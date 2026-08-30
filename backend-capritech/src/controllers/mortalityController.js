@@ -9,9 +9,20 @@ const Response = require("../functions/response");
 
 const getAllMortality = async (req, res) => {
     try {
-        const mortalityList = await getAllMortalityService();
-        const dataArray = Array.isArray(mortalityList) ? mortalityList : [];
-        var response = new Response(true, "Mortalidades consultadas exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllMortalityService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Mortalidades consultadas exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

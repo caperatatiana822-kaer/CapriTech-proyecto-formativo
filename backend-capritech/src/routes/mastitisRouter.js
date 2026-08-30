@@ -26,7 +26,7 @@ const {getAllMastitis,
  *       200:
  *         description: Lista de registros de mastitis obtenida correctamente
  */
-router.get("/mastitisAll",  getAllMastitis)
+router.get("/mastitisAll", getAllMastitis)
 /**
  * @swagger
  * /api/mastitis/mastitis/{id}:
@@ -47,7 +47,7 @@ router.get("/mastitisAll",  getAllMastitis)
  *       404:
  *         description: Registro de mastitis no encontrado
  */
-router.get("/mastitis/:id",  getMastitisById)
+router.get("/mastitis/:id", getMastitisById)
 /**
  * @swagger
  * /api/mastitis/mastitis:

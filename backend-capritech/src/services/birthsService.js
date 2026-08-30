@@ -1,4 +1,3 @@
-// services/birthsService.js
 const Birth = require('../models/birthsModel');
 
 const birthsCreate = async (data) => {
@@ -13,9 +12,9 @@ const birthsCreate = async (data) => {
     }
 };
 
-const getAllbirths = async () => {
+const getAllbirths = async (limit, offset) => {
     try {
-        const allBirths = await Birth.findAll();
+        const allBirths = await Birth.findAll({limit: limit, offset: offset});
         console.log("Nacimientos encontrados:", allBirths.length);
         return allBirths || [];
     } catch (error) {

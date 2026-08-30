@@ -10,7 +10,7 @@ class Response {
         return {
             success: this.success,
             message: this.message,
-            data: this.data ? this.data : {},
+            data: this.data,
             error: this.error
         }
     }

@@ -12,13 +12,22 @@ const responsibleCreate = async (data) => {
     }
 };
 
-const getAllResponsible = async () => {
+const getAllResponsible = async (limit, offset) => {
     try {
+        const totalCount = await Responsible.count();
         const responsibleRecords = await Responsible.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros RESPONSIBLE encontrados:", responsibleRecords.length);
-        return responsibleRecords || [];
+        return {
+            data: responsibleRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllResponsible:", error);
         throw new Error(`Error al obtener registros RESPONSIBLE: ${error.message}`);

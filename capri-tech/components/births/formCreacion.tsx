@@ -23,7 +23,6 @@ function FormCreacionNacimiento() {
     setError("")
     setErroresDetallados([])
 
-    // Validaciones básicas en el frontend
     const validaciones = []
     if (!chapeta) validaciones.push("La chapeta es obligatoria")
     if (!nombreAnimal) validaciones.push("El nombre es obligatorio")
@@ -39,7 +38,6 @@ function FormCreacionNacimiento() {
       return
     }
 
-    // Mapeo correcto de campos para el backend
     const nuevoNacimiento = {
       chapeta: parseInt(chapeta),
       nombre: nombreAnimal,
@@ -66,14 +64,11 @@ function FormCreacionNacimiento() {
       console.log("Respuesta completa del backend:", datos)
 
       if (!respuesta.ok) {
-        // Manejar diferentes tipos de errores del backend
         let mensajeError = "Error al registrar el nacimiento"
         
         if (datos.message) {
           mensajeError = datos.message
         }
-        
-        // Si hay errores detallados, mostrarlos
         if (datos.errors && Array.isArray(datos.errors)) {
           const erroresMensajes = datos.errors.map((e: any) => e.mensaje || e.message || JSON.stringify(e))
           setErroresDetallados(erroresMensajes)
@@ -82,16 +77,12 @@ function FormCreacionNacimiento() {
         
         throw new Error(mensajeError)
       }
-
-      // Si todo fue exitoso
       alert("Nacimiento registrado correctamente")
       router.push("/dashboard/births/table")
 
     } catch (error: any) {
       console.error("Error al registrar el nacimiento:", error)
       setError(error.message || "No se pudo registrar el nacimiento")
-      
-      // Si no hay errores detallados, crear uno genérico
       if (erroresDetallados.length === 0) {
         setErroresDetallados([error.message || "Error desconocido al registrar el nacimiento"])
       }
@@ -101,15 +92,26 @@ function FormCreacionNacimiento() {
   }
 
   return (
-    <div className="flex justify-center py-10 px-6 min-h-screen">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div className="py-10 px-6 min-h-screen">
+      {/* Contenedor superior con el botón fuera del formulario */}
+      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
+        <button 
+          type="submit" 
+          disabled={enviando}
+          onClick={handleSubmit}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
+        >
+          {enviando ? "Registrando..." : "Registrar Parto"}
+        </button>
+      </div>
 
+      {/* Formulario */}
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
-          <h1 className="text-2xl font-bold">Formulario de creación de nacimientos</h1>
-          <p className="text-green-100 mt-1">Ingresa la información del nuevo caprino</p>
+          <h1 className="text-2xl font-bold">Formulario de creación de partos</h1>
+          <p className="text-green-100 mt-1">Ingresa la información del nuevo parto</p>
         </div>
 
-        {/* Mostrar errores generales */}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
             <p className="text-red-700 font-semibold">Error:</p>
@@ -117,7 +119,6 @@ function FormCreacionNacimiento() {
           </div>
         )}
 
-        {/* Mostrar errores detallados */}
         {erroresDetallados.length > 0 && (
           <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mx-6 mt-4">
             <p className="text-yellow-700 font-semibold">Detalles del error:</p>
@@ -130,7 +131,6 @@ function FormCreacionNacimiento() {
         )}
         
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta *</label>
             <input 
@@ -152,7 +152,7 @@ function FormCreacionNacimiento() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Nacimiento *</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de parto *</label>
             <input 
               type="date" 
               value={fechaNacimiento} 
@@ -212,16 +212,6 @@ function FormCreacionNacimiento() {
               required
               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
           </div>
-
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
-              disabled={enviando}
-              className="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50">
-              {enviando ? "Registrando..." : "Registrar Nacimiento"}
-            </button>
-          </div>
-
         </form>
       </div>
     </div>

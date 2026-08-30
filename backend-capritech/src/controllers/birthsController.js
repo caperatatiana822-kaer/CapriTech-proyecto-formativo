@@ -9,7 +9,13 @@ const Response = require("../functions/response");
 
 const getAllBirths = async (req, res) => {
     try {
-        const birthsList = await getAllBirthsService();
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+    
+        const limit = queryLimit ? Number(queryLimit):10;
+        const offset = queryOffset ? Number(queryOffset):0;
+
+        const birthsList = await getAllBirthsService(limit, offset);
         const dataArray = Array.isArray(birthsList) ? birthsList : [];
         var response = new Response(true, "Nacimientos consultados exitosamente", dataArray, null);
         res.status(200);

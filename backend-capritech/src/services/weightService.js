@@ -12,13 +12,22 @@ const weigthCreate = async (data) => {
     }
 };
 
-const getAllWeigthings = async () => {
+const getAllWeigthings = async (limit, offset) => {
     try {
+        const totalCount = await Weighing.count();
         const weighingRecords = await Weighing.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros WEIGHT encontrados:", weighingRecords.length);
-        return weighingRecords || [];
+        return {
+            data: weighingRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.error("Error al consultar los pesajes:", error);
         throw new Error(`Error al obtener registros WEIGHT: ${error.message}`);

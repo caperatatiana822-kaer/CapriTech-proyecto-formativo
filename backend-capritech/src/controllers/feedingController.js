@@ -9,9 +9,21 @@ const Response = require("../functions/response");
 
 const getAllFeeding = async (req, res) => {
     try {
-        const feedingList = await getAllFeedingService();
-        const dataArray = Array.isArray(feedingList) ? feedingList : [];
-        var response = new Response(true, "Alimentaciones consultadas exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllFeedingService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Alimentaciones consultadas exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -23,7 +35,6 @@ const getAllFeeding = async (req, res) => {
         res.json(response.json);
     }
 };
-
 const getFeedingById = async (req, res) => {
     try {
         const { id } = req.params;

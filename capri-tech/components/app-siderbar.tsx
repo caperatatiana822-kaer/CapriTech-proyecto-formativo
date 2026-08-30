@@ -134,31 +134,6 @@ export function AppSidebar() {
               </SidebarMenuItem>
             </Collapsible>
 
-            <Collapsible defaultOpen={pathname.startsWith("/dashboard/famacha")}>
-              <SidebarMenuItem className="mb-2">
-                <CollapsibleTrigger asChild>
-                  <button className="font-semibold text-green-800 flex items-center justify-between w-full">
-                    <span className="flex items-center gap-2">
-                      <Eye className="h-4 w-4" />
-                      Famacha</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    <SidebarMenuSubButton asChild className="
-              hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2" >
-                      <a href="/dashboard/famacha">Crear famacha</a>
-                    </SidebarMenuSubButton>
-                    <SidebarMenuSubButton asChild className="
-              hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2">
-                      <a href="/dashboard/famacha/table">Listar famachas</a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-
             <Collapsible defaultOpen={pathname.startsWith("/dashboard/mounts")}>
               <SidebarMenuItem className="mb-2">
                 <CollapsibleTrigger asChild>
@@ -190,7 +165,7 @@ export function AppSidebar() {
                   <button className="font-semibold text-green-800 flex items-center justify-between w-full">
                     <span className="flex items-center gap-2">
                       <Baby className="h-4 w-4" />
-                      Nacimientos</span>
+                      Partos</span>
                     <ChevronDown className="h-4 w-4" />
                   </button>
                 </CollapsibleTrigger>
@@ -198,11 +173,11 @@ export function AppSidebar() {
                   <SidebarMenuSub>
                     <SidebarMenuSubButton asChild className="
               hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2" >
-                      <a href="/dashboard/births">Crear nacimiento</a>
+                      <a href="/dashboard/births">Crear Parto</a>
                     </SidebarMenuSubButton>
                     <SidebarMenuSubButton asChild className="
               hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2">
-                      <a href="/dashboard/births/table">Listar nacimientos</a>
+                      <a href="/dashboard/births/table">Listar Partos</a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSub>
                 </CollapsibleContent>
@@ -327,6 +302,30 @@ export function AppSidebar() {
                         </CollapsibleContent>
                       </SidebarMenuSubItem>
                     </Collapsible>
+                    <Collapsible defaultOpen={pathname.startsWith("/dashboard/famacha")}>
+              <SidebarMenuItem className="mb-2">
+                <CollapsibleTrigger asChild>
+                  <button className="font-semibold text-green-800 flex items-center justify-between w-full">
+                    <span className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      Famacha</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubButton asChild className="
+              hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2" >
+                      <a href="/dashboard/famacha">Crear famacha</a>
+                    </SidebarMenuSubButton>
+                    <SidebarMenuSubButton asChild className="
+              hover:text-green-700 rounded-lg trhover:bg-green-100 ansition-all duration-200 px-3 py-2">
+                      <a href="/dashboard/famacha/table">Listar famachas</a>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>

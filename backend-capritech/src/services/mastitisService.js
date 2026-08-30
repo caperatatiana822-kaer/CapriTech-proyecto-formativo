@@ -12,13 +12,22 @@ const mastitisCreate = async (data) => {
     }
 };
 
-const getAllMastitis = async () => {
+const getAllMastitis = async (limit, offset) => {
     try {
+        const totalCount = await Mastitis.count();
         const mastitisRecords = await Mastitis.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros MASTITIS encontrados:", mastitisRecords.length);
-        return mastitisRecords || [];
+        return {
+            data: mastitisRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllMastitis:", error);
         throw new Error(`Error al obtener registros MASTITIS: ${error.message}`);

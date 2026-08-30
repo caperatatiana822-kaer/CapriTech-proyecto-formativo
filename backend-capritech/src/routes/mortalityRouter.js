@@ -59,7 +59,7 @@ router.get("/mortality/:id", getMortalityById)
  *       201:
  *         description: Registro de mortalidad creado correctamente
  */
-router.post("/mortality",  createMortality)
+router.post("/mortality", createMortality)
 /**
  * @swagger
  * /api/mortality/mortality/{id}:
@@ -80,7 +80,7 @@ router.post("/mortality",  createMortality)
 *       404:
 *         description: Registro de mortalidad no encontrado
  */
-router.put("/mortality/:id", updateMortality)
+router.put("/mortality/:id",  updateMortality)
 /**
 * @swagger
 * /api/mortality/mortality/{id}:

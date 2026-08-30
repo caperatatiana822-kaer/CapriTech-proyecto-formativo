@@ -30,6 +30,11 @@ const User = db.define('User', {
         allowNull: false,
         defaultValue: "false"
     },
+    uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false
+    },
     verifyEmail: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

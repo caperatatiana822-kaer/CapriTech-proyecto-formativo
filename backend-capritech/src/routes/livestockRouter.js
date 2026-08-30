@@ -6,7 +6,7 @@ const {getAllLivestock,
     updateLivestock, 
     deleteLivestock} = require("../controllers/livestockController.js");
 
-const { validateToken } = require('../middlewares/handlerToken');
+// const { validateToken } = require('../middlewares/handlerToken');
 /**
  * @swagger
  * tags:
@@ -27,7 +27,7 @@ const { validateToken } = require('../middlewares/handlerToken');
  *       200:
  *         description: Lista de semovientes obtenida correctamente
  */
-router.get("/livestockAll", validateToken, getAllLivestock)
+router.get("/livestockAll", getAllLivestock)
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ router.get("/livestockAll", validateToken, getAllLivestock)
  *         description: Semoviente no encontrado
  */
 //semoviente con id
-router.get("/livestock/:id", validateToken, getLivestockById)
+router.get("/livestock/:id",  getLivestockById)
 
 /**
  * @swagger
@@ -64,7 +64,7 @@ router.get("/livestock/:id", validateToken, getLivestockById)
  *         description: Semoviente creado correctamente
  */
 //crear semoviente
-router.post("/livestock", validateToken, createLivestock)
+router.post("/livestock",  createLivestock)
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ router.post("/livestock", validateToken, createLivestock)
  *         description: Semoviente actualizado correctamente
  */
 //consultar semoviente con id
-router.put("/livestock/:id", validateToken, updateLivestock)
+router.put("/livestock/:id", updateLivestock)
 /**
  * @swagger
  * /api/livestock/livestock/{id}:
@@ -105,6 +105,6 @@ router.put("/livestock/:id", validateToken, updateLivestock)
  *         description: Semoviente eliminado correctamente
  */
 //eliminar semoviente
-router.delete("/livestock/:id", validateToken, deleteLivestock)
+router.delete("/livestock/:id",  deleteLivestock)
 
 module.exports = router;

@@ -61,7 +61,7 @@ router.get("/feedings/:id",  getFeedingById)
  *       201:
  *         description: Registro de alimentación creado correctamente
  */
-router.post("/feedings",   createFeeding)
+router.post("/feedings",  createFeeding)
 //consultar alimentacion con id 
 /**
  * @swagger
@@ -83,7 +83,7 @@ router.post("/feedings",   createFeeding)
  *       404:
  *         description: Registro de alimentación no encontrado
  */
-router.put("/feedings/:id", updateFeeding)
+router.put("/feedings/:id",  updateFeeding)
 //eliminar alimentacion
 /**
  * @swagger

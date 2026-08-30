@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -13,49 +14,72 @@ function formatearFecha(fechaISO: string) {
 }
 
 export default function TablaVacunacion() {
+  const router = useRouter()
   const [vacunaciones, setVacunaciones] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
 
-  useEffect(function cargarVacunaciones() {
-    async function obtenerVacunaciones() {
-      try {
-        setCargando(true)
-        setError("")
-        
-        const respuesta = await fetch("http://localhost:3001/api/vaccination/vaccinationAll")
-        const datos = await respuesta.json()
-        console.log("Respuesta VACCINATION:", datos)
-        
-        if (!respuesta.ok) {
-          throw new Error(datos.message || "Error al cargar vacunaciones")
-        }
-        
-        let listaVacunaciones = []
-        if (datos.data && Array.isArray(datos.data)) {
-          listaVacunaciones = datos.data
-        } else if (Array.isArray(datos)) {
-          listaVacunaciones = datos
-        } else {
-          listaVacunaciones = []
-        }
-        
-        setVacunaciones(listaVacunaciones)
-      } catch (error: any) {
-        console.error("Error al cargar las vacunaciones:", error)
-        setError(error.message || "No se pudieron cargar las vacunaciones")
-        setVacunaciones([])
-      } finally {
-        setCargando(false)
+  const cargarVacunaciones = async (pagina = 1) => {
+    try {
+      setCargando(true)
+      setError("")
+      
+      const limite = 10
+      const offset = (pagina - 1) * limite
+      const respuesta = await fetch(`http://localhost:3001/api/vaccination/vaccinationAll?limit=${limite}&offset=${offset}`)
+      const datos = await respuesta.json()
+      console.log("Respuesta VACCINATION:", datos)
+      
+      if (!respuesta.ok) {
+        throw new Error(datos.message || "Error al cargar vacunaciones")
       }
+      
+      if (datos.success && datos.data) {
+        setVacunaciones(datos.data.data || [])
+        setTotalItems(datos.data.totalItems || 0)
+        setTotalPaginas(datos.data.totalPages || 1)
+        setPaginaActual(datos.data.currentPage || 1)
+      } else {
+        setVacunaciones([])
+      }
+    } catch (error: any) {
+      console.error("Error al cargar las vacunaciones:", error)
+      setError(error.message || "No se pudieron cargar las vacunaciones")
+      setVacunaciones([])
+    } finally {
+      setCargando(false)
     }
-    obtenerVacunaciones()
+  }
+
+  useEffect(() => {
+    cargarVacunaciones(1)
   }, [])
 
-  return (
-    <div className="flex justify-center py-10 px-6 ">
-      <div className="w-full max-w-6xl bg-white shadow-lg rounded-2xl overflow-hidden">
+  function handleAgregarVacunacion() {
+    router.push("/dashboard/vaccination")
+  }
 
+  function irPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= totalPaginas) {
+      cargarVacunaciones(pagina)
+    }
+  }
+
+  return (
+    <div className="py-10 px-6">
+      <div className="max-w-6xl mx-auto mb-4 flex justify-end">
+        <button 
+          onClick={handleAgregarVacunacion}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+        >
+          + Agregar Vacunacion
+        </button>
+      </div>
+
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
           <h1 className="text-2xl font-bold">Tabla de Vacunacion</h1>
           <p className="text-green-100 mt-1">Registro de vacunas aplicadas a los caprinos</p>
@@ -114,6 +138,39 @@ export default function TablaVacunacion() {
               })}
             </tbody>
           </table>
+
+
+          {!cargando && !error && totalItems > 0 && (
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+              <div className="text-sm text-gray-600">
+                Página {paginaActual} de {totalPaginas}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => irPagina(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                    paginaActual === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                  }`}
+                >
+                  Anterior
+                </button>
+                <button
+                  onClick={() => irPagina(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                    paginaActual === totalPaginas
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                  }`}
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

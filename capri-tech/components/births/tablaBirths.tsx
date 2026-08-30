@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -12,7 +13,8 @@ function formatearFecha(fechaISO: string) {
 }
 
 export default function TablaBirths() {
-  const [nacimientos, setNacimientos] = useState<any[]>([]) // Especificar que es un array
+  const router = useRouter()
+  const [nacimientos, setNacimientos] = useState<any[]>([]) 
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
 
@@ -27,8 +29,6 @@ export default function TablaBirths() {
         const respuesta = await fetch("http://localhost:3001/api/births/birthsAll", {
           headers: {
             'Content-Type': 'application/json',
-            // Si tienes autenticación, descomenta esta línea
-            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         })
         
@@ -37,25 +37,19 @@ export default function TablaBirths() {
         console.log("Respuesta completa del backend:", datos)
         
         if (!respuesta.ok) {
-          // Si el backend devuelve un error específico
           const mensajeError = datos.message || `Error ${respuesta.status}: ${respuesta.statusText}`
           throw new Error(mensajeError)
         }
-        
-        // Verificar qué contiene datos
+
         console.log("Contenido de datos:", datos)
-        
-        // Extraer el array de datos de forma segura
+
         let listaNacimientos = []
         
         if (datos.data && Array.isArray(datos.data)) {
-          // Si la respuesta tiene una propiedad 'data' que es un array
           listaNacimientos = datos.data
         } else if (Array.isArray(datos)) {
-          // Si la respuesta directamente es un array
           listaNacimientos = datos
         } else if (datos && typeof datos === 'object') {
-          // Si es un objeto, intentar extraer un array de alguna propiedad común
           const posiblesArrays = ['births', 'nacimientos', 'items', 'results', 'rows']
           for (const key of posiblesArrays) {
             if (datos[key] && Array.isArray(datos[key])) {
@@ -64,7 +58,7 @@ export default function TablaBirths() {
             }
           }
           
-          // Si no se encontró ningún array, pero hay datos, intentar convertir a array
+
           if (listaNacimientos.length === 0 && Object.keys(datos).length > 0) {
             console.warn("No se encontró un array en la respuesta, usando el objeto completo como array")
             listaNacimientos = [datos]
@@ -77,7 +71,7 @@ export default function TablaBirths() {
       } catch (error: any) {
         console.error("Error al cargar los nacimientos:", error)
         setError(error.message || "No se pudieron cargar los nacimientos")
-        setNacimientos([]) // Asegurar que siempre sea un array
+        setNacimientos([])
       } finally {
         setCargando(false)
       }
@@ -85,16 +79,29 @@ export default function TablaBirths() {
     obtenerNacimientos()
   }, [])
 
-  // Función de depuración para ver el estado actual
   console.log("Estado actual - Cargando:", cargando, "Error:", error, "Nacimientos:", nacimientos)
 
-  return (
-    <div className="flex justify-center py-10 px-6 ">
-      <div className="w-full max-w-6xl bg-white shadow-lg rounded-2xl overflow-hidden">
+  function handleAgregarParto() {
+    router.push("/dashboard/births")
+  }
 
+  return (
+    <div className="py-10 px-6">
+      {/* Contenedor superior con el botón fuera de la tabla */}
+      <div className="max-w-6xl mx-auto mb-4 flex justify-end">
+        <button 
+          onClick={handleAgregarParto}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+        >
+          + Agregar Parto
+        </button>
+      </div>
+
+      {/* Tabla */}
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
-          <h1 className="text-2xl font-bold">Tabla de Nacimientos</h1>
-          <p className="text-green-100 mt-1">Registro de nacimientos de caprinos</p>
+          <h1 className="text-2xl font-bold">Tabla de Partos</h1>
+          <p className="text-green-100 mt-1">Registro de Partos de caprinos</p>
         </div>
 
         <div className="p-6 overflow-x-auto">
@@ -107,12 +114,11 @@ export default function TablaBirths() {
 
           {!cargando && !error && nacimientos.length === 0 && (
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
-              <p className="text-yellow-700">Todavía no hay nacimientos registrados.</p>
+              <p className="text-yellow-700">Todavía no hay partos registrados.</p>
             </div>
           )}
 
           <table className="w-full border-collapse">
-
             <thead>
               <tr className="bg-green-100 text-green-800">
                 <th className="p-3 text-left">Chapeta</th>
@@ -135,7 +141,7 @@ export default function TablaBirths() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>Cargando nacimientos...</span>
+                      <span>Cargando partos...</span>
                     </div>
                   </td>
                 </tr>
@@ -159,9 +165,7 @@ export default function TablaBirths() {
                 })
               )}
             </tbody>
-
           </table>
-
         </div>
       </div>
     </div>

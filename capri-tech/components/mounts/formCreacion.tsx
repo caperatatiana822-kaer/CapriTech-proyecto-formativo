@@ -19,7 +19,18 @@ export default function FormCreacionMount() {
       try {
         const res = await fetch("http://localhost:3001/api/livestock/livestockAll")
         const json = await res.json()
-        setAnimales(json.data || [])
+
+        const datos = Array.isArray(json?.data)
+          ? json.data
+          : Array.isArray(json?.data?.data)
+            ? json.data.data
+            : Array.isArray(json?.animales)
+              ? json.animales
+              : Array.isArray(json)
+                ? json
+                : []
+
+        setAnimales(datos)
       } catch (e) {
         console.error(e)
       }
@@ -27,8 +38,9 @@ export default function FormCreacionMount() {
     cargar()
   }, [])
 
-  const machos = animales.filter(a => (a.sexo || "").toLowerCase() === "macho")
-  const hembras = animales.filter(a => (a.sexo || "").toLowerCase() === "hembra")
+  const listaAnimales = Array.isArray(animales) ? animales : []
+  const machos = listaAnimales.filter(a => (a.sexo || "").toLowerCase() === "macho")
+  const hembras = listaAnimales.filter(a => (a.sexo || "").toLowerCase() === "hembra")
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -73,15 +85,27 @@ export default function FormCreacionMount() {
   }
 
   return (
-    <div className="flex justify-center py-10 px-6">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div className="py-10 px-6">
+      {/* Contenedor superior con el botón fuera del formulario */}
+      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
+        <button 
+          disabled={enviando} 
+          type="submit"
+          onClick={handleSubmit}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
+        >
+          {enviando ? "Registrando..." : "Registrar Monta"}
+        </button>
+      </div>
+
+      {/* Formulario */}
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
           <h1 className="text-2xl font-bold">Formulario de Montas</h1>
           <p className="text-green-100 mt-1">Ingresa la información de la monta realizada</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Monta</label>
             <input type="date" required value={fechaMonta} onChange={e => setFechaMonta(e.target.value)}
@@ -120,13 +144,6 @@ export default function FormCreacionMount() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">Posible Fecha de Parto</label>
             <input type="date" required value={posibleFechaParto} onChange={e => setPosibleFechaParto(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
-          </div>
-
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button disabled={enviando} type="submit"
-              className="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50">
-              {enviando ? "Registrando..." : "Registrar Monta"}
-            </button>
           </div>
         </form>
       </div>

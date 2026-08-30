@@ -26,7 +26,7 @@ const {getAllResponsibles,
  *       200:
  *         description: Lista de responsables obtenida correctamente
  */
-router.get("/responsibleAll",  getAllResponsibles)
+router.get("/responsibleAll", getAllResponsibles)
 /**
  * @swagger
  * /api/responsible/responsible/{id}:
@@ -101,6 +101,6 @@ router.put("/responsible/:id",  updateResponsible)
  *       404:
  *         description: Registro de responsable no encontrado
  */
-router.delete("/responsible/:id",  deleteResponsible)
+router.delete("/responsible/:id", deleteResponsible)
 
 module.exports = router;

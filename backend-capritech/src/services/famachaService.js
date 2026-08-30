@@ -12,13 +12,23 @@ const famachaCreate = async (data) => {
     }
 };
 
-const getallfamacha = async () => {
+const getallfamacha = async (limit, offset) => {
     try {
+        const totalCount = await Famacha.count();
         const famachaRecords = await Famacha.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros FAMACHA encontrados:", famachaRecords.length);
-        return famachaRecords || [];
+
+        return {
+            data: famachaRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getallfamacha:", error);
         throw new Error(`Error al obtener registros FAMACHA: ${error.message}`);

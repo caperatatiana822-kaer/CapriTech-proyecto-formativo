@@ -12,13 +12,22 @@ const feedingCreate = async (data) => {
     }
 };
 
-const getAllFeeding = async () => {
+const getAllFeeding = async (limit, offset) => {
     try {
+        const totalCount = await Feeding.count();
         const feedingRecords = await Feeding.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros FEEDING encontrados:", feedingRecords.length);
-        return feedingRecords || [];
+        return {
+            data: feedingRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllFeeding:", error);
         throw new Error(`Error al obtener registros FEEDING: ${error.message}`);

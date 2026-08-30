@@ -9,14 +9,26 @@ const Response = require("../functions/response");
 
 const getAllVaccination = async (req, res) => {
     try {
-        const vaccinationList = await getAllVaccinationService();
-        const dataArray = Array.isArray(vaccinationList) ? vaccinationList : [];
-        var response = new Response(true, "Vacunaciones consultadas exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllVaccinationService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+
+        const response = new Response(true, "Vacunaciones consultadas exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
         console.log(error);
-        var response = new Response(false, "error al consultar todas las vacunaciones", null, [
+        const response = new Response(false, "error al consultar todas las vacunaciones", null, [
             error.message,
         ]);
         res.status(500);
@@ -61,7 +73,7 @@ const getVaccinationById = async (req, res) => {
 
 const createVaccination = async (req, res) => {
     try {
-        const { chapeta, fecha, vacuna, responsable } = req.body;
+        const { chapeta, fecha, vacuna, dosis, responsable } = req.body;
 
         let errores = [];
 
@@ -73,6 +85,9 @@ const createVaccination = async (req, res) => {
         }
         if (!vacuna || String(vacuna).trim() === "") {
             errores.push({ mensaje: "El nombre de la vacuna es obligatorio" });
+        }
+         if (!dosis || String(dosis).trim() === "") {
+            errores.push({ mensaje: "La dosis es obligatoria" });
         }
         if (!responsable || String(responsable).trim() === "") {
             errores.push({ mensaje: "El responsable es obligatorio" });
@@ -89,6 +104,7 @@ const createVaccination = async (req, res) => {
             chapeta: parseInt(chapeta),
             fecha: fecha,
             vacuna: vacuna,
+            dosis: dosis,
             responsable: responsable
         };
 

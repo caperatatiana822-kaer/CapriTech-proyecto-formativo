@@ -10,10 +10,24 @@ const productionCreate = async (data) => {
     }
 };
 
-const getAllProduction = async () => {
+const getAllProduction = async (limit, offset) => {
     try {
-        const allProduction = await Production.findAll();
-        return allProduction;
+        const totalCount = await Production.count();
+        const allProduction = await Production.findAll({
+            limit: limit,
+            offset: offset,
+            order: [['id', 'DESC']] 
+        });
+        
+        return {
+            data: allProduction,
+            pagination: {
+                totalItems: totalCount,
+                itemsPerPage: limit,
+                currentPage: Math.floor(offset / limit) + 1,
+                totalPages: Math.ceil(totalCount / limit)
+            }
+        };
     } catch (error) {
         console.log(error);
         throw error;

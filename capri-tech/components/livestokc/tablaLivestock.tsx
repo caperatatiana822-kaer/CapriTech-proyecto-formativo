@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -8,28 +9,65 @@ function formatearFecha(fechaISO: string) {
 }
 
 export default function TablaLivestock() {
+  const router = useRouter()
   const [animales, setAnimales] = useState([])
   const [cargando, setCargando] = useState(true)
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10
+  })
 
-  useEffect(function cargarAnimales() {
-    async function obtenerAnimales() {
-      try {
-        const respuesta = await fetch("http://localhost:3001/api/livestock/livestockAll")
-        const datos = await respuesta.json()
-        setAnimales(datos.data)
-      } catch (error) {
-        console.error("Error al cargar los animales:", error)
-      } finally {
-        setCargando(false)
+  const cargarAnimales = async (page = 1) => {
+    setCargando(true)
+    try {
+      const limit = 10
+      const offset = (page - 1) * limit
+      const respuesta = await fetch(`http://localhost:3001/api/livestock/livestockAll?limit=${limit}&offset=${offset}`)
+      const datos = await respuesta.json()
+      
+      if (datos.success && datos.data) {
+        setAnimales(datos.data.data || [])
+        if (datos.data.pagination) {
+          setPagination(datos.data.pagination)
+        }
+      } else {
+        setAnimales([])
       }
+    } catch (error) {
+      console.error("Error al cargar los animales:", error)
+      setAnimales([])
+    } finally {
+      setCargando(false)
     }
-    obtenerAnimales()
+  }
+
+  useEffect(() => {
+    cargarAnimales(1)
   }, [])
 
-  return (
-    <div className="flex justify-center py-10 px-6 ">
-      <div className="w-full max-w-6xl bg-white shadow-lg rounded-2xl overflow-hidden">
+  function handleAgregarCaprino() {
+    router.push("/dashboard/livestock")
+  }
 
+  function handlePageChange(newPage: number) {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      cargarAnimales(newPage)
+    }
+  }
+
+  return (
+    <div className="py-10 px-6">
+      <div className="max-w-6xl mx-auto mb-4 flex justify-end">
+        <button 
+          onClick={handleAgregarCaprino}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition">
+          + Agregar Caprino
+        </button>
+      </div>
+
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
           <h1 className="text-2xl font-bold">Tabla de Inventario</h1>
           <p className="text-green-100 mt-1">Registro general de animales del inventario</p>
@@ -37,7 +75,6 @@ export default function TablaLivestock() {
 
         <div className="p-6 overflow-x-auto">
           <table className="w-full border-collapse">
-
             <thead>
               <tr className="bg-green-100 text-green-800">
                 <th className="p-3 text-left">Nombre</th>
@@ -81,10 +118,40 @@ export default function TablaLivestock() {
                 )
               })}
             </tbody>
-
           </table>
-        </div>
 
+          {!cargando && pagination.totalPages > 0 && (
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+              <div className="text-sm text-gray-600">
+                Página {pagination.currentPage} de {pagination.totalPages}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handlePageChange(pagination.currentPage - 1)}
+                  disabled={pagination.currentPage === 1}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                    pagination.currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                  }`}
+                >
+                  Anterior
+                </button>
+                <button
+                  onClick={() => handlePageChange(pagination.currentPage + 1)}
+                  disabled={pagination.currentPage === pagination.totalPages}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                    pagination.currentPage === pagination.totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                  }`}
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

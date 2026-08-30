@@ -15,7 +15,6 @@ export default function FormCreacionFamacha() {
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
 
-  // Cargar todos los animales igual que en montas
   useEffect(() => {
     async function cargarAnimales() {
       try {
@@ -23,12 +22,22 @@ export default function FormCreacionFamacha() {
         setError("")
         const res = await fetch("http://localhost:3001/api/livestock/livestockAll")
         const json = await res.json()
-        
+
         if (!res.ok) {
           throw new Error(json.message || "Error al cargar animales")
         }
-        
-        setAnimales(json.data || [])
+
+        const datos = Array.isArray(json?.data)
+          ? json.data
+          : Array.isArray(json?.data?.data)
+            ? json.data.data
+            : Array.isArray(json?.animales)
+              ? json.animales
+              : Array.isArray(json)
+                ? json
+                : []
+
+        setAnimales(datos)
       } catch (e: any) {
         console.error(e)
         setError(e.message || "No se pudieron cargar los animales")
@@ -39,15 +48,13 @@ export default function FormCreacionFamacha() {
     cargarAnimales()
   }, [])
 
-  // Todos los animales (sin filtrar por sexo)
-  const todosAnimales = animales
+  const todosAnimales = Array.isArray(animales) ? animales : []
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setEnviando(true)
     setError("")
 
-    // Validar que la chapeta exista
     const animal = todosAnimales.find(a => a.chapeta === parseInt(chapeta))
     if (!animal) {
       setError("Debe seleccionar un animal valido.")
@@ -92,9 +99,19 @@ export default function FormCreacionFamacha() {
   }
 
   return (
-    <div className="flex justify-center py-10 px-6 ">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div className="py-10 px-6">
+      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
+        <button 
+          type="submit" 
+          disabled={enviando || cargandoAnimales}
+          onClick={handleSubmit}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
+        >
+          {enviando ? "Guardando..." : "Registrar famacha"}
+        </button>
+      </div>
 
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
           <h1 className="text-2xl font-bold">
             Formulario de Creacion FAMACHA
@@ -109,7 +126,6 @@ export default function FormCreacionFamacha() {
         )}
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Animal *</label>
             <select 
@@ -174,19 +190,7 @@ export default function FormCreacionFamacha() {
               placeholder="Observaciones adicionales (opcional)"
             />
           </div>
-
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
-              disabled={enviando || cargandoAnimales}
-              className="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
-            >
-              {enviando ? "Guardando..." : "Guardar Registro"}
-            </button>
-          </div>
-
         </form>
-
       </div>
     </div>
   )

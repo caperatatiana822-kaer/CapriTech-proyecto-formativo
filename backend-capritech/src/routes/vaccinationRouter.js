@@ -61,7 +61,7 @@ router.get("/vaccination/:id", getVaccinationById)
  *       201:
  *         description: Registro de vacunación creado correctamente
  */
-router.post("/vaccination",  createVaccination)
+router.post("/vaccination", createVaccination)
 
 /**
  * @swagger
@@ -83,7 +83,7 @@ router.post("/vaccination",  createVaccination)
 *       404:
 *         description: Registro de vacunación no encontrado
  */
-router.put("/vaccination/:id", updateVaccination)
+router.put("/vaccination/:id",  updateVaccination)
 
 /**
 * @swagger
@@ -105,6 +105,6 @@ router.put("/vaccination/:id", updateVaccination)
 *       404:
 *         description: Registro de vacunación no encontrado
  */
-router.delete("/vaccination/:id",  deleteVaccination)
+router.delete("/vaccination/:id", deleteVaccination)
 
 module.exports = router;

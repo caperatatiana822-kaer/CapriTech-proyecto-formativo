@@ -27,10 +27,6 @@ const Responsible = db.define('Responsible', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    diaSemana: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
 }, {
     tableName: 'responsibles',
     timestamps: true

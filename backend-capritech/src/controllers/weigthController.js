@@ -9,9 +9,20 @@ const Response = require("../functions/response");
 
 const getAllWeigth = async (req, res) => {
     try {
-        const weigthList = await getAllWeigthings();
-        const dataArray = Array.isArray(weigthList) ? weigthList : [];
-        var response = new Response(true, "Pesajes consultados exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllWeigthings(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Pesajes consultados exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

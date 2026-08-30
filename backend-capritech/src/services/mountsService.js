@@ -10,17 +10,28 @@ const mountCreate = async (data) => {
     }
 };
 
-const getAllMounts = async () => {
+const getAllMounts = async (limit, offset) => {
     try {
-        const allMounts = await Mounts.findAll();
-        return allMounts;
+        const totalCount = await Mounts.count();
+        const allMounts = await Mounts.findAll({
+            limit: limit,
+            offset: offset,
+            order: [['id', 'DESC']]
+        });
+
+        return {
+            data: allMounts,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log(error);
         throw error;
     }
 };
 
-const  mountGetById = async (id) => {
+const mountGetById = async (id) => {
     try {
         const Mountid = await Mounts.findOne({where: {id}});
         return Mountid;
@@ -53,7 +64,7 @@ const mountUpdate = async (id, data) => {
 module.exports = {
     mountCreate,
     getAllMounts,
-     mountGetById,
+    mountGetById,
     mountDelete,
     mountUpdate
 };

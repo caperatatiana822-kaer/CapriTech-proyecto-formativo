@@ -64,16 +64,27 @@ function FormCreacionProduction() {
   }
 
   return (
-    <div className="flex justify-center py-10 px-6 ">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div className="py-10 px-6">
+      {/* Contenedor superior con el botón fuera del formulario */}
+      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
+        <button 
+          type="submit" 
+          disabled={enviando}
+          onClick={handleSubmit}
+          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
+        >
+          {enviando ? "Registrando..." : "Registrar Producción"}
+        </button>
+      </div>
 
+      {/* Formulario */}
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
         <div className="bg-green-700 text-white p-6">
           <h1 className="text-2xl font-bold">Formulario de Producción</h1>
           <p className="text-green-100 mt-1">Ingresa la información de la producción registrada</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Producción</label>
             <select required value={productionType} onChange={(e) => setProductionType(e.target.value)}
@@ -154,16 +165,7 @@ function FormCreacionProduction() {
             <input type="text" value={observaciones} onChange={(e) => setObservaciones(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
           </div>
-
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button type="submit" disabled={enviando}
-              className="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50">
-              {enviando ? "Registrando..." : "Registrar Producción"}
-            </button>
-          </div>
-
         </form>
-
       </div>
     </div>
   );

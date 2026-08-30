@@ -12,13 +12,22 @@ const userCreate = async (data) => {
     }
 };
 
-const getAllUsers = async () => {
+const getAllUsers = async (limit, offset) => {
     try {
+        const totalCount = await User.count();
         const users = await User.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros USER encontrados:", users.length);
-        return users || [];
+        return {
+            data: users || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllUsers:", error);
         throw new Error(`Error al obtener registros USER: ${error.message}`);

@@ -3,8 +3,19 @@ const Response = require("../functions/response");
 
 const getAllLivestock = async (req, res) => {
     try {
-        const livestockList = await getAllLivestockService();
-        var response = new Response(true, "Semovientes consultados exitosamente", livestockList, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllLivestockService(limit, offset);
+        const responseData = {
+            data: result.data,
+            pagination: result.pagination
+        };
+        
+        var response = new Response(true, "Semovientes consultados exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

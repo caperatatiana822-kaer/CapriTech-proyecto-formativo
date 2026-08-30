@@ -9,9 +9,20 @@ const Response = require("../functions/response");
 
 const getAllMastitis = async (req, res) => {
     try {
-        const mastitisList = await getAllMastitisService();
-        const dataArray = Array.isArray(mastitisList) ? mastitisList : [];
-        var response = new Response(true, "Casos de mastitis consultados exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;     
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllMastitisService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Casos de mastitis consultados exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

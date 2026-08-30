@@ -3,8 +3,20 @@ const Response = require("../functions/response");
 
 const getAllMounts = async (req, res) => {
     try {
-        const mountsList = await getAllMountsService();
-        var response = new Response(true, "Montas consultadas exitosamente", mountsList, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+
+        const result = await getAllMountsService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Montas consultadas exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

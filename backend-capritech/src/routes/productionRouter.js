@@ -5,7 +5,7 @@ const{getAllProduction,
     createProduction,
     updateProduction,
     deleteProduction} = require("../controllers/productionController.js")
-const { validateToken } = require('../middlewares/handlerToken');
+// const { validateToken } = require('../middlewares/handlerToken');
 
 /**
  * @swagger
@@ -26,7 +26,7 @@ const { validateToken } = require('../middlewares/handlerToken');
  *       200:
  *         description: Lista de producción obtenida correctamente
  */
-router.get("/productionAll", validateToken, getAllProduction)
+router.get("/productionAll",  getAllProduction)
 
 
 /**
@@ -49,7 +49,7 @@ router.get("/productionAll", validateToken, getAllProduction)
  *       404:
  *         description: Producción no encontrada
  */
-router.get("/production/:id", validateToken, getProductionById)
+router.get("/production/:id", getProductionById)
 
 /**
  * @swagger
@@ -62,7 +62,7 @@ router.get("/production/:id", validateToken, getProductionById)
  *       201:
  *         description: Producción creada correctamente
  */
-router.post("/production", validateToken, createProduction)
+router.post("/production", createProduction)
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.post("/production", validateToken, createProduction)
  *       404:
  *         description: Producción no encontrada
  */
-router.put("/production/:id", validateToken, updateProduction)
+router.put("/production/:id", updateProduction)
 
 /**
  * @swagger
@@ -106,6 +106,6 @@ router.put("/production/:id", validateToken, updateProduction)
  *       404:
  *         description: Producción no encontrada
  */
-router.delete("/production/:id", validateToken, deleteProduction)
+router.delete("/production/:id", deleteProduction)
 
 module.exports = router;

@@ -12,13 +12,23 @@ const createvaccination = async (data) => {
     }
 };
 
-const getAllvaccinations = async () => {
+const getAllvaccinations = async (limit, offset) => {
     try {
-        const vaccinations = await Vaccination.findAll({
+        const totalCount = await Vaccination.count();
+
+        const vaccinationRecords = await Vaccination.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
-        console.log("Registros VACCINATION encontrados:", vaccinations.length);
-        return vaccinations || [];
+        
+        console.log("Registros VACCINATION encontrados:", vaccinationRecords.length);
+        return {
+            data: vaccinationRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllvaccinations:", error);
         throw new Error(`Error al obtener registros VACCINATION: ${error.message}`);

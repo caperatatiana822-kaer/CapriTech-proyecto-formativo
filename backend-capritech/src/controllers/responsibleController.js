@@ -9,9 +9,19 @@ const Response = require("../functions/response");
 
 const getAllResponsibles = async (req, res) => {
     try {
-        const responsibleList = await getAllResponsibleService();
-        const dataArray = Array.isArray(responsibleList) ? responsibleList : [];
-        var response = new Response(true, "Responsables consultados exitosamente", dataArray, null);
+        const queryLimit = req.query.limit;
+        const queryOffset = req.query.offset;
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0;
+        const result = await getAllResponsibleService(limit, offset);
+        const responseData = {
+            data: result.data,
+            totalItems: result.totalItems,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage
+        };
+        
+        var response = new Response(true, "Responsables consultados exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -61,7 +71,7 @@ const getResponsibleById = async (req, res) => {
 
 const createResponsible = async (req, res) => {
     try {
-        const { nombre, documento, tipoResponsable, actividad, frecuencia, diaSemana } = req.body;
+        const { nombre, documento, tipoResponsable, actividad, frecuencia,  } = req.body;
 
         var errores = [];
 
@@ -80,9 +90,6 @@ const createResponsible = async (req, res) => {
         if (!frecuencia || String(frecuencia).trim() === "") {
             errores.push({ mensaje: "La frecuencia es obligatoria" });
         }
-        if (!diaSemana || String(diaSemana).trim() === "") {
-            errores.push({ mensaje: "El dia de la semana es obligatorio" });
-        }
 
         if (errores.length > 0) {
             var response = new Response(false, "Error en la creacion del responsable", null, errores);
@@ -97,7 +104,6 @@ const createResponsible = async (req, res) => {
             tipoResponsable: tipoResponsable,
             actividad: actividad,
             frecuencia: frecuencia,
-            diaSemana: diaSemana
         };
 
         console.log("Datos a guardar RESPONSIBLE:", data);

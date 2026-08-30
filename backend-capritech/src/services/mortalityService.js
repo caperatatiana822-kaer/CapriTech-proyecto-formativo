@@ -12,13 +12,23 @@ const mortalityCreate = async (data) => {
     }
 };
 
-const getAllMortality = async () => {
+const getAllMortality = async (limit, offset) => {
     try {
+
+        const totalCount = await Mortality.count();
         const mortalityRecords = await Mortality.findAll({
+            limit: limit,
+            offset: offset,
             order: [['id', 'DESC']]
         });
+        
         console.log("Registros MORTALITY encontrados:", mortalityRecords.length);
-        return mortalityRecords || [];
+        return {
+            data: mortalityRecords || [],
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: Math.floor(offset / limit) + 1
+        };
     } catch (error) {
         console.log("Error en getAllMortality:", error);
         throw new Error(`Error al obtener registros MORTALITY: ${error.message}`);
