@@ -63,22 +63,22 @@ export default function TablaMounts(){
       <div className="max-w-6xl mx-auto mb-4 flex justify-end">
         <button 
           onClick={handleAgregarMonta}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+          className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-6 py-2 rounded-lg shadow-md transition"
         >
           + Agregar Monta
         </button>
       </div>
 
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Tabla de Montas</h1>
-          <p className="text-green-100 mt-1">Registro de montas y seguimiento reproductivo</p>
+          <p className="text-[#d7ccc8] mt-1">Registro de montas y seguimiento reproductivo</p>
         </div>
 
         <div className="p-6 overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-green-100 text-green-800">
+              <tr className="bg-[#f5efe6] text-[#4e342e]">
                 <th className="p-3 text-left">Fecha de Monta</th>
                 <th className="p-3 text-left">Nombre del Macho</th>
                 <th className="p-3 text-left">Raza del Macho</th>
@@ -94,7 +94,7 @@ export default function TablaMounts(){
               {cargando && <tr><td colSpan={9} className="p-6 text-center text-gray-500">Cargando montas...</td></tr>}
               {!cargando && montas.length===0 && <tr><td colSpan={9} className="p-6 text-center text-gray-500">Todavía no hay montas registradas.</td></tr>}
               {!cargando && montas.map((item:any)=>(
-                <tr key={item.id} className="border-b hover:bg-green-50 transition">
+                <tr key={item.id} className="border-b hover:bg-[#faf8f5] transition">
                   <td className="p-3">{formatearFecha(item.fechaMonta)}</td>
                   <td className="p-3">{item.nombreMacho}</td>
                   <td className="p-3">{item.razaMacho}</td>
@@ -121,10 +121,10 @@ export default function TablaMounts(){
                   className={`px-4 py-2 rounded-lg text-sm font-medium ${
                     paginaActual === 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                      : "bg-[#f5efe6] text-[#6d4c41] hover:bg-[#ede4d4]"
                   }`}
                 >
-                  Anterior
+                 ← Anterior
                 </button>
                 <button
                   onClick={() => irPagina(paginaActual + 1)}
@@ -132,10 +132,10 @@ export default function TablaMounts(){
                   className={`px-4 py-2 rounded-lg text-sm font-medium ${
                     paginaActual === totalPaginas
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-green-100 text-green-700 hover:bg-green-200"
+                      : "bg-[#f5efe6] text-[#6d4c41] hover:bg-[#ede4d4]"
                   }`}
                 >
-                  Siguiente
+                  Siguiente →
                 </button>
               </div>
             </div>

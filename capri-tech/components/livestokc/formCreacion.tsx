@@ -63,42 +63,32 @@ function FormCreacionLivestock() {
 
   return (
     <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50">
-          {enviando ? "Registrando..." : "+ Agregar Caprino"}
-        </button>
-      </div>
-
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de Inventario</h1>
-          <p className="text-green-100 mt-1">Ingresa la información del caprino</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la información del caprino</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre</label>
             <input type="text" required value={nombre} onChange={(e) => setNombre(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta</label>
             <input type="text" required value={chapeta} onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de nacimiento</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de nacimiento</label>
             <Popover>
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between border border-gray-300 rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-green-600"
+                  className="w-full flex items-center justify-between border border-[#d7ccc8] rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
                 >
                   <span className={fechaNacimiento ? "text-gray-900" : "text-gray-400"}>
                     {fechaNacimiento
@@ -121,9 +111,9 @@ function FormCreacionLivestock() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Raza</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Raza</label>
             <select required value={raza} onChange={(e) => setRaza(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="">Selecciona una raza</option>
               <option value="Alpina">Alpina</option>
               <option value="Boer">Boer</option>
@@ -131,18 +121,18 @@ function FormCreacionLivestock() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Sexo</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Sexo</label>
             <select required value={sexo} onChange={(e) => setSexo(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Etapa de Producción</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Etapa de Producción</label>
             <select required value={etapaProduccion} onChange={(e) => setEtapaProduccion(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="carne">Carne</option>
               <option value="lechera">Lechera</option>
               <option value="cabrito">Cabrito</option>
@@ -151,14 +141,23 @@ function FormCreacionLivestock() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Observaciones</label>
             <textarea
               rows={4}
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
               placeholder="Escribe alguna observación sobre el animal (opcional)"
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] resize-none"
             />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              type="submit" 
+              disabled={enviando}
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50">
+              {enviando ? "Registrando..." : "Registrar Caprino"}
+            </button>
           </div>
         </form>
       </div>

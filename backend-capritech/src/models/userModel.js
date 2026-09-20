@@ -16,8 +16,15 @@ const User = db.define('User', {
         allowNull: false,
         unique: true
     },
+    salt: {
+        type: DataTypes.STRING,
+        max: 50,
+        allowNull: false
+    },
     password: {
         type: DataTypes.STRING,
+        max: 200,
+        min: 3,
         allowNull: false
     },
     documentId: {
@@ -42,7 +49,15 @@ const User = db.define('User', {
     active: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
-    }
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
 }, {
     tableName: 'users',
     timestamps: true
