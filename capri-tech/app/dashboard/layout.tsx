@@ -16,11 +16,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             height={32}
             className="ml-4"
           />
-        <h1 className="ml-4 text-xl font-bold text-green-700">CapriTech</h1>
+        <h1 className="ml-4 text-xl font-bold text-[#6d4c41]">CapriTech</h1>
         </header>
-        <div className="p-6 bg-green-50 min-h-screen">
-        {children}
+      
+        <div className="p-0 bg-[#faf8f5] min-h-screen">
+          {children}
         </div>
+        
       </main>
     </SidebarProvider>
   )

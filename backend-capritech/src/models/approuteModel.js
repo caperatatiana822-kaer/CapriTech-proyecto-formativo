@@ -1,24 +1,29 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/database.js';
+import { sequelize } from '../config/conectionDB';
 
 const AppRoute = sequelize.define('AppRoute', {
     id_app_Route: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
-        field: 'id_app_Route'
+        allowNull: true,
     },
     path: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING,
+        max: 255,
         allowNull: false
     },
     name: {
-        type: DataTypes.STRING(70),
+        type: DataTypes.STRING,
+        max: 45,
         allowNull: false
     },
+    active: {
+        type: DataTypes.BOOLEAN,
+    },
     icon: {
-        type: DataTypes.STRING(70),
+        type: DataTypes.STRING,
+        max: 45,
         allowNull: true
     },
     group: {
@@ -33,5 +38,4 @@ const AppRoute = sequelize.define('AppRoute', {
     tableName: 'app_route',
     timestamps: false
 });
-
-export default AppRoute;
+module.exports = AppRoute;

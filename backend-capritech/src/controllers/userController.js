@@ -6,6 +6,7 @@ const {
     getAllUsers: getAllUsersService 
 } = require('../services/userService');
 const Response = require("../functions/response");
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
     try {
@@ -99,10 +100,14 @@ const createUser = async (req, res) => {
             return;
         }
 
+        const salt =bcrypt.genSaltSync(10);
+        const hashed_password = bcrypt.hashSync(password, salt)
+
         const data = {
             name: name,
             email: email,
-            password: password,
+            password: hashed_password,
+            salt, 
             documentId: documentId,
             postJob: postJob,
             verifyEmail: false,

@@ -86,36 +86,23 @@ export default function FormCreacionMount() {
 
   return (
     <div className="py-10 px-6">
-      {/* Contenedor superior con el botón fuera del formulario */}
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          disabled={enviando} 
-          type="submit"
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Registrando..." : "Registrar Monta"}
-        </button>
-      </div>
-
-      {/* Formulario */}
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de Montas</h1>
-          <p className="text-green-100 mt-1">Ingresa la información de la monta realizada</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la información de la monta realizada</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Monta</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de Monta</label>
             <input type="date" required value={fechaMonta} onChange={e => setFechaMonta(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]" />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Macho</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta del Macho</label>
             <select required value={chapetaMacho} onChange={e => setChapetaMacho(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="">Selecciona una chapeta</option>
               {machos.map(m => (
                 <option key={m.id} value={m.chapeta}>{m.chapeta} - {m.nombre}</option>
@@ -124,9 +111,9 @@ export default function FormCreacionMount() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta de la Hembra</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta de la Hembra</label>
             <select required value={chapetaHembra} onChange={e => setChapetaHembra(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="">Selecciona una chapeta</option>
               {hembras.map(h => (
                 <option key={h.id} value={h.chapeta}>{h.chapeta} - {h.nombre}</option>
@@ -135,15 +122,25 @@ export default function FormCreacionMount() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Número de Monta</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Número de Monta</label>
             <input type="number" required value={numeroMonta} onChange={e => setNumeroMonta(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]" />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Posible Fecha de Parto</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Posible Fecha de Parto</label>
             <input type="date" required value={posibleFechaParto} onChange={e => setPosibleFechaParto(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]" />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              disabled={enviando} 
+              type="submit"
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Registrando..." : "Registrar Monta"}
+            </button>
           </div>
         </form>
       </div>

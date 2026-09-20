@@ -108,21 +108,10 @@ function FormCreationWeight() {
 
   return (
     <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando || cargandoAnimales}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Registrando..." : "Registrar Pesaje"}
-        </button>
-      </div>
-
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de Pesaje</h1>
-          <p className="text-green-100 mt-1">Ingresa la informacion del pesaje realizado</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la informacion del pesaje realizado</p>
         </div>
 
         {error && (
@@ -133,12 +122,12 @@ function FormCreationWeight() {
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Animal *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta del Animal *</label>
             <select 
               required 
               value={chapeta} 
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -158,18 +147,18 @@ function FormCreationWeight() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Pesaje *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de Pesaje *</label>
             <input 
               type="date" 
               required 
               value={fecha} 
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Ganancia de Peso *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Ganancia de Peso *</label>
             <div className="relative">
               <input 
                 type="number" 
@@ -178,7 +167,7 @@ function FormCreationWeight() {
                 required 
                 value={peso} 
                 onChange={(e) => setPeso(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-600"
+                className="w-full border border-[#d7ccc8] rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
                 placeholder="Ej: 25.5"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500">
@@ -188,15 +177,25 @@ function FormCreationWeight() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Responsable *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Responsable *</label>
             <input 
               type="text" 
               required 
               value={responsable} 
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
               placeholder="Nombre del responsable"
             />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              type="submit" 
+              disabled={enviando || cargandoAnimales}
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Registrando..." : "Registrar Pesaje"}
+            </button>
           </div>
         </form>
       </div>

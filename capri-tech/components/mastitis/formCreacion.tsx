@@ -113,21 +113,10 @@ function FormCreationMastitis() {
 
   return (
     <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando || cargandoAnimales}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Guardando..." : "Registrar mastitis"}
-        </button>
-      </div>
-
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de Mastitis</h1>
-          <p className="text-green-100 mt-1">Ingresa la informacion del diagnostico de mastitis</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la informacion del diagnostico de mastitis</p>
         </div>
 
         {error && (
@@ -138,7 +127,7 @@ function FormCreationMastitis() {
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Animal *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta del Animal *</label>
             <select 
               required 
               value={chapeta} 
@@ -146,7 +135,7 @@ function FormCreationMastitis() {
                 console.log("Chapeta seleccionada:", e.target.value)
                 setChapeta(e.target.value)
               }}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -166,23 +155,23 @@ function FormCreationMastitis() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha *</label>
             <input 
               type="date" 
               required 
               value={fecha} 
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Resultado *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Resultado *</label>
             <select 
               required 
               value={resultado} 
               onChange={(e) => setResultado(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
             >
               <option value="">Selecciona un resultado</option>
               <option value="Negativo">Negativo</option>
@@ -192,26 +181,36 @@ function FormCreationMastitis() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Responsable *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Responsable *</label>
             <input 
               type="text" 
               required 
               value={responsable} 
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
               placeholder="Nombre del responsable"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Observaciones</label>
             <textarea
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
               rows={3}
               placeholder="Observaciones adicionales (opcional)"
             />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              type="submit" 
+              disabled={enviando || cargandoAnimales}
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Guardando..." : "Registrar mastitis"}
+            </button>
           </div>
         </form>
       </div>

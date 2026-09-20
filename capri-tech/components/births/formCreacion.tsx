@@ -92,24 +92,11 @@ function FormCreacionNacimiento() {
   }
 
   return (
-    <div className="py-10 px-6 min-h-screen">
-      {/* Contenedor superior con el botón fuera del formulario */}
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Registrando..." : "Registrar Parto"}
-        </button>
-      </div>
-
-      {/* Formulario */}
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+    <div className="py-10 px-6 min-h-screen w-full m-0 bg-[#faf8f5]">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden border border-[#e8e0d8]">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de creación de partos</h1>
-          <p className="text-green-100 mt-1">Ingresa la información del nuevo parto</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la información del nuevo parto</p>
         </div>
 
         {error && (
@@ -132,85 +119,103 @@ function FormCreacionNacimiento() {
         
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta *</label>
             <input 
               type="number" 
               value={chapeta} 
               onChange={(e) => setChapeta(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre *</label>
             <input 
               type="text" 
               value={nombreAnimal} 
               onChange={(e) => setNombreAnimal(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de parto *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de parto *</label>
             <input 
               type="date" 
               value={fechaNacimiento} 
               onChange={(e) => setFechaNacimiento(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Raza *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Raza *</label>
             <input 
               type="text" 
               value={raza} 
               onChange={(e) => setRaza(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Sexo *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Sexo *</label>
             <select 
               value={sexo} 
               onChange={(e) => setSexo(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            >
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Peso al Nacer (Kg) *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Peso al Nacer (Kg) *</label>
             <input 
               type="number" 
               step="0.01"
               value={pesoNacer} 
               onChange={(e) => setPesoNacer(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta Madre *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta Madre *</label>
             <input 
               type="number" 
               value={fichaMadre} 
               onChange={(e) => setFichaMadre(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta Padre *</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta Padre *</label>
             <input 
               type="number" 
               value={fichaPadre} 
               onChange={(e) => setFichaPadre(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition bg-white"
+            />
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              type="submit" 
+              disabled={enviando}
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50 border border-[#8d6e63]"
+            >
+              {enviando ? "Registrando..." : "Registrar Parto"}
+            </button>
           </div>
         </form>
       </div>

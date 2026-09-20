@@ -1,12 +1,18 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/database.js';
-const Roll = sequelize.define('Roll', {
+import { sequelize } from '../config/conectionDB';
+const roll = sequelize.define('roll', {
     id_roll: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: true,
         autoIncrement: true,
-        allowNull: false,
-        field: 'id_Roll'
+    },
+    slug: {
+        type: DataTypes.STRING,
+        max: 45,
+    },
+    name_rol: {
+
     },
     id_app_router: {
         type: DataTypes.INTEGER,
@@ -64,4 +70,4 @@ const Roll = sequelize.define('Roll', {
     updatedAt: 'fec_actual'
 });
 
-export default Roll;
+module.exports = roll;

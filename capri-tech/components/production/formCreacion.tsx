@@ -65,105 +65,102 @@ function FormCreacionProduction() {
 
   return (
     <div className="py-10 px-6">
-      {/* Contenedor superior con el botón fuera del formulario */}
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Registrando..." : "Registrar Producción"}
-        </button>
-      </div>
-
-      {/* Formulario */}
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
+        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
           <h1 className="text-2xl font-bold">Formulario de Producción</h1>
-          <p className="text-green-100 mt-1">Ingresa la información de la producción registrada</p>
+          <p className="text-[#d7ccc8] mt-1">Ingresa la información de la producción registrada</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Tipo de Producción</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Tipo de Producción</label>
             <select required value={productionType} onChange={(e) => setProductionType(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
               <option value="carne">Carne</option>
               <option value="leche">Leche</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha</label>
             <input type="date" required value={fecha} onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Descripción</label>
             <input type="text" required value={descripcionElemento} onChange={(e) => setDescripcionElemento(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Unidad de Medida</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Unidad de Medida</label>
             <input type="text" required value={unidadMedida} onChange={(e) => setUnidadMedida(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Cantidad</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Cantidad</label>
             <input type="number" required value={cantidad} onChange={(e) => setCantidad(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Valor Unitario</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Valor Unitario</label>
             <input type="number" required value={valorUnitario} onChange={(e) => setValorUnitario(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Valor Total</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Valor Total</label>
             <input type="number" required value={valorTotal} onChange={(e) => setValorTotal(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha de Vencimiento</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de Vencimiento</label>
             <input type="date" required value={fechaVencimiento} onChange={(e) => setFechaVencimiento(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Centro de Costo</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Centro de Costo</label>
             <input type="text" required value={centroCosto} onChange={(e) => setCentroCosto(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de quien Traslada</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre de quien Traslada</label>
             <input type="text" required value={nombreTraslada} onChange={(e) => setNombreTraslada(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de quien Recibe</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre de quien Recibe</label>
             <input type="text" required value={nombreRecibe} onChange={(e) => setNombreRecibe(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Instructor Técnico</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Instructor Técnico</label>
             <input type="text" required value={instructorTecnico} onChange={(e) => setInstructorTecnico(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Observaciones</label>
             <input type="text" value={observaciones} onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
+          </div>
+
+          <div className="md:col-span-2 flex justify-end mt-4">
+            <button 
+              type="submit" 
+              disabled={enviando}
+              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Registrando..." : "Registrar Producción"}
+            </button>
           </div>
         </form>
       </div>
