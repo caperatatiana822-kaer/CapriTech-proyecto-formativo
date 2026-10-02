@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { CirclePlus } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 function FormCreationWeight() {
   const router = useRouter()
@@ -96,7 +107,7 @@ function FormCreationWeight() {
       }
 
       alert("Pesaje registrado correctamente")
-      router.push("/dashboard/weigth/table")
+      router.push("/dashboard/weigth")
 
     } catch (error: any) {
       console.error("Error al registrar el pesaje:", error)
@@ -107,27 +118,36 @@ function FormCreationWeight() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
-          <h1 className="text-2xl font-bold">Formulario de Pesaje</h1>
-          <p className="text-[#d7ccc8] mt-1">Ingresa la informacion del pesaje realizado</p>
-        </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Pesaje
+        </button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Pesaje
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la informacion del pesaje realizado.
+        </DialogDescription>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta del Animal *</label>
-            <select 
-              required 
-              value={chapeta} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta del Animal *</label>
+            <select
+              required
+              value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -147,27 +167,27 @@ function FormCreationWeight() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de Pesaje *</label>
-            <input 
-              type="date" 
-              required 
-              value={fecha} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha de Pesaje *</label>
+            <input
+              type="date"
+              required
+              value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Ganancia de Peso *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Ganancia de Peso *</label>
             <div className="relative">
-              <input 
-                type="number" 
-                step="0.1" 
-                min="0" 
-                required 
-                value={peso} 
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                required
+                value={peso}
                 onChange={(e) => setPeso(e.target.value)}
-                className="w-full border border-[#d7ccc8] rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+                className="w-full border border-[#d7ccc8] rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#844243]"
                 placeholder="Ej: 25.5"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500">
@@ -177,30 +197,30 @@ function FormCreationWeight() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Responsable *</label>
-            <input 
-              type="text" 
-              required 
-              value={responsable} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
+            <input
+              type="text"
+              required
+              value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Nombre del responsable"
             />
           </div>
 
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
               disabled={enviando || cargandoAnimales}
-              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Registrar Pesaje"}
             </button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
-  );
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default FormCreationWeight;
+export default FormCreationWeight

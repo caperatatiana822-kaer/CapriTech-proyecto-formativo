@@ -1,41 +1,27 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/conectionDB';
+const {DataTypes} = require('sequelize');
+const db = require('../config/conectionDB');
 
-const AppRoute = sequelize.define('AppRoute', {
-    id_app_Route: {
+const appRoute = db.define('appRoute', {
+    id_appRoute: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
         allowNull: true,
+        primaryKey: true,
+        autoIncrement: true
     },
-    path: {
+    name_router: {
         type: DataTypes.STRING,
-        max: 255,
-        allowNull: false
+        max: 45
     },
-    name: {
+    route: {
         type: DataTypes.STRING,
-        max: 45,
-        allowNull: false
+        max: 255
     },
     active: {
         type: DataTypes.BOOLEAN,
     },
-    icon: {
+    icono: {
         type: DataTypes.STRING,
-        max: 45,
-        allowNull: true
-    },
-    group: {
-        type: DataTypes.STRING(70),
-        allowNull: true
-    },
-    module: {
-        type: DataTypes.STRING(45),
-        allowNull: true
+        max: 45
     }
-}, {
-    tableName: 'app_route',
-    timestamps: false
 });
-module.exports = AppRoute;
+module.exports = appRoute;

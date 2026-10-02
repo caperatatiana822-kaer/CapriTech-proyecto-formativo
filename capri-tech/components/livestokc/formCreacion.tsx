@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, CirclePlus } from "lucide-react"
 
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -12,10 +11,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 function FormCreacionLivestock() {
-  const router = useRouter()
-
   const [nombre, setNombre] = useState("")
   const [chapeta, setChapeta] = useState("")
   const [fechaNacimiento, setFechaNacimiento] = useState<Date | undefined>(undefined)
@@ -24,6 +29,16 @@ function FormCreacionLivestock() {
   const [etapaProduccion, setEtapaProduccion] = useState("carne")
   const [observaciones, setObservaciones] = useState("")
   const [enviando, setEnviando] = useState(false)
+
+  function limpiarFormulario() {
+    setNombre("")
+    setChapeta("")
+    setFechaNacimiento(undefined)
+    setRaza("")
+    setSexo("Macho")
+    setEtapaProduccion("carne")
+    setObservaciones("")
+  }
 
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
@@ -52,7 +67,7 @@ function FormCreacionLivestock() {
         throw new Error("El servidor respondió con un error")
       }
 
-      router.push("/dashboard/livestock/table")
+      limpiarFormulario()
     } catch (error) {
       console.error("Error al registrar el animal:", error)
       alert("No se pudo registrar el animal. Intenta de nuevo.")
@@ -62,33 +77,54 @@ function FormCreacionLivestock() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
-          <h1 className="text-2xl font-bold">Formulario de Inventario</h1>
-          <p className="text-[#d7ccc8] mt-1">Ingresa la información del caprino</p>
-        </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Caprino
+        </button>
+      </DialogTrigger>
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Inventario
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la información del caprino.
+        </DialogDescription>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre</label>
-            <input type="text" required value={nombre} onChange={(e) => setNombre(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre</label>
+            <input
+              type="text"
+              required
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta</label>
-            <input type="text" required value={chapeta} onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"/>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta</label>
+            <input
+              type="text"
+              required
+              value={chapeta}
+              onChange={(e) => setChapeta(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Fecha de nacimiento</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">
+              Fecha de nacimiento
+            </label>
             <Popover>
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between border border-[#d7ccc8] rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+                  className="w-full flex items-center justify-between border border-[#d7ccc8] rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-[#844243]"
                 >
                   <span className={fechaNacimiento ? "text-gray-900" : "text-gray-400"}>
                     {fechaNacimiento
@@ -111,9 +147,13 @@ function FormCreacionLivestock() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Raza</label>
-            <select required value={raza} onChange={(e) => setRaza(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Raza</label>
+            <select
+              required
+              value={raza}
+              onChange={(e) => setRaza(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            >
               <option value="">Selecciona una raza</option>
               <option value="Alpina">Alpina</option>
               <option value="Boer">Boer</option>
@@ -121,18 +161,28 @@ function FormCreacionLivestock() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Sexo</label>
-            <select required value={sexo} onChange={(e) => setSexo(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Sexo</label>
+            <select
+              required
+              value={sexo}
+              onChange={(e) => setSexo(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            >
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Etapa de Producción</label>
-            <select required value={etapaProduccion} onChange={(e) => setEtapaProduccion(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">
+              Etapa de Producción
+            </label>
+            <select
+              required
+              value={etapaProduccion}
+              onChange={(e) => setEtapaProduccion(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            >
               <option value="carne">Carne</option>
               <option value="lechera">Lechera</option>
               <option value="cabrito">Cabrito</option>
@@ -141,28 +191,29 @@ function FormCreacionLivestock() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Observaciones</label>
             <textarea
               rows={4}
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
               placeholder="Escribe alguna observación sobre el animal (opcional)"
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] resize-none"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] resize-none"
             />
           </div>
 
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
               disabled={enviando}
-              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50">
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
               {enviando ? "Registrando..." : "Registrar Caprino"}
             </button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
-  );
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default FormCreacionLivestock;
+export default FormCreacionLivestock

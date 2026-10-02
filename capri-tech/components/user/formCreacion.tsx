@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { X } from "lucide-react";
 import { API_USER_URL } from "@/app/config";
 
 function obtenerMensajeError(error: unknown): string {
@@ -137,87 +138,95 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
   };
 
   return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-[#3E2723]/40">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
 
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-[#4e342e]/40">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="absolute top-4 right-4 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+          aria-label="Cerrar"
+        >
+          <X className="h-5 w-5" />
+        </button>
 
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        
-
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6 rounded-t-2xl">
-          <h1 className="text-2xl font-bold">Formulario de Usuario</h1>
-          <p className="text-[#d7ccc8] mt-1">Ingresa la información del usuario</p>
+        <div className="p-6 pb-2">
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">
+            Formulario de Usuario
+          </h1>
+          <p className="text-gray-500 mt-1 text-sm">
+            Ingresa la información del usuario.
+          </p>
         </div>
 
-
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
         {mensajeExito && (
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-4">
+          <div className="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-2">
             <p className="text-green-700 text-sm">{mensajeExito}</p>
           </div>
         )}
 
-
-        <form onSubmit={gestionarForm} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={gestionarForm} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre *</label>
             <input 
               type="text" 
               required 
               value={name} 
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Nombre completo"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Email *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Email *</label>
             <input 
               type="email" 
               required 
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="correo@ejemplo.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Documento *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Documento *</label>
             <input 
               type="text" 
               required 
               value={documentId} 
               onChange={(e) => setDocumentId(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Número de documento"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Contraseña *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Contraseña *</label>
             <input 
               type="password" 
               required 
               value={password} 
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Mínimo 6 caracteres"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Cargo *</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Cargo *</label>
             <select 
               required 
               value={postJob} 
               onChange={(e) => setPostJob(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona un cargo</option>
               <option value="Administrador">Administrador</option>
@@ -227,20 +236,11 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
             </select>
           </div>
 
-
-          <div className="md:col-span-2 flex justify-end gap-3 mt-4">
-            <button 
-              type="button"
-              onClick={handleCancel}
-              disabled={guardando}
-              className="px-6 py-3 rounded-lg border border-[#d7ccc8] text-[#6d4c41] font-semibold hover:bg-[#f5efe6] transition disabled:opacity-50"
-            >
-              Cancelar
-            </button>
+          <div className="md:col-span-2 flex justify-end gap-3 mt-2 !border-t-0">
             <button 
               type="submit" 
               disabled={guardando}
-              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
             >
               {guardando ? "Registrando..." : "Registrar Usuario"}
             </button>

@@ -2,6 +2,17 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { CirclePlus } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 function FormCreacionResponsibles() {
   const router = useRouter()
@@ -48,7 +59,7 @@ function FormCreacionResponsibles() {
       }
 
       alert("Responsable registrado correctamente")
-      router.push("/dashboard/responsible/table")
+      router.push("/dashboard/responsible")
 
     } catch (error: any) {
       console.error("Error al registrar el responsable:", error)
@@ -59,39 +70,48 @@ function FormCreacionResponsibles() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
-          <h1 className="text-2xl font-bold">Formulario de Responsables</h1>
-          <p className="text-[#d7ccc8] mt-1">Ingresa la informacion del responsable</p>
-        </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Responsable
+        </button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Responsables
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la informacion del responsable.
+        </DialogDescription>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Nombre *</label>
-            <input 
-              type="text" 
-              required 
-              value={nombre} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre *</label>
+            <input
+              type="text"
+              required
+              value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Nombre completo"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Tipo *</label>
-            <select 
-              required 
-              value={tipoResponsable} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Tipo *</label>
+            <select
+              required
+              value={tipoResponsable}
               onChange={(e) => setTipoResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona un tipo</option>
               <option value="aprendiz">Aprendiz</option>
@@ -104,24 +124,24 @@ function FormCreacionResponsibles() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Documento *</label>
-            <input 
-              type="number" 
-              required 
-              value={documento} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Documento *</label>
+            <input
+              type="number"
+              required
+              value={documento}
               onChange={(e) => setDocumento(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Número de documento"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Actividad a Cargo *</label>
-            <select 
-              required 
-              value={actividad} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Actividad a Cargo *</label>
+            <select
+              required
+              value={actividad}
               onChange={(e) => setActividad(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona una actividad</option>
               <option value="ordeño">Ordeño</option>
@@ -139,12 +159,12 @@ function FormCreacionResponsibles() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Frecuencia *</label>
-            <select 
-              required 
-              value={frecuencia} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Frecuencia *</label>
+            <select
+              required
+              value={frecuencia}
               onChange={(e) => setFrecuencia(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona una frecuencia</option>
               <option value="Diaria">Diaria</option>
@@ -155,12 +175,12 @@ function FormCreacionResponsibles() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Dia de la Semana *</label>
-            <select 
-              required 
-              value={diaSemana} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Dia de la Semana *</label>
+            <select
+              required
+              value={diaSemana}
               onChange={(e) => setDiaSemana(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona un dia</option>
               <option value="Lunes">Lunes</option>
@@ -173,19 +193,19 @@ function FormCreacionResponsibles() {
             </select>
           </div>
 
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
               disabled={enviando}
-              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Registrar Responsable"}
             </button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
-  );
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default FormCreacionResponsibles;
+export default FormCreacionResponsibles

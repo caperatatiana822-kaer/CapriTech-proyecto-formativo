@@ -8,7 +8,12 @@ function formatearFecha(fechaISO:string){
   return new Date(fechaISO).toLocaleDateString("es-CO")
 }
 
-export default function TablaMounts(){
+type Props = {
+  busqueda?: string
+  headerExtra?: React.ReactNode
+}
+
+export default function TablaMounts({ busqueda = "", headerExtra }: Props){
   const router = useRouter()
   const [montas,setMontas]=useState<any[]>([])
   const [cargando,setCargando]=useState(true)
@@ -27,7 +32,6 @@ export default function TablaMounts(){
       console.log("Respuesta MONTS:", json)
       
       if (json.success && json.data) {
-        // Asegurarnos de obtener los datos correctamente
         const dataList = json.data.data || json.data || []
         setMontas(dataList)
         setTotalItems(json.data.totalItems || 0)
@@ -48,91 +52,103 @@ export default function TablaMounts(){
     cargarMontas(1)
   },[])
 
-  function handleAgregarMonta() {
-    router.push("/dashboard/mounts")
-  }
-
   function irPagina(pagina: number) {
     if (pagina >= 1 && pagina <= totalPaginas) {
       cargarMontas(pagina)
     }
   }
 
-  return(
-    <div className="py-10 px-6">
-      <div className="max-w-6xl mx-auto mb-4 flex justify-end">
-        <button 
-          onClick={handleAgregarMonta}
-          className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-6 py-2 rounded-lg shadow-md transition"
-        >
-          + Agregar Monta
-        </button>
-      </div>
+  const montasFiltradas = montas.filter((m: any) =>
+    (m.fechaMonta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.nombreMacho || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.razaMacho || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.chapetaMacho || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.nombreHembra || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.razaHembra || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.chapetaHembra || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.numeroMonta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (m.posibleFechaParto || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+  )
 
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
-          <h1 className="text-2xl font-bold">Tabla de Montas</h1>
-          <p className="text-[#d7ccc8] mt-1">Registro de montas y seguimiento reproductivo</p>
+  return(
+    <div className="py-10 px-6 bg-gray-50 min-h-screen">
+      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+
+        <div className="bg-white p-6">
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Montas</h1>
+          <p className="text-gray-500 mt-1 text-sm">Registro de montas y seguimiento reproductivo</p>
+
+          {headerExtra}
         </div>
 
-        <div className="p-6 overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-[#f5efe6] text-[#4e342e]">
-                <th className="p-3 text-left">Fecha de Monta</th>
-                <th className="p-3 text-left">Nombre del Macho</th>
-                <th className="p-3 text-left">Raza del Macho</th>
-                <th className="p-3 text-left">Chapeta del Macho</th>
-                <th className="p-3 text-left">Nombre de la Hembra</th>
-                <th className="p-3 text-left">Raza de la Hembra</th>
-                <th className="p-3 text-left">Chapeta de la Hembra</th>
-                <th className="p-3 text-left">Número de Monta</th>
-                <th className="p-3 text-left">Posible Fecha de Parto</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cargando && <tr><td colSpan={9} className="p-6 text-center text-gray-500">Cargando montas...</td></tr>}
-              {!cargando && montas.length===0 && <tr><td colSpan={9} className="p-6 text-center text-gray-500">Todavía no hay montas registradas.</td></tr>}
-              {!cargando && montas.map((item:any)=>(
-                <tr key={item.id} className="border-b hover:bg-[#faf8f5] transition">
-                  <td className="p-3">{formatearFecha(item.fechaMonta)}</td>
-                  <td className="p-3">{item.nombreMacho}</td>
-                  <td className="p-3">{item.razaMacho}</td>
-                  <td className="p-3">{item.chapetaMacho}</td>
-                  <td className="p-3">{item.nombreHembra}</td>
-                  <td className="p-3">{item.razaHembra}</td>
-                  <td className="p-3">{item.chapetaHembra}</td>
-                  <td className="p-3">{item.numeroMonta}</td>
-                  <td className="p-3">{formatearFecha(item.posibleFechaParto)}</td>
+        <div className="p-6">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-[#844243] text-white">
+                  <th className="p-3 text-left font-semibold text-sm rounded-l-lg">Fecha de Monta</th>
+                  <th className="p-3 text-left font-semibold text-sm">Nombre del Macho</th>
+                  <th className="p-3 text-left font-semibold text-sm">Raza del Macho</th>
+                  <th className="p-3 text-left font-semibold text-sm">Chapeta del Macho</th>
+                  <th className="p-3 text-left font-semibold text-sm">Nombre de la Hembra</th>
+                  <th className="p-3 text-left font-semibold text-sm">Raza de la Hembra</th>
+                  <th className="p-3 text-left font-semibold text-sm">Chapeta de la Hembra</th>
+                  <th className="p-3 text-left font-semibold text-sm">Número de Monta</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Posible Fecha de Parto</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {cargando && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">Cargando montas...</td>
+                  </tr>
+                )}
+                {!cargando && montas.length===0 && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">Todavía no hay montas registradas.</td>
+                  </tr>
+                )}
+                {!cargando && montasFiltradas.map((item:any)=>(
+                  <tr key={item.id} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
+                    <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fechaMonta)}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.nombreMacho}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.razaMacho}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.chapetaMacho}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.nombreHembra}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.razaHembra}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.chapetaHembra}</td>
+                    <td className="p-3 text-sm text-gray-800">{item.numeroMonta}</td>
+                    <td className="p-3 text-sm text-gray-800">{formatearFecha(item.posibleFechaParto)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {!cargando && totalItems > 0 && (
-            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
-                Página {paginaActual} de {totalPaginas}
+                Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => irPagina(paginaActual - 1)}
                   disabled={paginaActual === 1}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
                     paginaActual === 1
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-[#f5efe6] text-[#6d4c41] hover:bg-[#ede4d4]"
+                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
                   }`}
                 >
-                 ← Anterior
+                  ← Anterior
                 </button>
                 <button
                   onClick={() => irPagina(paginaActual + 1)}
                   disabled={paginaActual === totalPaginas}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
                     paginaActual === totalPaginas
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-[#f5efe6] text-[#6d4c41] hover:bg-[#ede4d4]"
+                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
                   }`}
                 >
                   Siguiente →

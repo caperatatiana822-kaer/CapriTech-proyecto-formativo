@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { CirclePlus } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default function FormCreacionFamacha() {
   const router = useRouter()
@@ -88,7 +99,7 @@ export default function FormCreacionFamacha() {
       }
 
       alert("Prueba FAMACHA registrada correctamente")
-      router.push("/dashboard/famacha/table")
+      router.push("/dashboard/famacha")
 
     } catch (error: any) {
       console.error("Error al registrar la prueba FAMACHA:", error)
@@ -99,29 +110,36 @@ export default function FormCreacionFamacha() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-[#6d4c41] text-[#f5efe6] p-6">
-          <h1 className="text-2xl font-bold">
-            Formulario de Creacion FAMACHA
-          </h1>
-          <p className="text-[#d7ccc8] mt-1">Ingresa la informacion de la prueba FAMACHA</p>
-        </div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Famacha
+        </button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Creacion FAMACHA
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la informacion de la prueba FAMACHA.
+        </DialogDescription>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Chapeta del Animal *</label>
-            <select 
-              required 
-              value={chapeta} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta del Animal *</label>
+            <select
+              required
+              value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -141,24 +159,24 @@ export default function FormCreacionFamacha() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Responsable *</label>
-            <input 
-              type="text" 
-              required 
-              value={responsable} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
+            <input
+              type="text"
+              required
+              value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Nombre del responsable"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Resultado de la Prueba *</label>
-            <select 
-              required 
-              value={resultado} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Resultado de la Prueba *</label>
+            <select
+              required
+              value={resultado}
               onChange={(e) => setResultado(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona un resultado</option>
               <option value="1">1 - Rojo (sin anemia)</option>
@@ -170,27 +188,27 @@ export default function FormCreacionFamacha() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#4e342e] mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Observaciones</label>
             <textarea
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               rows={3}
               placeholder="Observaciones adicionales (opcional)"
             />
           </div>
 
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <button 
-              type="submit" 
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
               disabled={enviando || cargandoAnimales}
-              className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
             >
               {enviando ? "Guardando..." : "Registrar famacha"}
             </button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

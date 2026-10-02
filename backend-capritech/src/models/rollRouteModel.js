@@ -1,29 +1,19 @@
-// models/RolRoute.js
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/conectionDB';
+const {DataTypes} = require('sequelize');
+const db = require('../config/conectionDB');
 
-const RolRoute = sequelize.define('RolRoute', {
-    id_rol_route: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+const appRouteRoll = db.define('appRouteRoll', {
+    id_appRouteRoll: {
         allowNull: true,
+        autoIncrement: true,
+        primaryKey: true,
+        type: DataTypes.INTEGER
     },
-    id_rol: {
-        type: DataTypes.INTEGER,
-        foreignKey: true,
-        allowNull: false,
-
+    id_appRoute: {
+        type: DataTypes.INTEGER, 
     },
-    id_app_route: {
-        type: DataTypes.INTEGER,
-        foreignKey: true,
-        allowNull: false,
-
+    id_roll: {
+        type: DataTypes.INTEGER, 
     }
-}, {
-    tableName: 'rol_route',
-    timestamps: false
+    
 });
-
-module.exports = RolRoute;
+module.exports = appRouteRoll;

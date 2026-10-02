@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-// const { validateToken } = require('../middlewares/handlerToken');
+const { validateToken } = require('../middlewares/handlerToken');
 
 const {
   getAllUsers,
@@ -31,7 +31,7 @@ const {
  *       200:
  *         description: Lista de usuarios obtenida correctamente
  */
-router.get('/',  getAllUsers);
+router.get('/', validateToken, getAllUsers);
 
 
 /**
@@ -54,7 +54,7 @@ router.get('/',  getAllUsers);
  *       404:
  *         description: Usuario no encontrado
  */
-router.get('/:id',  getUserById);
+router.get('/:id', validateToken, getUserById);
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ router.get('/:id',  getUserById);
  *       201:
  *         description: Usuario creado correctamente
  */
-router.post('/',  createUser);
+router.post('/', validateToken, createUser);
 
 /**
  * @swagger
@@ -87,7 +87,7 @@ router.post('/',  createUser);
  *       200:
  *         description: Usuario actualizado correctamente
  */
-router.put('/:id',  updateUser);
+router.put('/:id', validateToken, updateUser);
 
 
 /**
@@ -108,7 +108,7 @@ router.put('/:id',  updateUser);
  *       200:
  *         description: Usuario eliminado correctamente
  */
-router.delete('/:id', deleteUser);
+router.delete('/:id', validateToken, deleteUser);
 
 module.exports = router;
  

@@ -1,15 +1,78 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function LoginModal() {
+export default function LoginModal(props: any) {
   const [abrir, setAbrir] = useState(false);
   const [modo, setModo] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
+    const handleLogin = async () => {
+    const credenciales = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credenciales),
+      });
+
+      const data = await response.json(); 
+      console.log("Respuesta del servidor:", data);
+      if (data.success) {
+        let token = data.data.token;
+        localStorage.setItem("token", token);
+        router.push("/dashboard");
+      } else {
+        alert(data.message || "Error al iniciar sesión");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Ocurrió un error de conexión");
+    }
+  }; 
+
+  const handleRecuperarPassword = async () => {
+    if (!email) {
+      alert("Por favor, ingresa tu correo electrónico");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      const data = await response.json();
+      console.log("Respuesta recuperar:", data);
+
+      if (data.success) {
+        alert(data.message || "Revisa tu correo para recuperar la contraseña");
+        setModo("login");
+      } else {
+        alert(data.message || "Error al recuperar la contraseña");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Ocurrió un error de conexión");
+    }
+  };
+  
   return (
     <>
       <button
+        type="button"
         onClick={() => setAbrir(true)}
         className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
       >
@@ -68,6 +131,8 @@ export default function LoginModal() {
                 </p>
 
                 <button
+                  onClick={handleLogin}
+                  type="button"
                   className="w-full bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
                 >
                   Entrar
@@ -89,6 +154,8 @@ export default function LoginModal() {
                 </div>
 
                 <button
+                  onClick={handleRecuperarPassword}
+                  type="button"
                   className="w-full bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
                 >
                   Recuperar
