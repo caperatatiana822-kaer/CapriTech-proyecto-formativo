@@ -23,9 +23,9 @@ export default function NavBar(){
             </button>
 
             <div className="hidden md:flex items-center gap-15">
-                <a href="/" className=" text-lg text-[#5d4037] hover:text-[#8d6e63] font-medium transition duration-300">Inicio</a>
-                <a href="/contacto" className=" text-lg text-[#5d4037] hover:text-[#8d6e63] font-medium transition duration-300">Contacto</a>
-                <a href="/nosotros" className="text-lg text-[#5d4037] hover:text-[#8d6e63] font-medium transition duration-300">Nosotros</a>
+                <a href="/" className=" text-lg text-[#000000] hover:text-[#844243] font-medium transition duration-300">Inicio</a>
+                <a href="/contacto" className=" text-lg text-[#000000] hover:text-[#844243] font-medium transition duration-300">Contacto</a>
+                <a href="/nosotros" className="text-lg text-[#000000] hover:text-[#844243] font-medium transition duration-300">Nosotros</a>
                 <LoginModal />
             </div>
             {menu && (

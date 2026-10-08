@@ -25,6 +25,8 @@ export default function FormCreacionMount() {
   const [posibleFechaParto, setPosibleFechaParto] = useState("")
   const [enviando, setEnviando] = useState(false)
 
+  const [open, setOpen] = useState(false)
+
   useEffect(() => {
     async function cargar() {
       try {
@@ -92,13 +94,14 @@ export default function FormCreacionMount() {
       alert("No se pudo registrar la monta.")
     } finally {
       setEnviando(false)
+      setEnviando(false)
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+         <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Monta
         </button>
@@ -108,21 +111,18 @@ export default function FormCreacionMount() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Montas
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la información de la monta realizada.
-        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha de Monta</label>
             <input type="date" required value={fechaMonta} onChange={e => setFechaMonta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta del Macho</label>
             <select required value={chapetaMacho} onChange={e => setChapetaMacho(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200">
               <option value="">Selecciona una chapeta</option>
               {machos.map(m => (
                 <option key={m.id} value={m.chapeta}>{m.chapeta} - {m.nombre}</option>
@@ -133,7 +133,7 @@ export default function FormCreacionMount() {
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta de la Hembra</label>
             <select required value={chapetaHembra} onChange={e => setChapetaHembra(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]">
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200">
               <option value="">Selecciona una chapeta</option>
               {hembras.map(h => (
                 <option key={h.id} value={h.chapeta}>{h.chapeta} - {h.nombre}</option>
@@ -144,22 +144,32 @@ export default function FormCreacionMount() {
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Número de Monta</label>
             <input type="number" required value={numeroMonta} onChange={e => setNumeroMonta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-[#000000] mb-2">Posible Fecha de Parto</label>
             <input type="date" required value={posibleFechaParto} onChange={e => setPosibleFechaParto(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]" />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
+          <DialogDescription className="text-gray-500">
+          Ingresa la información de la monta realizada.
+        </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
-              disabled={enviando}
-              type="submit"
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
             >
-              {enviando ? "Registrando..." : "Registrar Monta"}
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={enviando}
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+            >
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

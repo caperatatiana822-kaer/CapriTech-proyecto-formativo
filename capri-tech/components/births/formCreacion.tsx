@@ -28,6 +28,8 @@ function FormCreacionNacimiento() {
   const [error, setError] = useState("")
   const [erroresDetallados, setErroresDetallados] = useState<string[]>([])
 
+  const [open, setOpen] = useState(false)
+
   function limpiarFormulario() {
     setChapeta("")
     setNombreAnimal("")
@@ -101,6 +103,7 @@ function FormCreacionNacimiento() {
       }
       alert("Nacimiento registrado correctamente")
       limpiarFormulario()
+      setOpen(false)
       router.push("/dashboard/births")
 
     } catch (error: any) {
@@ -115,9 +118,9 @@ function FormCreacionNacimiento() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Parto
         </button>
@@ -157,7 +160,7 @@ function FormCreacionNacimiento() {
               value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -168,7 +171,7 @@ function FormCreacionNacimiento() {
               value={nombreAnimal}
               onChange={(e) => setNombreAnimal(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -179,7 +182,7 @@ function FormCreacionNacimiento() {
               value={fechaNacimiento}
               onChange={(e) => setFechaNacimiento(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -190,7 +193,7 @@ function FormCreacionNacimiento() {
               value={raza}
               onChange={(e) => setRaza(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -199,7 +202,7 @@ function FormCreacionNacimiento() {
             <select
               value={sexo}
               onChange={(e) => setSexo(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             >
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
@@ -214,7 +217,7 @@ function FormCreacionNacimiento() {
               value={pesoNacer}
               onChange={(e) => setPesoNacer(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -225,7 +228,7 @@ function FormCreacionNacimiento() {
               value={fichaMadre}
               onChange={(e) => setFichaMadre(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
@@ -236,17 +239,24 @@ function FormCreacionNacimiento() {
               value={fichaPadre}
               onChange={(e) => setFichaPadre(e.target.value)}
               required
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] transition bg-white"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 transition bg-white"
             />
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
+            <button
               type="submit"
               disabled={enviando}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Registrar Parto"}
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

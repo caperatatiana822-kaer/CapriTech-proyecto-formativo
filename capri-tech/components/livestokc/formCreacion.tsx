@@ -30,6 +30,8 @@ function FormCreacionLivestock() {
   const [observaciones, setObservaciones] = useState("")
   const [enviando, setEnviando] = useState(false)
 
+  const [open, setOpen] = useState(false)
+
   function limpiarFormulario() {
     setNombre("")
     setChapeta("")
@@ -68,6 +70,7 @@ function FormCreacionLivestock() {
       }
 
       limpiarFormulario()
+      setOpen(false)
     } catch (error) {
       console.error("Error al registrar el animal:", error)
       alert("No se pudo registrar el animal. Intenta de nuevo.")
@@ -77,9 +80,9 @@ function FormCreacionLivestock() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Caprino
         </button>
@@ -89,9 +92,6 @@ function FormCreacionLivestock() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Inventario
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la información del caprino.
-        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
@@ -101,7 +101,7 @@ function FormCreacionLivestock() {
               required
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -112,7 +112,7 @@ function FormCreacionLivestock() {
               required
               value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -124,7 +124,7 @@ function FormCreacionLivestock() {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between border border-[#d7ccc8] rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-[#844243]"
+                  className="w-full flex items-center justify-between border border-[#d7ccc8] rounded-lg p-3 text-left focus:outline-none focus:ring-2 focus:ring-gray-200"
                 >
                   <span className={fechaNacimiento ? "text-gray-900" : "text-gray-400"}>
                     {fechaNacimiento
@@ -152,7 +152,7 @@ function FormCreacionLivestock() {
               required
               value={raza}
               onChange={(e) => setRaza(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="">Selecciona una raza</option>
               <option value="Alpina">Alpina</option>
@@ -166,7 +166,7 @@ function FormCreacionLivestock() {
               required
               value={sexo}
               onChange={(e) => setSexo(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="Macho">Macho</option>
               <option value="Hembra">Hembra</option>
@@ -181,7 +181,7 @@ function FormCreacionLivestock() {
               required
               value={etapaProduccion}
               onChange={(e) => setEtapaProduccion(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="carne">Carne</option>
               <option value="lechera">Lechera</option>
@@ -197,17 +197,27 @@ function FormCreacionLivestock() {
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
               placeholder="Escribe alguna observación sobre el animal (opcional)"
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] resize-none"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
             />
           </div>
+          <DialogDescription className="text-gray-500">
+          Ingresa la información del caprino.
+        </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
+            <button
               type="submit"
               disabled={enviando}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Registrar Caprino"}
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

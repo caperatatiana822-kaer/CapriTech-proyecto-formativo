@@ -2,12 +2,11 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-// Componente interno que usa useSearchParams (debe estar dentro de Suspense)
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
-  // Leemos el token de la URL: /reset-password?token=abc123
+
   const token = searchParams.get("token");
 
   const [newPassword, setNewPassword] = useState("");
@@ -15,7 +14,7 @@ function ResetPasswordForm() {
   const [cargando, setCargando] = useState(false);
   const [tokenValido, setTokenValido] = useState<boolean | null>(null);
 
-  // Verificamos el token al cargar la página
+
   useEffect(() => {
     const verificarToken = async () => {
       if (!token) {
@@ -42,7 +41,6 @@ function ResetPasswordForm() {
   }, [token]);
 
   const handleResetPassword = async () => {
-    // Validaciones
     if (!newPassword || !confirmPassword) {
       alert("Por favor, llena todos los campos");
       return;
@@ -62,7 +60,6 @@ function ResetPasswordForm() {
       const response = await fetch("http://localhost:3001/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // IMPORTANTE: Enviamos newPassword y confirmPassword, NO "password"
         body: JSON.stringify({ token, newPassword, confirmPassword }),
       });
 
@@ -83,12 +80,10 @@ function ResetPasswordForm() {
     }
   };
 
-  // Mientras verifica el token
   if (tokenValido === null) {
     return <p className="text-center text-gray-600">Verificando enlace...</p>;
   }
 
-  // Si el token no es válido
   if (tokenValido === false) {
     return (
       <div className="text-center">
@@ -104,7 +99,6 @@ function ResetPasswordForm() {
     );
   }
 
-  // Si el token es válido, mostramos el formulario
   return (
     <>
       <h2 className="text-2xl font-bold text-center mb-6 text-[#5d4037]">
@@ -149,7 +143,6 @@ function ResetPasswordForm() {
   );
 }
 
-// Página principal (envuelve el formulario en Suspense, requerido por useSearchParams)
 export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5efe6]">

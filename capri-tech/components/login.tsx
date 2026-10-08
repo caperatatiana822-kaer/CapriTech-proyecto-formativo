@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeClosed } from "lucide-react";
 
 export default function LoginModal(props: any) {
   const [abrir, setAbrir] = useState(false);
@@ -8,8 +9,10 @@ export default function LoginModal(props: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [eye, setEye] = useState(<EyeClosed />)
+  const [typePassword, setTypePassword] = useState("password")
 
-    const handleLogin = async () => {
+  const handleLogin = async () => {
     const credenciales = {
       email: email,
       password: password,
@@ -24,7 +27,7 @@ export default function LoginModal(props: any) {
         body: JSON.stringify(credenciales),
       });
 
-      const data = await response.json(); 
+      const data = await response.json();
       console.log("Respuesta del servidor:", data);
       if (data.success) {
         let token = data.data.token;
@@ -37,7 +40,7 @@ export default function LoginModal(props: any) {
       console.error("Error:", error);
       alert("Ocurrió un error de conexión");
     }
-  }; 
+  };
 
   const handleRecuperarPassword = async () => {
     if (!email) {
@@ -68,13 +71,22 @@ export default function LoginModal(props: any) {
       alert("Ocurrió un error de conexión");
     }
   };
-  
+
+  const MostrarPassword = () => {
+    if (typePassword == "password") {
+      setTypePassword("text");
+      setEye(<Eye />)
+    } else {
+      setTypePassword("password");
+      setEye(<EyeClosed />)
+    }
+  }
   return (
     <>
       <button
         type="button"
         onClick={() => setAbrir(true)}
-        className="bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
+        className="bg-[#844243] hover:bg-[#4e342e] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
       >
         Ingresar
       </button>
@@ -89,7 +101,7 @@ export default function LoginModal(props: any) {
               ×
             </button>
 
-            <h2 className="text-2xl font-bold text-center mb-6 text-[#5d4037]">
+            <h2 className="text-2xl font-bold text-center mb-6 text-[#000000]">
               {modo === "login"
                 ? "Iniciar Sesión"
                 : "Recuperar Contraseña"}
@@ -99,28 +111,39 @@ export default function LoginModal(props: any) {
               <>
                 <div className="mb-3">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ingresa tu correo electrónico
+                    Correo electrónico:
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ejemplo@correo.com"
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition"
+                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
                   />
                 </div>
 
                 <div className="mb-3">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ingresa tu contraseña
+                    Contraseña:
                   </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="********"
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition"
-                  />
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="contraseña"
+                      type={typePassword}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="********"
+                      className="w-full border border-gray-300 rounded-lg p-3 pr-10 focus:outline-none focus:ring-gray-400 transition"
+                    />
+                    <button
+                      type="button"
+                      onClick={MostrarPassword}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    >
+                      {typePassword === "password" ? <EyeClosed size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                 </div>
 
                 <p
@@ -133,30 +156,30 @@ export default function LoginModal(props: any) {
                 <button
                   onClick={handleLogin}
                   type="button"
-                  className="w-full bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
+                  className="w-full bg-[#844243] hover:bg-[#6E3536] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
                 >
                   Entrar
                 </button>
               </>
             ) : (
               <>
-                <div className="mb-4">
+                <div className="mb-8">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ingresa tu correo electrónico
+                    Correo electrónico:
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ejemplo@correo.com"
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41] transition"
+                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
                   />
                 </div>
 
                 <button
                   onClick={handleRecuperarPassword}
                   type="button"
-                  className="w-full bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
+                  className="w-full bg-[#844243] hover:bg-[#6E3536] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63]"
                 >
                   Recuperar
                 </button>

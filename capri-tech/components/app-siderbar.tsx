@@ -168,42 +168,8 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-[#E8D9C5] px-3 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#844243] text-sm font-semibold text-white">
-            {usuarioActual.inicial}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-black">{usuarioActual.nombre}</p>
-            <p className="truncate text-xs text-black">{usuarioActual.correo}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setLogoutDialogOpen(true)}
-            className="shrink-0 rounded-lg p-2 text-[#3E2723] hover:bg-white/10 hover:text-black transition-colors"
-            title="Cerrar sesión"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
-        </div>
-      </SidebarFooter>
 
-      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>¿Cerrar sesión?</DialogTitle>
-            <DialogDescription>Vas a salir de tu cuenta. ¿Estás seguro de que quieres cerrar sesión?</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <button type="button" onClick={() => setLogoutDialogOpen(false)} className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm font-medium text-[#6d4c41] hover:bg-[#f5efe6]">
-              Cancelar
-            </button>
-            <button type="button" onClick={handleConfirmarCierreSesion} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700">
-              Sí, cerrar sesión
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      
     </Sidebar>
   )
 };
