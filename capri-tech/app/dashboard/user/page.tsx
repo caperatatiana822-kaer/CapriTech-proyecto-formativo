@@ -1,11 +1,13 @@
+"use client"
 
-import FormCreacionUsuario from "@/components/user/formCreacion";
+import TablaUsuario from "@/components/user/tablaUser"
 
-function User() {
-    return ( <>
-        <FormCreacionUsuario />
-    </>
-    );
+function UsersPage() {
+  return (
+    <div className="w-full h-full">
+      <TablaUsuario />
+    </div>
+  )
 }
 
-export default User;
+export default UsersPage

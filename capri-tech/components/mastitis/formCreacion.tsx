@@ -2,11 +2,23 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { CirclePlus } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 function FormCreationMastitis() {
   const router = useRouter()
 
   const [animales, setAnimales] = useState<any[]>([])
+  const [responsables, setResponsables] = useState<any[]>([])  // ✅ Nuevo estado
   const [chapeta, setChapeta] = useState("")
   const [fecha, setFecha] = useState("")
   const [resultado, setResultado] = useState("")
@@ -49,6 +61,29 @@ function FormCreationMastitis() {
     cargarAnimales()
   }, [])
 
+  // ✅ Cargar responsables desde el backend
+  useEffect(() => {
+    async function cargarResponsables() {
+      try {
+        const res = await fetch("http://localhost:3001/api/responsible/responsibleAll")
+        const json = await res.json()
+
+        const datos = Array.isArray(json?.data?.data)
+          ? json.data.data
+          : Array.isArray(json?.data)
+            ? json.data
+            : Array.isArray(json)
+              ? json
+              : []
+
+        setResponsables(datos)
+      } catch (e) {
+        console.error("Error cargando responsables:", e)
+      }
+    }
+    cargarResponsables()
+  }, [])
+
   const todosAnimales = Array.isArray(animales) ? animales : []
 
   async function handleSubmit(evento: React.FormEvent) {
@@ -65,7 +100,7 @@ function FormCreationMastitis() {
     const chapetaNumero = parseInt(chapeta)
 
     const animal = todosAnimales.find(a => Number(a.chapeta) === chapetaNumero)
-    
+
     if (!animal) {
       console.log("Animal no encontrado. Chapeta seleccionada:", chapeta)
       console.log("Animales disponibles:", todosAnimales)
@@ -101,7 +136,7 @@ function FormCreationMastitis() {
       }
 
       alert("Caso de mastitis registrado correctamente")
-      router.push("/dashboard/mastitis/table")
+      router.push("/dashboard/mastitis")
 
     } catch (error: any) {
       console.error("Error al registrar el caso de mastitis:", error)
@@ -112,41 +147,39 @@ function FormCreationMastitis() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando || cargandoAnimales}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Guardando..." : "Registrar mastitis"}
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Mastitis
         </button>
-      </div>
+      </DialogTrigger>
 
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
-          <h1 className="text-2xl font-bold">Formulario de Mastitis</h1>
-          <p className="text-green-100 mt-1">Ingresa la informacion del diagnostico de mastitis</p>
-        </div>
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Mastitis
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la informacion del diagnostico de mastitis.
+        </DialogDescription>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Animal *</label>
-            <select 
-              required 
-              value={chapeta} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta del Animal *</label>
+            <select
+              required
+              value={chapeta}
               onChange={(e) => {
                 console.log("Chapeta seleccionada:", e.target.value)
                 setChapeta(e.target.value)
               }}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -166,23 +199,23 @@ function FormCreationMastitis() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha *</label>
-            <input 
-              type="date" 
-              required 
-              value={fecha} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha *</label>
+            <input
+              type="date"
+              required
+              value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Resultado *</label>
-            <select 
-              required 
-              value={resultado} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Resultado *</label>
+            <select
+              required
+              value={resultado}
               onChange={(e) => setResultado(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             >
               <option value="">Selecciona un resultado</option>
               <option value="Negativo">Negativo</option>
@@ -192,31 +225,67 @@ function FormCreationMastitis() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Responsable *</label>
-            <input 
-              type="text" 
-              required 
-              value={responsable} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
+            <select
+              required
+              value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
-              placeholder="Nombre del responsable"
-            />
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            >
+              <option value="">Selecciona un responsable</option>
+              {responsables.map((r: any) => (
+                <option key={r.id} value={r.nombre}>
+                  {r.nombre}
+                </option>
+              ))}
+            </select>
+            {responsables.length === 0 && (
+              <p className="text-sm text-yellow-600 mt-1">
+                No hay responsables registrados en el sistema.
+              </p>
+            )}
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">
+              Observaciones
+            </label>
             <textarea
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              maxLength={200}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] resize-none"
               rows={3}
               placeholder="Observaciones adicionales (opcional)"
             />
+
+            <div className="flex justify-end mt-1">
+              <span
+                className={`text-xs ${observaciones.length >= 200
+                    ? "text-red-500 font-semibold"
+                    : observaciones.length >= 160
+                      ? "text-yellow-600"
+                      : "text-gray-400"
+                  }`}
+              >
+                {observaciones.length} / 200
+              </span>
+            </div>
           </div>
+
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
+              disabled={enviando || cargandoAnimales}
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Guardando..." : "Registrar mastitis"}
+            </button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
-  );
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default FormCreationMastitis;
+export default FormCreationMastitis

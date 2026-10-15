@@ -21,7 +21,7 @@ const Vaccination = db.define('Vaccination', {
     },
     dosis: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     responsable: {
         type: DataTypes.STRING,

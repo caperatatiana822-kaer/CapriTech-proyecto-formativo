@@ -2,6 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { CirclePlus } from "lucide-react"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 function FormCreacionVacunacion() {
   const router = useRouter()
@@ -10,6 +21,7 @@ function FormCreacionVacunacion() {
   const [chapeta, setChapeta] = useState("")
   const [fecha, setFecha] = useState("")
   const [vacuna, setVacuna] = useState("")
+  const [dosis, setDosis] = useState("")
   const [responsable, setResponsable] = useState("")
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
@@ -74,6 +86,7 @@ function FormCreacionVacunacion() {
       chapeta: chapetaNumero,
       fecha: fecha,
       vacuna: vacuna,
+      dosis: dosis,
       responsable: responsable,
     }
 
@@ -96,7 +109,7 @@ function FormCreacionVacunacion() {
       }
 
       alert("Vacunacion registrada correctamente")
-      router.push("/dashboard/vaccination/table")
+      router.push("/dashboard/vaccination")
 
     } catch (error: any) {
       console.error("Error al registrar la vacunacion:", error)
@@ -107,38 +120,36 @@ function FormCreacionVacunacion() {
   }
 
   return (
-    <div className="py-10 px-6">
-      <div className="max-w-4xl mx-auto mb-4 flex justify-end">
-        <button 
-          type="submit" 
-          disabled={enviando || cargandoAnimales}
-          onClick={handleSubmit}
-          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition disabled:opacity-50"
-        >
-          {enviando ? "Registrando..." : "Registrar Vacunacion"}
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <CirclePlus className="w-5 h-5" />
+          Agregar Vacunacion
         </button>
-      </div>
+      </DialogTrigger>
 
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl overflow-hidden">
-        <div className="bg-green-700 text-white p-6">
-          <h1 className="text-2xl font-bold">Formulario de Vacunacion</h1>
-          <p className="text-green-100 mt-1">Ingresa la informacion de la vacunacion realizada</p>
-        </div>
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="text-2xl font-bold text-[#000000]">
+          Formulario de Vacunacion
+        </DialogHeader>
+        <DialogDescription className="text-gray-500">
+          Ingresa la informacion de la vacunacion realizada.
+        </DialogDescription>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 text-sm">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Chapeta del Animal *</label>
-            <select 
-              required 
-              value={chapeta} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Chapeta del Animal *</label>
+            <select
+              required
+              value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -158,43 +169,65 @@ function FormCreacionVacunacion() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha *</label>
-            <input 
-              type="date" 
-              required 
-              value={fecha} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha *</label>
+            <input
+              type="date"
+              required
+              value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre de la Vacuna *</label>
-            <input 
-              type="text" 
-              required 
-              value={vacuna} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre de la Vacuna *</label>
+            <input
+              type="text"
+              required
+              value={vacuna}
               onChange={(e) => setVacuna(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Ej: Fiebre Aftosa, Brucelosis, etc."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Responsable *</label>
-            <input 
-              type="text" 
-              required 
-              value={responsable} 
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Dosis *</label>
+            <input
+              type="text"
+              required
+              value={dosis}
+              onChange={(e) => setDosis(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              placeholder="Ej: 2ml"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
+            <input
+              type="text"
+              required
+              value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
               placeholder="Nombre del responsable"
             />
           </div>
+
+          <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <button
+              type="submit"
+              disabled={enviando || cargandoAnimales}
+              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+            >
+              {enviando ? "Registrando..." : "Registrar Vacunacion"}
+            </button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
-  );
+      </DialogContent>
+    </Dialog>
+  )
 }
 
-export default FormCreacionVacunacion;
+export default FormCreacionVacunacion

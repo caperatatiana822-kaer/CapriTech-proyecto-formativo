@@ -44,6 +44,15 @@ const userGetById = async (id) => {
     }
 };
 
+const getEmailUser = async (email)=>{
+    try{
+        const userEmail = await User.findOne({where: {email}});
+        return userEmail;
+    } catch (error){
+        throw error;
+    }
+}
+
 const usuarioDelete = async (id) => {
     try {
         const deleteUser = await User.destroy({ where: { id: id } });
@@ -69,5 +78,6 @@ module.exports = {
     getAllUsers,
     userGetById,
     usuarioDelete,
-    userUpdate
+    userUpdate,
+    getEmailUser
 };
