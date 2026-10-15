@@ -86,7 +86,7 @@ export default function LoginModal(props: any) {
       <button
         type="button"
         onClick={() => setAbrir(true)}
-        className="bg-[#844243] hover:bg-[#4e342e] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
+        className="bg-[#844243] hover:bg-[#6E3536] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
       >
         Ingresar
       </button>

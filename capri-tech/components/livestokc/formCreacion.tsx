@@ -196,13 +196,19 @@ function FormCreacionLivestock() {
               rows={4}
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
+              maxLength={200}
               placeholder="Escribe alguna observación sobre el animal (opcional)"
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
             />
+            <div className="flex justify-end mt-1">
+              <span className="text-xs text-gray-400">
+                {observaciones.length} / 200
+              </span>
+            </div>
           </div>
           <DialogDescription className="text-gray-500">
-          Ingresa la información del caprino.
-        </DialogDescription>
+            Ingresa la información del caprino.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button

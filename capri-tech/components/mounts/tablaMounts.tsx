@@ -111,11 +111,11 @@ export default function TablaMounts({ busqueda = "", headerExtra }: Props){
                 {!cargando && montasFiltradas.map((item:any)=>(
                   <tr key={item.id} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                     <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fechaMonta)}</td>
-                    <td className="p-3 text-sm text-gray-800">{item.nombreMacho}</td>
-                    <td className="p-3 text-sm text-gray-800">{item.razaMacho}</td>
+                    <td className="p-3 text-sm text-gray-800 capitalize">{item.nombreMacho}</td>
+                    <td className="p-3 text-sm text-gray-800 capitalize">{item.razaMacho}</td>
                     <td className="p-3 text-sm text-gray-800">{item.chapetaMacho}</td>
-                    <td className="p-3 text-sm text-gray-800">{item.nombreHembra}</td>
-                    <td className="p-3 text-sm text-gray-800">{item.razaHembra}</td>
+                    <td className="p-3 text-sm text-gray-800 capitalize">{item.nombreHembra}</td>
+                    <td className="p-3 text-sm text-gray-800 capitalize">{item.razaHembra}</td>
                     <td className="p-3 text-sm text-gray-800">{item.chapetaHembra}</td>
                     <td className="p-3 text-sm text-gray-800">{item.numeroMonta}</td>
                     <td className="p-3 text-sm text-gray-800">{formatearFecha(item.posibleFechaParto)}</td>

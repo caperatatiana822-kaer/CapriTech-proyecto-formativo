@@ -129,17 +129,17 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
                     <tr key={item.id} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.productionType}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fecha)}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.descripcionElemento}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.unidadMedida}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.descripcionElemento}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.unidadMedida}</td>
                       <td className="p-3 text-sm text-gray-800">{item.cantidad}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearMoneda(item.valorUnitario)}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearMoneda(item.valorTotal)}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fechaVencimiento)}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.centroCosto}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.nombreTraslada}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.nombreRecibe}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.instructorTecnico}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.centroCosto}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.nombreTraslada}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.nombreRecibe}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.instructorTecnico}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.observaciones || "—"}</td>
                     </tr>
                   )
                 })}

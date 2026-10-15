@@ -190,12 +190,18 @@ export default function FormCreacionFamacha() {
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-[#000000] mb-2">Observaciones</label>
             <textarea
+              rows={4}
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
-              rows={3}
-              placeholder="Observaciones adicionales (opcional)"
+              maxLength={200}
+              placeholder="Escribe alguna observación (opcional)"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
             />
+            <div className="flex justify-end mt-1">
+              <span className="text-xs text-gray-400">
+                {observaciones.length} / 200
+              </span>
+            </div>
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">

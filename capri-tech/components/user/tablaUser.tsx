@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search } from "lucide-react"
+import { Search, CirclePlus } from "lucide-react"
 import FormCreacionUsuario from "@/components/user/formCreacion"
 
 export default function TablaUsuario() {
@@ -112,9 +112,10 @@ export default function TablaUsuario() {
             </div>
             <button 
               onClick={handleAgregarUsuario}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2"
             >
-              + Agregar Usuario
+              <CirclePlus className="w-5 h-5" />
+              Agregar Usuario
             </button>
           </div>
         </div>
@@ -167,11 +168,11 @@ export default function TablaUsuario() {
                   return (
                     <tr key={usuario.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 font-medium">{usuario.id}</td>
-                      <td className="p-3 text-sm text-gray-800">{usuario.name}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{usuario.name}</td>
                       <td className="p-3 text-sm text-gray-800">{usuario.email}</td>
                       <td className="p-3 text-sm text-gray-800">{usuario.documentId}</td>
-                      <td className="p-3 text-sm text-gray-800">{usuario.postJob}</td>
-                      <td className="p-3 text-sm text-gray-800">
+                      <td className="p-3 text-sm text-gray-800 capitalize">{usuario.postJob}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                           usuario.active 
                             ? "bg-green-100 text-green-800" 

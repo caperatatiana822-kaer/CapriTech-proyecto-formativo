@@ -136,7 +136,7 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
                     <tr key={caso.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 font-medium">{caso.chapeta}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(caso.fecha)}</td>
-                      <td className="p-3 text-sm text-gray-800">
+                      <td className="p-3 text-sm text-gray-800 capitalize">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                           caso.resultado === "Positivo" ? "bg-red-100 text-red-800" :
                           caso.resultado === "Negativo" ? "bg-green-100 text-green-800" :
@@ -146,8 +146,8 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
                           {caso.resultado}
                         </span>
                       </td>
-                      <td className="p-3 text-sm text-gray-800">{caso.responsable}</td>
-                      <td className="p-3 text-sm text-gray-800">{caso.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{caso.responsable}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{caso.observaciones || "—"}</td>
                     </tr>
                   )
                 })}

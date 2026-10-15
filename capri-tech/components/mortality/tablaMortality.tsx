@@ -132,7 +132,7 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
                     <tr key={registro.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 font-medium">{registro.chapeta}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(registro.fecha)}</td>
-                      <td className="p-3 text-sm text-gray-800">{registro.diagnosticopresuntivo}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{registro.diagnosticopresuntivo}</td>
                     </tr>
                   )
                 })}

@@ -135,8 +135,8 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
                     <tr key={item.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fecha)}</td>
                       <td className="p-3 text-sm text-gray-800">{item.hora}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.responsable}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.alimento}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.responsable}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{item.alimento}</td>
                       <td className="p-3 text-sm text-gray-800 font-medium">{item.cantidad} Kg</td>
                     </tr>
                   )

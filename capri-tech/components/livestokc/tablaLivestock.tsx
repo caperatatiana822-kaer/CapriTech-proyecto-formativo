@@ -31,7 +31,7 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
       const offset = (page - 1) * limit
       const respuesta = await fetch(`http://localhost:3001/api/livestock/livestockAll?limit=${limit}&offset=${offset}`)
       const datos = await respuesta.json()
-      
+
       if (datos.success && datos.data) {
         setAnimales(datos.data.data || [])
         if (datos.data.pagination) {
@@ -89,14 +89,15 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Raza</th>
                   <th className="p-3 text-left font-semibold text-sm">Sexo</th>
                   <th className="p-3 text-left font-semibold text-sm">Etapa de Producción</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Observaciones</th>
+                  <th className="p-3 text-left font-semibold text-sm">Observaciones</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={7} className="p-6 text-center text-gray-500">
+                    <td colSpan={8} className="p-6 text-center text-gray-500">
                       Cargando animales...
                     </td>
                   </tr>
@@ -104,7 +105,7 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && animales.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="p-6 text-center text-gray-500">
+                    <td colSpan={8} className="p-6 text-center text-gray-500">
                       Todavía no hay animales registrados.
                     </td>
                   </tr>
@@ -113,13 +114,21 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                 {!cargando && animalesFiltrados.map(function renderFila(animal: any) {
                   return (
                     <tr key={animal.id} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
-                      <td className="p-3 text-sm text-gray-800">{animal.nombre}</td>
-                      <td className="p-3 text-sm text-gray-800">{animal.chapeta}</td>
-                      <td className="p-3 text-sm text-gray-800">{formatearFecha(animal.fechaNacimiento)}</td>
-                      <td className="p-3 text-sm text-gray-800">{animal.raza}</td>
-                      <td className="p-3 text-sm text-gray-800">{animal.sexo}</td>
-                      <td className="p-3 text-sm text-gray-800">{animal.etapaProduccion}</td>
-                      <td className="p-3 text-sm text-gray-800">{animal.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.nombre}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.chapeta}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{formatearFecha(animal.fechaNacimiento)}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.raza}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.sexo}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.etapaProduccion}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{animal.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${animal.active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                          }`}>
+                          {animal.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}
@@ -136,22 +145,20 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                 <button
                   onClick={() => handlePageChange(pagination.currentPage - 1)}
                   disabled={pagination.currentPage === 1}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    pagination.currentPage === 1
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${pagination.currentPage === 1
                       ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                       : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
+                    }`}
                 >
                   ← Anterior
                 </button>
                 <button
                   onClick={() => handlePageChange(pagination.currentPage + 1)}
                   disabled={pagination.currentPage === pagination.totalPages}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    pagination.currentPage === pagination.totalPages
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${pagination.currentPage === pagination.totalPages
                       ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                       : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
+                    }`}
                 >
                   Siguiente →
                 </button>

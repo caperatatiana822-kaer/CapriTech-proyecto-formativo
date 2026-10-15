@@ -186,10 +186,10 @@ export default function TablaBirths({ busqueda = "", headerExtra }: Props) {
                   return (
                     <tr key={nacimiento.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 font-medium">{nacimiento.chapeta || "—"}</td>
-                      <td className="p-3 text-sm text-gray-800">{nacimiento.nombre || "—"}</td>
-                      <td className="p-3 text-sm text-gray-800">{formatearFecha(nacimiento.fechaNacimiento)}</td>
-                      <td className="p-3 text-sm text-gray-800">{nacimiento.raza || "—"}</td>
-                      <td className="p-3 text-sm text-gray-800">{nacimiento.sexo || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{nacimiento.nombre || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 ">{formatearFecha(nacimiento.fechaNacimiento)}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{nacimiento.raza || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{nacimiento.sexo || "—"}</td>
                       <td className="p-3 text-sm text-gray-800">{nacimiento.pesoNacimiento || nacimiento.pesoNacer || "—"} Kg</td>
                       <td className="p-3 text-sm text-gray-800">{nacimiento.chapetaMadre || "—"}</td>
                       <td className="p-3 text-sm text-gray-800">{nacimiento.chapetaPadre || "—"}</td>

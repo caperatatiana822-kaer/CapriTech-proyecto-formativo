@@ -38,6 +38,8 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
 
+  const [open, setOpen] = useState(false)
+
   if (!isOpen) return null;
 
   const resetForm = () => {
@@ -134,6 +136,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
       setError("Error al registrar usuario: " + mensajeError);
     } finally {
       setGuardando(false);
+      setOpen(false)
     }
   };
 
@@ -154,9 +157,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
           <h1 className="text-2xl font-bold tracking-tight text-[#000000]">
             Formulario de Usuario
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            Ingresa la información del usuario.
-          </p>
+          
         </div>
 
         {error && (
@@ -179,7 +180,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               required 
               value={name} 
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Nombre completo"
             />
           </div>
@@ -191,7 +192,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               required 
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="correo@ejemplo.com"
             />
           </div>
@@ -203,7 +204,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               required 
               value={documentId} 
               onChange={(e) => setDocumentId(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Número de documento"
             />
           </div>
@@ -215,7 +216,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               required 
               value={password} 
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Mínimo 6 caracteres"
             />
           </div>
@@ -226,7 +227,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               required 
               value={postJob} 
               onChange={(e) => setPostJob(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="">Selecciona un cargo</option>
               <option value="Administrador">Administrador</option>
@@ -235,14 +236,24 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               <option value="Pasante">Pasante</option>
             </select>
           </div>
+          <p className="text-gray-500 mt-1 text-sm">
+            Ingresa la información del usuario.
+          </p>
 
           <div className="md:col-span-2 flex justify-end gap-3 mt-2 !border-t-0">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
             <button 
               type="submit" 
               disabled={guardando}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {guardando ? "Registrando..." : "Registrar Usuario"}
+              {guardando ? "Registrando..." : "Guardar"}
             </button>
           </div>
         </form>

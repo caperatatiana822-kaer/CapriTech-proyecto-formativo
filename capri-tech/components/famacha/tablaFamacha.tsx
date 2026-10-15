@@ -145,13 +145,13 @@ export default function TablaFamacha({ busqueda = "", headerExtra }: Props) {
                   return (
                     <tr key={registro.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800 font-medium">{registro.chapeta}</td>
-                      <td className="p-3 text-sm text-gray-800">{registro.responsable}</td>
-                      <td className="p-3 text-sm text-gray-800">
+                      <td className="p-3 text-sm text-gray-800 capitalize">{registro.responsable}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${getResultadoColor(registro.resultado)}`}>
                           {getResultadoTexto(registro.resultado)}
                         </span>
                       </td>
-                      <td className="p-3 text-sm text-gray-800">{registro.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{registro.observaciones || "—"}</td>
                     </tr>
                   )
                 })}

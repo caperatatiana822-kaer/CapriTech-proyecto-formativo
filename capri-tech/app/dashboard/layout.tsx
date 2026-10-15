@@ -25,9 +25,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+import FormActualizarPerfil from "@/components/profile/formProfile"
+import FormActualizarPassword from "@/components/profile/formPassword"
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const [perfilOpen, setPerfilOpen] = useState(false);
+  const [passwordOpen, setPasswordOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -78,24 +84,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                 </button>
               </DropdownMenuTrigger>
-              
+
               <DropdownMenuContent align="end" className="w-56 bg-white border-gray-200 shadow-lg rounded-xl">
                 <DropdownMenuLabel className="text-gray-800 font-semibold">Mi Cuenta</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                
-                <DropdownMenuItem className="cursor-pointer text-gray-700 hover:bg-gray-100">
+
+                <DropdownMenuItem
+                  onClick={() => setPerfilOpen(true)}
+                  className="cursor-pointer text-gray-700 hover:bg-gray-100"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Actualizar perfil</span>
                 </DropdownMenuItem>
-                
-                <DropdownMenuItem className="cursor-pointer text-gray-700 hover:bg-gray-100">
+
+                <DropdownMenuItem
+                  onClick={() => setPasswordOpen(true)}
+                  className="cursor-pointer text-gray-700 hover:bg-gray-100"
+                >
                   <Key className="mr-2 h-4 w-4" />
                   <span>Actualizar contraseña</span>
                 </DropdownMenuItem>
-                
+
                 <DropdownMenuSeparator />
-                
-                <DropdownMenuItem 
+
+                <DropdownMenuItem
                   onClick={() => setLogoutDialogOpen(true)}
                   className="cursor-pointer text-[#844243] hover:bg-red-50 hover:text-red-700 font-medium"
                 >
@@ -114,16 +126,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-4 flex gap-2 justify-end">
-                  <button 
-                    type="button" 
-                    onClick={() => setLogoutDialogOpen(false)} 
+                  <button
+                    type="button"
+                    onClick={() => setLogoutDialogOpen(false)}
                     className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm font-medium text-black hover:bg-gray-200 transition-colors"
                   >
                     Cancelar
                   </button>
-                  <button 
-                    type="button" 
-                    onClick={handleConfirmarCierreSesion} 
+                  <button
+                    type="button"
+                    onClick={handleConfirmarCierreSesion}
                     className="rounded-lg bg-[#844243] px-4 py-2 text-sm font-medium text-white hover:bg-[#6E3536] transition-colors"
                   >
                     Sí, cerrar sesión
@@ -139,6 +151,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </SidebarProvider>
+      <FormActualizarPerfil
+        isOpen={perfilOpen}
+        onClose={() => setPerfilOpen(false)}
+      />
+      <FormActualizarPassword
+        isOpen={passwordOpen}
+        onClose={() => setPasswordOpen(false)}
+      />
     </TooltipProvider>
   )
 }

@@ -126,12 +126,12 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
                 {!cargando && !error && responsablesFiltrados.map(function renderFila(responsable: any, index: number) {
                   return (
                     <tr key={responsable.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
-                      <td className="p-3 text-sm text-gray-800 font-medium">{responsable.nombre}</td>
+                      <td className="p-3 text-sm text-gray-800 font-medium capitalize">{responsable.nombre}</td>
                       <td className="p-3 text-sm text-gray-800">{responsable.documento}</td>
-                      <td className="p-3 text-sm text-gray-800">{responsable.tipoResponsable}</td>
-                      <td className="p-3 text-sm text-gray-800">{responsable.actividad}</td>
-                      <td className="p-3 text-sm text-gray-800">{responsable.frecuencia}</td>
-                      <td className="p-3 text-sm text-gray-800">{responsable.diaSemana}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.tipoResponsable}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.actividad}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.frecuencia}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.diaSemana}</td>
                     </tr>
                   )
                 })}

@@ -18,6 +18,7 @@ function FormCreationMastitis() {
   const router = useRouter()
 
   const [animales, setAnimales] = useState<any[]>([])
+  const [responsables, setResponsables] = useState<any[]>([])  // ✅ Nuevo estado
   const [chapeta, setChapeta] = useState("")
   const [fecha, setFecha] = useState("")
   const [resultado, setResultado] = useState("")
@@ -58,6 +59,29 @@ function FormCreationMastitis() {
       }
     }
     cargarAnimales()
+  }, [])
+
+  // ✅ Cargar responsables desde el backend
+  useEffect(() => {
+    async function cargarResponsables() {
+      try {
+        const res = await fetch("http://localhost:3001/api/responsible/responsibleAll")
+        const json = await res.json()
+
+        const datos = Array.isArray(json?.data?.data)
+          ? json.data.data
+          : Array.isArray(json?.data)
+            ? json.data
+            : Array.isArray(json)
+              ? json
+              : []
+
+        setResponsables(datos)
+      } catch (e) {
+        console.error("Error cargando responsables:", e)
+      }
+    }
+    cargarResponsables()
   }, [])
 
   const todosAnimales = Array.isArray(animales) ? animales : []
@@ -202,25 +226,51 @@ function FormCreationMastitis() {
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
-            <input
-              type="text"
+            <select
               required
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
-              placeholder="Nombre del responsable"
-            />
+            >
+              <option value="">Selecciona un responsable</option>
+              {responsables.map((r: any) => (
+                <option key={r.id} value={r.nombre}>
+                  {r.nombre}
+                </option>
+              ))}
+            </select>
+            {responsables.length === 0 && (
+              <p className="text-sm text-yellow-600 mt-1">
+                No hay responsables registrados en el sistema.
+              </p>
+            )}
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Observaciones</label>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">
+              Observaciones
+            </label>
             <textarea
               value={observaciones}
               onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              maxLength={200}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243] resize-none"
               rows={3}
               placeholder="Observaciones adicionales (opcional)"
             />
+
+            <div className="flex justify-end mt-1">
+              <span
+                className={`text-xs ${observaciones.length >= 200
+                    ? "text-red-500 font-semibold"
+                    : observaciones.length >= 160
+                      ? "text-yellow-600"
+                      : "text-gray-400"
+                  }`}
+              >
+                {observaciones.length} / 200
+              </span>
+            </div>
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">

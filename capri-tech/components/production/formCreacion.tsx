@@ -104,77 +104,88 @@ function FormCreacionProduction() {
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha</label>
             <input type="date" required value={fecha} onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Descripción</label>
             <input type="text" required value={descripcionElemento} onChange={(e) => setDescripcionElemento(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Unidad de Medida</label>
             <input type="text" required value={unidadMedida} onChange={(e) => setUnidadMedida(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Cantidad</label>
             <input type="number" required value={cantidad} onChange={(e) => setCantidad(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Valor Unitario</label>
             <input type="number" required value={valorUnitario} onChange={(e) => setValorUnitario(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Valor Total</label>
             <input type="number" required value={valorTotal} onChange={(e) => setValorTotal(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Fecha de Vencimiento</label>
             <input type="date" required value={fechaVencimiento} onChange={(e) => setFechaVencimiento(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Centro de Costo</label>
             <input type="text" required value={centroCosto} onChange={(e) => setCentroCosto(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre de quien Traslada</label>
             <input type="text" required value={nombreTraslada} onChange={(e) => setNombreTraslada(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre de quien Recibe</label>
             <input type="text" required value={nombreRecibe} onChange={(e) => setNombreRecibe(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Instructor Técnico</label>
             <input type="text" required value={instructorTecnico} onChange={(e) => setInstructorTecnico(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-[#000000] mb-2">Observaciones</label>
-            <input type="text" value={observaciones} onChange={(e) => setObservaciones(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"/>
+            <textarea
+              rows={4}
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+              maxLength={200}
+              placeholder="Escribe alguna observación (opcional)"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200 resize-none"
+            />
+            <div className="flex justify-end mt-1">
+              <span className="text-xs text-gray-400">
+                {observaciones.length} / 200
+              </span>
+            </div>
           </div>
           <DialogDescription className="text-gray-500">
-          Ingresa la información de la producción.
-        </DialogDescription>
+            Ingresa la información de la producción.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button

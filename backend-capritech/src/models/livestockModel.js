@@ -34,6 +34,11 @@ const livestock = db.define('livestock', {
     observaciones: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     timestamps: false
