@@ -25,6 +25,8 @@ function FormCreacionFeeding() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
 
+  const [open, setOpen] = useState(false)
+
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
     setEnviando(true)
@@ -64,15 +66,16 @@ function FormCreacionFeeding() {
       setError(error.message || "No se pudo registrar la alimentacion")
     } finally {
       setEnviando(false)
+      setOpen(false)
     }
   }
 
   return (
-    <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
-          Agregar Alimentacion
+          Agregar alimentacion
         </button>
       </DialogTrigger>
 
@@ -80,9 +83,7 @@ function FormCreacionFeeding() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Alimentacion
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion de la alimentacion suministrada.
-        </DialogDescription>
+        
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -98,7 +99,7 @@ function FormCreacionFeeding() {
               required
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -109,7 +110,7 @@ function FormCreacionFeeding() {
               required
               value={hora}
               onChange={(e) => setHora(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -120,7 +121,7 @@ function FormCreacionFeeding() {
               required
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Nombre del responsable"
             />
           </div>
@@ -132,7 +133,7 @@ function FormCreacionFeeding() {
               required
               value={alimento}
               onChange={(e) => setAlimento(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Tipo de alimento"
             />
           </div>
@@ -145,18 +146,28 @@ function FormCreacionFeeding() {
               required
               value={cantidad}
               onChange={(e) => setCantidad(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Ej: 5.5"
             />
           </div>
+          <DialogDescription className="text-gray-500">
+          Ingresa la informacion de la alimentacion suministrada.
+        </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+           <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
             <button
               type="submit"
               disabled={enviando}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Registrar Alimentacion"}
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

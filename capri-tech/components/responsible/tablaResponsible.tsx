@@ -21,17 +21,17 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
     try {
       setCargando(true)
       setError("")
-      
+
       const limite = 10
       const offset = (pagina - 1) * limite
       const respuesta = await fetch(`http://localhost:3001/api/responsible/responsibleAll?limit=${limite}&offset=${offset}`)
       const datos = await respuesta.json()
       console.log("Respuesta RESPONSIBLE:", datos)
-      
+
       if (!respuesta.ok) {
         throw new Error(datos.message || "Error al cargar responsables")
       }
-      
+
       if (datos.success && datos.data) {
         setResponsables(datos.data.data || [])
         setTotalItems(datos.data.totalItems || 0)
@@ -66,6 +66,7 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
     (r.actividad || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (r.frecuencia || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (r.diaSemana || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+
   )
 
   return (
@@ -73,7 +74,7 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Responsables</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Responsables</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro de responsables vinculados al sistema</p>
 
           {headerExtra}
@@ -96,7 +97,8 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
                   <th className="p-3 text-left font-semibold text-sm">Tipo de Responsable</th>
                   <th className="p-3 text-left font-semibold text-sm">Actividad a Cargo</th>
                   <th className="p-3 text-left font-semibold text-sm">Frecuencia</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Dia de la Semana</th>
+                  <th className="p-3 text-left font-semibold text-sm ">Dia de la Semana</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
@@ -131,7 +133,19 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
                       <td className="p-3 text-sm text-gray-800 capitalize">{responsable.tipoResponsable}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{responsable.actividad}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{responsable.frecuencia}</td>
-                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.diaSemana}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">
+                        {Array.isArray(responsable.diaSemana)
+                          ? responsable.diaSemana.join(", ")
+                          : responsable.diaSemana}
+                      </td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${responsable.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
+                          {responsable.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}
@@ -148,22 +162,20 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
                 <button
                   onClick={() => irPagina(paginaActual - 1)}
                   disabled={paginaActual === 1}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    paginaActual === 1
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${paginaActual === 1
                       ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                       : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
+                    }`}
                 >
                   ← Anterior
                 </button>
                 <button
                   onClick={() => irPagina(paginaActual + 1)}
                   disabled={paginaActual === totalPaginas}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    paginaActual === totalPaginas
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${paginaActual === totalPaginas
                       ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                       : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
+                    }`}
                 >
                   Siguiente →
                 </button>

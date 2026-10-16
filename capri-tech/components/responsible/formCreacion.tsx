@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 import {
   Dialog,
@@ -20,11 +21,28 @@ function FormCreacionResponsibles() {
   const [nombre, setNombre] = useState("")
   const [tipoResponsable, setTipoResponsable] = useState("")
   const [documento, setDocumento] = useState("")
-  const [actividad, setActividad] = useState("")
   const [frecuencia, setFrecuencia] = useState("")
   const [diaSemana, setDiaSemana] = useState("")
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
+
+  const [open, setOpen] = useState(false)
+  const actividades = [
+    { value: "ordeño", label: "Ordeño" },
+    { value: "pesaje", label: "Pesaje" },
+    { value: "montas", label: "Montas" },
+    { value: "famacha", label: "Prueba de famacha" },
+    { value: "mastitis", label: "Prueba de mastitis" },
+    { value: "nacimientos", label: "Nacimientos" },
+    { value: "alimentacion", label: "Alimentacion" },
+    { value: "pastoreo", label: "Pastoreo" },
+    { value: "vacunacion", label: "Vacunacion" },
+    { value: "actividades_unidad", label: "Actividades de la unidad" },
+    { value: "administracion", label: "Administracion general" },
+  ]
+  const [actividadesSeleccionadas, setActividadesSeleccionadas] = useState<string[]>([])
+  const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+  const [diasSeleccionados, setDiasSeleccionados] = useState<string[]>([])
 
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
@@ -35,9 +53,9 @@ function FormCreacionResponsibles() {
       nombre: nombre,
       tipoResponsable: tipoResponsable,
       documento: parseInt(documento),
-      actividad: actividad,
+      actividad: actividadesSeleccionadas,
       frecuencia: frecuencia,
-      diaSemana: diaSemana,
+      diaSemana: diasSeleccionados,
     }
 
     try {
@@ -46,7 +64,7 @@ function FormCreacionResponsibles() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(nuevoResponsable),
+        body: JSON.stringify(nuevoResponsable)
       })
 
       const datos = await respuesta.json()
@@ -54,11 +72,14 @@ function FormCreacionResponsibles() {
 
       if (!respuesta.ok) {
         const mensajeError = datos.message || "Error al registrar el responsable"
-        const erroresDetalle = datos.errors ? datos.errors.map((e: any) => e.mensaje).join(", ") : ""
+        const erroresDetalle = datos.error
+          ? datos.error.map((e: any) => typeof e === "string" ? e : e.mensaje).join(", ")
+          : ""
         throw new Error(erroresDetalle || mensajeError)
       }
 
       alert("Responsable registrado correctamente")
+      setOpen(false)
       router.push("/dashboard/responsible")
 
     } catch (error: any) {
@@ -70,11 +91,11 @@ function FormCreacionResponsibles() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
-          Agregar Responsable
+          Agregar responsable
         </button>
       </DialogTrigger>
 
@@ -82,9 +103,6 @@ function FormCreacionResponsibles() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Responsables
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion del responsable.
-        </DialogDescription>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -100,7 +118,7 @@ function FormCreacionResponsibles() {
               required
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Nombre completo"
             />
           </div>
@@ -111,7 +129,7 @@ function FormCreacionResponsibles() {
               required
               value={tipoResponsable}
               onChange={(e) => setTipoResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="">Selecciona un tipo</option>
               <option value="aprendiz">Aprendiz</option>
@@ -130,32 +148,37 @@ function FormCreacionResponsibles() {
               required
               value={documento}
               onChange={(e) => setDocumento(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Número de documento"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Actividad a Cargo *</label>
-            <select
-              required
-              value={actividad}
-              onChange={(e) => setActividad(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+          <div className="w-full space-y-3">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Actividades a Cargo *</label>
+
+            <ToggleGroup
+              type="multiple"
+              value={actividadesSeleccionadas}
+              onValueChange={setActividadesSeleccionadas}
+              className="flex flex-wrap gap-2"
             >
-              <option value="">Selecciona una actividad</option>
-              <option value="ordeño">Ordeño</option>
-              <option value="pesaje">Pesaje</option>
-              <option value="montas">Montas</option>
-              <option value="famacha">Prueba de famacha</option>
-              <option value="mastitis">Prueba de mastitis</option>
-              <option value="nacimientos">Nacimientos</option>
-              <option value="alimentacion">Alimentacion</option>
-              <option value="pastoreo">Pastoreo</option>
-              <option value="vacunacion">Vacunacion</option>
-              <option value="actividades_unidad">Actividades de la unidad</option>
-              <option value="administracion">Administracion general</option>
-            </select>
+              {actividades.map((actividad) => (
+                <ToggleGroupItem
+                  key={actividad.value}
+                  value={actividad.value}
+                  aria-label={actividad.label}
+                  className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {actividad.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+
+            {actividadesSeleccionadas.length === 0 && (
+              <p className="text-sm text-destructive">
+                Selecciona al menos una actividad
+              </p>
+            )}
           </div>
 
           <div>
@@ -164,7 +187,7 @@ function FormCreacionResponsibles() {
               required
               value={frecuencia}
               onChange={(e) => setFrecuencia(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             >
               <option value="">Selecciona una frecuencia</option>
               <option value="Diaria">Diaria</option>
@@ -174,32 +197,52 @@ function FormCreacionResponsibles() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Dia de la Semana *</label>
-            <select
-              required
-              value={diaSemana}
-              onChange={(e) => setDiaSemana(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+          <div className="w-full space-y-3">
+            <label className="text-sm font-medium">Selecciona los días</label>
+
+            <ToggleGroup  
+              type="multiple"
+              value={diasSeleccionados}
+              onValueChange={setDiasSeleccionados}
+              className="flex flex-wrap gap-2"
             >
-              <option value="">Selecciona un dia</option>
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miercoles">Miercoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sabado">Sabado</option>
-              <option value="Domingo">Domingo</option>
-            </select>
+              {diasSemana.map((dia) => (
+                <ToggleGroupItem
+                  key={dia}
+                  value={dia}
+                  aria-label={dia}
+                  className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {dia}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+
+            {diasSeleccionados.length === 0 && (
+              <p className="text-sm text-destructive">
+                Selecciona al menos un día
+              </p>
+            )}
           </div>
+          
+          <DialogDescription className="text-gray-500">
+            Ingresa la informacion del responsable.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
+            <button
               type="submit"
               disabled={enviando}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Registrar Responsable"}
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

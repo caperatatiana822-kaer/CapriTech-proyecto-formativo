@@ -25,6 +25,8 @@ function FormCreacionMortality() {
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
 
+  const [open, setOpen] = useState(false)
+
   useEffect(() => {
     async function cargarAnimales() {
       try {
@@ -112,13 +114,14 @@ function FormCreacionMortality() {
       setError(error.message || "No se pudo registrar la mortalidad")
     } finally {
       setEnviando(false)
+      setOpen(false)
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Mortalidad
         </button>
@@ -128,9 +131,6 @@ function FormCreacionMortality() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Mortalidad
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion del registro de mortalidad.
-        </DialogDescription>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -145,7 +145,7 @@ function FormCreacionMortality() {
               required
               value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -171,7 +171,7 @@ function FormCreacionMortality() {
               required
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -182,18 +182,28 @@ function FormCreacionMortality() {
               required
               value={diagnostico}
               onChange={(e) => setDiagnostico(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Ej: Neumonia, Parasitosis, etc."
             />
           </div>
+          <DialogDescription className="text-gray-500">
+          Ingresa la informacion del registro de mortalidad.
+        </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+             <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
             <button
               type="submit"
-              disabled={enviando || cargandoAnimales}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              disabled={enviando}
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Registrar Mortalidad"}
+              {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>
         </form>

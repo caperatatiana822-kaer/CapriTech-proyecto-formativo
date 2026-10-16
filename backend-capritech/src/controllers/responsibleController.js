@@ -20,7 +20,7 @@ const getAllResponsibles = async (req, res) => {
             totalPages: result.totalPages,
             currentPage: result.currentPage
         };
-        
+
         var response = new Response(true, "Responsables consultados exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
@@ -71,7 +71,7 @@ const getResponsibleById = async (req, res) => {
 
 const createResponsible = async (req, res) => {
     try {
-        const { nombre, documento, tipoResponsable, actividad, frecuencia,  } = req.body;
+        const { nombre, documento, tipoResponsable, actividad, frecuencia, diaSemana } = req.body;
 
         var errores = [];
 
@@ -84,11 +84,15 @@ const createResponsible = async (req, res) => {
         if (!tipoResponsable || String(tipoResponsable).trim() === "") {
             errores.push({ mensaje: "El tipo de responsable es obligatorio" });
         }
-        if (!actividad || String(actividad).trim() === "") {
+        if (!actividad || (Array.isArray(actividad) && actividad.length === 0) ||
+            (!Array.isArray(actividad) && String(actividad).trim() === "")) {
             errores.push({ mensaje: "La actividad es obligatoria" });
         }
         if (!frecuencia || String(frecuencia).trim() === "") {
             errores.push({ mensaje: "La frecuencia es obligatoria" });
+        }
+        if (!diaSemana || (Array.isArray(diaSemana) && diaSemana.length === 0)) {
+            errores.push({ mensaje: "Debe seleccionar al menos un día" });
         }
 
         if (errores.length > 0) {
@@ -102,8 +106,9 @@ const createResponsible = async (req, res) => {
             nombre: nombre,
             documento: parseInt(documento),
             tipoResponsable: tipoResponsable,
-            actividad: actividad,
+            actividad: Array.isArray(actividad) ? actividad.join(", ") : actividad,
             frecuencia: frecuencia,
+            diaSemana: Array.isArray(diaSemana) ? diaSemana.join(", ") : diaSemana,
         };
 
         console.log("Datos a guardar RESPONSIBLE:", data);

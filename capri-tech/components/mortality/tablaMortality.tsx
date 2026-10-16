@@ -80,7 +80,7 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Mortalidad</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Mortalidad</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro de mortalidad de los caprinos</p>
 
           {headerExtra}

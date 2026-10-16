@@ -20,16 +20,25 @@ const Responsible = db.define('Responsible', {
         allowNull: false
     },
     actividad: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
     frecuencia: {
         type: DataTypes.STRING,
         allowNull: false
     },
+    diaSemana: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    }
 }, {
     tableName: 'responsibles',
-    timestamps: true
+    timestamps: false
 });
 
 module.exports = Responsible;
