@@ -68,6 +68,7 @@ function FormCreacionProduction() {
       }
 
       setOpen(false)
+      window.dispatchEvent(new Event("production:created"))
       router.push("/dashboard/production")
     } catch (error) {
       console.error("Error al registrar la producción:", error)

@@ -25,6 +25,7 @@ function FormCreationWeight() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     async function cargarAnimales() {
@@ -118,9 +119,9 @@ function FormCreationWeight() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Pesaje
         </button>
@@ -147,7 +148,7 @@ function FormCreationWeight() {
               required
               value={chapeta}
               onChange={(e) => setChapeta(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               disabled={cargandoAnimales}
             >
               <option value="">
@@ -173,7 +174,7 @@ function FormCreationWeight() {
               required
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
           </div>
 
@@ -187,7 +188,7 @@ function FormCreationWeight() {
                 required
                 value={peso}
                 onChange={(e) => setPeso(e.target.value)}
-                className="w-full border border-[#d7ccc8] rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+                className="w-full border border-gray-300 rounded-lg p-3 pr-12 focus:outline-none focus:ring-2 focus:ring-gray-200"
                 placeholder="Ej: 25.5"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500">
@@ -203,16 +204,23 @@ function FormCreationWeight() {
               required
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Nombre del responsable"
             />
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+            >
+              Cancelar
+            </button>
+            <button
               type="submit"
               disabled={enviando || cargandoAnimales}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Registrar Pesaje"}
             </button>

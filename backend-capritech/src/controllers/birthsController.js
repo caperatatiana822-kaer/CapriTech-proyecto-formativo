@@ -62,57 +62,45 @@ const getBirthsById = async (req, res) => {
 
 const createBirths = async (req, res) => {
     try {
-    const {
-        chapeta,
-        nombreAnimal,
-        fechaNacimiento,
-        raza,
-        sexo,
-        pesoNacer,
-        fichaMadre,
-        fichaPadre
-    } = req.body;
+        const { idMonta, fechaParto, razas, nacidosVivos, nacidosMuertos, machos, hembras, responsable } = req.body;
 
-    let errores = [];
+        let errores = [];
+        if (!idMonta) errores.push({ mensaje: "La monta es obligatoria" });
+        if (!fechaParto) errores.push({ mensaje: "La fecha de parto es obligatoria" });
+        if (!razas) errores.push({ mensaje: "La raza es obligatoria" });
+        if (nacidosVivos === undefined) errores.push({ mensaje: "Los nacidos vivos son obligatorios" });
+        if (nacidosMuertos === undefined) errores.push({ mensaje: "Los nacidos muertos son obligatorios" });
+        if (machos === undefined) errores.push({ mensaje: "La cantidad de machos es obligatoria" });
+        if (hembras === undefined) errores.push({ mensaje: "La cantidad de hembras es obligatoria" });
+        if (!responsable) errores.push({ mensaje: "El responsable es obligatorio" });
 
-    if (!chapeta) errores.push({ mensaje: "La chapeta es obligatoria" });
-    if (!nombreAnimal) errores.push({ mensaje: "El nombre del animal es obligatorio" });
-    if (!fechaNacimiento) errores.push({ mensaje: "La fecha de nacimiento es obligatoria" });
-    if (!raza) errores.push({ mensaje: "La raza es obligatoria" });
-    if (!sexo) errores.push({ mensaje: "El sexo es obligatorio" });
-    if (!pesoNacer) errores.push({ mensaje: "El peso al nacer es obligatorio" });
-    if (!fichaMadre) errores.push({ mensaje: "La ficha de la madre es obligatoria" });
-    if (!fichaPadre) errores.push({ mensaje: "La ficha del padre es obligatoria" });
+        if (errores.length > 0) {
+            const response = new Response(false, "Error en la creación del parto", null, errores);
+            res.status(400);
+            res.json(response.json);
+            return;
+        }
 
-    if (errores.length > 0) {
-        const response = new Response(false, "Error en la creacion del nacimiento", null, errores);
-        res.status(400);
+        const data = {
+            idMonta: parseInt(idMonta),
+            fechaParto,
+            razas,
+            nacidosVivos: parseInt(nacidosVivos),
+            nacidosMuertos: parseInt(nacidosMuertos),
+            machos: parseInt(machos),
+            hembras: parseInt(hembras),
+            responsable
+        };
+        
+        const births = await birthsCreate(data);
+        var response = new Response(true, "Parto registrado exitosamente", births, null);
+        res.status(201);
         res.json(response.json);
-        return;
-    }
-
-    data = {
-        chapeta: parseInt(chapeta),
-        nombre: nombreAnimal,
-        fechaNacimiento: fechaNacimiento,
-        raza: raza,
-        sexo: sexo,
-        pesoNacimiento: parseFloat(pesoNacer),
-        chapetaMadre: parseInt(fichaMadre),
-        chapetaPadre: parseInt(fichaPadre)
-    };
-    
-    const births = await birthsCreate(data);
-    var response = new Response(true, "Nacimiento creado exitosamente", births, null);
-    res.status(201);
-    res.json(response.json);
-} catch (error) {
-    console.log(error);
-    var response = new Response(false, "error en la creacion de nacimiento", null, [
-        error.message,
-    ])
-    res.status(500);
-    res.json(response.json);
+    } catch (error) {
+        console.log(error);
+        var response = new Response(false, "error en la creación de parto", null, [error.message])
+        res.status(500);
+        res.json(response.json);
     }
 };
 

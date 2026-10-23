@@ -47,7 +47,7 @@ export function AppSidebar() {
             <SidebarMenuItem className="mb-1">
               <SidebarMenuButton asChild tooltip="Inventario" className={pathname === "/dashboard/livestock" ? "rounded-lg px-3 py-2 font-bold !bg-[#E8D9C5] !text-[#3E2723]" : "rounded-lg px-3 py-2 text-[#000000] hover:bg-[#E8D9C5] hover:text-[#3E2723]"}>
                 <a href="/dashboard/livestock" className="font-semibold flex items-center gap-2">
-                  <PawPrint className="h-4 w-4 !text-[#3E2723]" /> Inventario
+                  <PawPrint className="h-4 w-4 !text-[#3E2723]" /> Caprinos
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>

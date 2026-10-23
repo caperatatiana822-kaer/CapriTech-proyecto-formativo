@@ -72,7 +72,8 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
   const registrosFiltrados = registros.filter((r: any) =>
     (r.chapeta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (r.fecha || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (r.diagnosticopresuntivo || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (r.diagnosticopresuntivo || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof r.active === "boolean" && (r.active ? "activo" : "inactivo").includes(busqueda.toLowerCase()))
   )
 
   return (
@@ -100,14 +101,15 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
                 <tr className="bg-[#844243] text-white">
                   <th className="p-3 text-left font-semibold text-sm rounded-l-lg">Chapeta</th>
                   <th className="p-3 text-left font-semibold text-sm">Fecha</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Diagnostico Presuntivo</th>
+                  <th className="p-3 text-left font-semibold text-sm">Diagnostico Presuntivo</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={3} className="p-6 text-center text-gray-500">
+                    <td colSpan={4} className="p-6 text-center text-gray-500">
                       <div className="flex justify-center items-center space-x-2">
                         <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -121,7 +123,7 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && !error && registros.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="p-6 text-center text-gray-500">
+                    <td colSpan={4} className="p-6 text-center text-gray-500">
                       Todavia no hay mortalidad registrada.
                     </td>
                   </tr>
@@ -133,6 +135,14 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
                       <td className="p-3 text-sm text-gray-800 font-medium">{registro.chapeta}</td>
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(registro.fecha)}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{registro.diagnosticopresuntivo}</td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${registro.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
+                          {registro.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}

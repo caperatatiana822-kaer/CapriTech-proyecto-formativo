@@ -8,7 +8,8 @@ const fs = require('fs');
 const Response = require("../functions/response");
 const { sendEmail } = require("../services/emailService");
 const User = require("../models/userModel");
-const {getEmailUser} = require('../services/userService')
+const { getEmailUser, updateEmailUser, getTokenUser } = require('../services/userService');
+
 
 dotenv.config();
 const JWT_KEY_SECRET = process.env.JWT_KEY_SECRET || "3247890sihsdfg2345sdfg";
@@ -32,26 +33,20 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user =  await getEmailUser (email)
+    const user = await User.findOne({ where: { email: email } });
+
+    if (!user) {
+      return res.status(401).json(new Response(false, "Error en el login", null, ["Usuario o contraseña incorrectos"]).json);
+    }
 
     if (!user.active) {
-      const response = new Response(
-        false,
-        "Error en el login",
-        "El usuario está inactivo",
-      );
-      return res.status(403).json(response);
+      return res.status(403).json(new Response(false, "Error en el login", null, ["El usuario está inactivo"]).json);
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.password);
 
     if (!passwordCorrect) {
-      const response = new Response(
-        false,
-        "Error en el login",
-        "Usuario o contraseña incorrectos",
-      );
-      return res.status(401).json(response);
+      return res.status(401).json(new Response(false, "Error en el login", null, ["Usuario o contraseña incorrectos"]).json);
     }
 
     const token = jwt.sign(
@@ -61,7 +56,8 @@ const login = async (req, res) => {
         role: user.role,
       },
       JWT_KEY_SECRET,
-      {expiresIn: "2h",},);
+      { expiresIn: "2h" }
+    );
 
     const response = new Response(true, "Login exitoso", {
       token,
@@ -73,68 +69,63 @@ const login = async (req, res) => {
       },
     });
 
-    return res.status(200).json(response);
+    return res.status(200).json(response.json);
   } catch (error) {
     console.error("Error en login:", error);
-    const response = new Response(
-      false,
-      "Error interno en el login",
-      error.message,
-    );
-    return res.status(500).json(response);
+    return res.status(500).json(new Response(false, "Error interno en el login", null, [error.message]).json);
   }
 };
 
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const response = new Response(
+    
+    const successResponse = new Response(
       true,
-      "Solicitud procesada",
-      "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña.",
+      "Si el correo está registrado, recibirás un enlace para restablecer tu contraseña."
     );
-    if (!email) {
-      return res.status(200).json(response);
-    }
+
+    if (!email) return res.status(200).json(successResponse.json);
+
     const user = await User.findOne({ where: { email: email } });
+    if (!user) return res.status(200).json(successResponse.json);
 
-    if (!user) {
-      return res.status(200).json(response);
+    const resetToken = Buffer.from(user.uuid).toString('base64');
+    let data = {
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: new Date(Date.now() + 3600000) 
     }
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
-    console.log('Token generado:', resetToken);
-    console.log('Usuario:', user.email);
+    await updateEmailUser(email, data);
 
-    await User.update(
-      {
-        resetPasswordToken: resetToken,
-        resetPasswordExpires: resetTokenExpires
-      },
-      {
-        where: { id: user.id }
+
+    const routeJson = path.join(process.cwd(), 'public', 'templates', 'forgotPassword.json');
+    const dataTemplate = JSON.parse(fs.readFileSync(routeJson, 'utf8'));
+
+    let htmlModific = fs.readFileSync(dataTemplate.html, 'utf8');
+
+    for (const key in dataTemplate.params) {
+      if (key === "@link") {
+        // htmlModific = htmlModific.replace(`{{${key}}}`, dataTemplate.params[key] + resetToken);
+        htmlModific = htmlModific.split(`{{${key}}}`).join(dataTemplate.params[key] + resetToken);
+      } else {
+        // htmlModific = htmlModific.replace(`{{${key}}}`, dataTemplate.params[key]);
+        htmlModific = htmlModific.split(`{{${key}}}`).join(dataTemplate.params[key]);
       }
-    );
+    }
 
-    const userVerificado = await User.findOne({ where: { id: user.id } });
-
-    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
-
-    let htmlContent = loadTemplate('forgotPassword', {
-      '@name': user.name || user.userName || 'Usuario',
-      '@link': resetLink
-    });
+    // htmlModific = htmlModific.replace(`{{@name}}`, user.name || "Usuario");
+    htmlModific = htmlModific.split(`{{@name}}`).join(user.name || "Usuario");
 
     await sendEmail(
       user.email,
-      "Recuperación de contraseña - CapriTech",
-      `Token: ${resetToken}`,
-      htmlContent
+      dataTemplate.subject || "Recuperación de contraseña - CapriTech",
+      `Tu enlace: ${dataTemplate.params["@link"]}${resetToken}`,
+      htmlModific
     );
 
     console.log('Correo enviado a:', user.email);
 
-    return res.status(200).json(response);
+    return res.status(200).json(successResponse.json);
   } catch (error) {
     console.error("Error en forgotPassword:", error);
     return res.status(500).json({
@@ -187,129 +178,61 @@ const resetPassword = async (req, res) => {
   try {
     const { token, newPassword, confirmPassword } = req.body;
 
-    console.log('RESET PASSWORD');
-    console.log('Token recibido:', token);
+    // 1. Validar los datos que llegan
+    if (!token) return enviarError(res, "Token de recuperación requerido");
+    if (!newPassword) return enviarError(res, "La nueva contraseña es obligatoria");
+    if (!confirmPassword) return enviarError(res, "Debe confirmar la nueva contraseña");
+    if (newPassword.length < 6) return enviarError(res, "La contraseña debe tener mínimo 6 caracteres");
+    if (newPassword !== confirmPassword) return enviarError(res, "Las contraseñas no coinciden");
 
-    if (!token) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "Token de recuperación requerido",
-      });
+    const user = await getTokenUser(token);
+    if (!user || !user.resetPasswordExpires) {
+      return enviarError(res, "El token de recuperación no es válido");
     }
-
-    const allUsers = await User.findAll({
-      attributes: ['id', 'email', 'resetPasswordToken', 'resetPasswordExpires']
-    });
-    console.log('👥 Usuarios en BD:');
-    allUsers.forEach(u => {
-      console.log(`  - ${u.email}: Token=${u.resetPasswordToken ? 'SÍ' : 'NO'}`);
-    });
-
-    const user = await User.findOne({
-      where: {
-        resetPasswordToken: token
-      }
-    });
-
-    console.log('Usuario encontrado por token:', user ? 'Sí' : 'No');
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "El token de recuperación no es válido",
-      });
-    }
-
-    console.log('Token expira:', user.resetPasswordExpires);
-    console.log('Ahora:', new Date());
-
-    if (!user.resetPasswordExpires) {
-      console.log('No tiene fecha de expiración');
-      return res.status(400).json({
-        success: false,
-        mensaje: "El token de recuperación no es válido",
-      });
-    }
-
     if (new Date() > new Date(user.resetPasswordExpires)) {
-      console.log('Token EXPIRADO');
-      return res.status(400).json({
-        success: false,
-        mensaje: "El token de recuperación ha expirado",
-      });
+      return enviarError(res, "El token de recuperación ha expirado");
     }
-
-    console.log('Token VÁLIDO');
-
-    if (!newPassword) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "La nueva contraseña es obligatoria",
-      });
-    }
-
-    if (!confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "Debe confirmar la nueva contraseña",
-      });
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "La contraseña debe tener mínimo 6 caracteres",
-      });
-    }
-
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        mensaje: "Las contraseñas no coinciden",
-      });
-    }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
+
     await User.update(
       {
         password: hashedPassword,
         resetPasswordToken: null,
-        resetPasswordExpires: null
+        resetPasswordExpires: null,
       },
-      {
-        where: { id: user.id }
-      }
+      { where: { id: user.id } }
     );
 
-    console.log('Contraseña actualizada para:', user.email);
+    const userAgent = req.headers['user-agent'] || '';
+    let device = 'Dispositivo desconocido';
 
-    const now = new Date();
-    const dateTime = now.toLocaleString('es-ES', {
+    if (userAgent.includes('Chrome')) device = 'Chrome en Windows';
+    else if (userAgent.includes('Firefox')) device = 'Firefox en Windows';
+    else if (userAgent.includes('Safari')) device = 'Safari en macOS';
+
+    const dateTime = new Date().toLocaleString('es-ES', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
-    let htmlContent = loadTemplate('passwordUpdate', {
-      '@name': user.name || user.userName || 'Usuario',
+
+    const htmlContent = loadTemplate('passwordUpdate', {
+      '@name': user.name || user.username || 'Usuario',
       '@dateTime': dateTime,
-      '@device': req.headers['user-agent']?.includes('Chrome') ? 'Chrome en Windows' : 
-                req.headers['user-agent']?.includes('Firefox') ? 'Firefox en Windows' : 
-                req.headers['user-agent']?.includes('Safari') ? 'Safari en macOS' : 
-                'Dispositivo desconocido',
-      '@location': req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Colombia'
+      '@device': device,
+      '@location': req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Colombia',
     });
-   
+
     await sendEmail(
       user.email,
       "Contraseña actualizada - CapriTech",
       "Tu contraseña ha sido actualizada correctamente.",
       htmlContent
     );
-    console.log('Correo de confirmación enviado');
+
     return res.status(200).json({
       success: true,
       mensaje: "Contraseña restablecida correctamente",

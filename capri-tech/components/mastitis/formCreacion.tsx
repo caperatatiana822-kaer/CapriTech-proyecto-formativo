@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
 
 import {
+  DialogClose,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,9 +25,11 @@ function FormCreationMastitis() {
   const [resultado, setResultado] = useState("")
   const [observaciones, setObservaciones] = useState("")
   const [responsable, setResponsable] = useState("")
+  const [active, setActive] = useState(true)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
+  const [cargandoResponsables, setCargandoResponsables] = useState(true)
 
   useEffect(() => {
     async function cargarAnimales() {
@@ -68,17 +71,17 @@ function FormCreationMastitis() {
         const res = await fetch("http://localhost:3001/api/responsible/responsibleAll")
         const json = await res.json()
 
-        const datos = Array.isArray(json?.data?.data)
-          ? json.data.data
-          : Array.isArray(json?.data)
-            ? json.data
-            : Array.isArray(json)
-              ? json
-              : []
+        if (!res.ok) {
+          throw new Error(json.message || "Error al cargar responsables")
+        }
 
-        setResponsables(datos)
+        const datos = json?.data?.data ?? json?.data ?? json
+        setResponsables(Array.isArray(datos) ? datos : [])
       } catch (e) {
         console.error("Error cargando responsables:", e)
+        setError("No se pudieron cargar los responsables")
+      } finally {
+        setCargandoResponsables(false)
       }
     }
     cargarResponsables()
@@ -115,6 +118,7 @@ function FormCreationMastitis() {
       resultado: resultado,
       observaciones: observaciones,
       responsable: responsable,
+      active,
     }
 
     try {
@@ -149,7 +153,7 @@ function FormCreationMastitis() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-6 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Mastitis
         </button>
@@ -231,8 +235,11 @@ function FormCreationMastitis() {
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+              disabled={cargandoResponsables}
             >
-              <option value="">Selecciona un responsable</option>
+              <option value="">
+                {cargandoResponsables ? "Cargando responsables..." : "Selecciona un responsable"}
+              </option>
               {responsables.map((r: any) => (
                 <option key={r.id} value={r.nombre}>
                   {r.nombre}
@@ -244,6 +251,19 @@ function FormCreationMastitis() {
                 No hay responsables registrados en el sistema.
               </p>
             )}
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Estado *</label>
+            <select
+              required
+              value={active ? "true" : "false"}
+              onChange={(e) => setActive(e.target.value === "true")}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
+            >
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
           </div>
 
           <div className="md:col-span-2">
@@ -274,10 +294,18 @@ function FormCreationMastitis() {
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
+              >
+                Cancelar
+              </button>
+            </DialogClose>
             <button
               type="submit"
-              disabled={enviando || cargandoAnimales}
-              className="bg-[#844243] hover:bg-[#6E3536] text-white font-semibold px-8 py-3 rounded-lg shadow-md transition disabled:opacity-50"
+              disabled={enviando || cargandoAnimales || cargandoResponsables}
+              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Guardando..." : "Registrar mastitis"}
             </button>

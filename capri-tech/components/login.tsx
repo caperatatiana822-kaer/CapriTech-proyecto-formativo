@@ -9,32 +9,34 @@ export default function LoginModal(props: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const [eye, setEye] = useState(<EyeClosed />)
-  const [typePassword, setTypePassword] = useState("password")
+  const [typePassword, setTypePassword] = useState("password");
+  const [eyeIcon, setEyeIcon] = useState(<EyeClosed size={20} />);
 
   const handleLogin = async () => {
-    const credenciales = {
-      email: email,
-      password: password,
-    };
+    if (!email || !password) {
+      alert("Por favor ingresa tu correo y contraseña");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:3001/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credenciales),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
       console.log("Respuesta del servidor:", data);
-      if (data.success) {
-        let token = data.data.token;
+
+      const success = data.success !== undefined ? data.success : data.json?.success;
+      const token = data.data?.token || data.json?.data?.token;
+
+      if (success && token) {
         localStorage.setItem("token", token);
         router.push("/dashboard");
       } else {
-        alert(data.message || "Error al iniciar sesión");
+        const msg = data.message || data.json?.message || "Credenciales incorrectas";
+        alert(Array.isArray(msg) ? msg[0] : msg);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -51,20 +53,21 @@ export default function LoginModal(props: any) {
     try {
       const response = await fetch("http://localhost:3001/api/auth/forgot-password", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: email }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
       console.log("Respuesta recuperar:", data);
 
-      if (data.success) {
-        alert(data.message || "Revisa tu correo para recuperar la contraseña");
+      const success = data.success !== undefined ? data.success : data.json?.success;
+      const message = data.message || data.json?.message;
+
+      if (success) {
+        alert(message || "Revisa tu correo para recuperar la contraseña");
         setModo("login");
       } else {
-        alert(data.message || "Error al recuperar la contraseña");
+        alert(message || "Error al recuperar la contraseña");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -72,15 +75,15 @@ export default function LoginModal(props: any) {
     }
   };
 
-  const MostrarPassword = () => {
-    if (typePassword == "password") {
+    const MostrarPassword = () => {
+    if (typePassword === "password") {
       setTypePassword("text");
-      setEye(<Eye />)
+      setEyeIcon(<Eye size={20} />);
     } else {
       setTypePassword("password");
-      setEye(<EyeClosed />)
+      setEyeIcon(<EyeClosed size={20} />);
     }
-  }
+  };
   return (
     <>
       <button

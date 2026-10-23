@@ -15,24 +15,8 @@ const Mating = db.define('Mating', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    nombreMacho: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    razaMacho: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     chapetaMacho: {
         type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    nombreHembra: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    razaHembra: {
-        type: DataTypes.STRING,
         allowNull: false
     },
     chapetaHembra: {
@@ -41,6 +25,10 @@ const Mating = db.define('Mating', {
     },
     posibleFechaParto: {
         type: DataTypes.DATE,
+        allowNull: false
+    },
+    responsable: {             
+        type: DataTypes.STRING,
         allowNull: false
     }
 }, {

@@ -73,7 +73,7 @@ const getVaccinationById = async (req, res) => {
 
 const createVaccination = async (req, res) => {
     try {
-        const { chapeta, fecha, vacuna, dosis, responsable } = req.body;
+        const { chapeta, fecha, vacuna, dosis, responsable, active = true } = req.body;
 
         let errores = [];
 
@@ -92,6 +92,9 @@ const createVaccination = async (req, res) => {
         if (!responsable || String(responsable).trim() === "") {
             errores.push({ mensaje: "El responsable es obligatorio" });
         }
+        if (typeof active !== "boolean") {
+            errores.push({ mensaje: "El estado debe ser Activo o Inactivo" });
+        }
 
         if (errores.length > 0) {
             const response = new Response(false, "Error en la creacion de la vacunacion", null, errores);
@@ -105,7 +108,8 @@ const createVaccination = async (req, res) => {
             fecha: fecha,
             vacuna: vacuna,
             dosis: dosis,
-            responsable: responsable
+            responsable: responsable,
+            active
         };
 
         console.log("Datos a guardar VACCINATION:", data);

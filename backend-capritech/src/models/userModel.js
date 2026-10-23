@@ -18,7 +18,7 @@ const User = db.define('User', {
     },
     salt: {
         type: DataTypes.STRING,
-        max: 50,
+        max: 60,
         allowNull: false
     },
     password: {
@@ -57,7 +57,7 @@ const User = db.define('User', {
     resetPasswordExpires: {
       type: DataTypes.DATE,
       allowNull: true
-    },
+    }
 }, {
     tableName: 'users',
     timestamps: true

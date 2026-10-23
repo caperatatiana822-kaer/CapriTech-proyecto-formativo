@@ -71,6 +71,7 @@ function FormCreacionLivestock() {
 
       limpiarFormulario()
       setOpen(false)
+      window.dispatchEvent(new Event("livestock:created"))
     } catch (error) {
       console.error("Error al registrar el animal:", error)
       alert("No se pudo registrar el animal. Intenta de nuevo.")

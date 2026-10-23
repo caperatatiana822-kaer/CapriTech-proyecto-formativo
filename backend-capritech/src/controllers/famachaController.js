@@ -72,7 +72,7 @@ const getFamachaById = async (req, res) => {
 
 const createFamacha = async (req, res) => {
     try {
-        const { chapeta, responsable, resultado, observaciones } = req.body;
+        const { chapeta, responsable, resultado, observaciones, active = true } = req.body;
         const errores = [];
 
         if (!chapeta || String(chapeta).trim() === "") {
@@ -83,6 +83,9 @@ const createFamacha = async (req, res) => {
         }
         if (!resultado || String(resultado).trim() === "") {
             errores.push({ mensaje: "El resultado es obligatorio" });
+        }
+        if (typeof active !== "boolean") {
+            errores.push({ mensaje: "El estado debe ser Activo o Inactivo" });
         }
 
         if (errores.length > 0) {
@@ -97,7 +100,8 @@ const createFamacha = async (req, res) => {
             chapeta: parseInt(chapeta),
             responsable: responsable,
             resultado: resultado,
-            observaciones: observaciones || null
+            observaciones: observaciones || null,
+            active
         };
 
         console.log("Datos a guardar FAMACHA:", data);

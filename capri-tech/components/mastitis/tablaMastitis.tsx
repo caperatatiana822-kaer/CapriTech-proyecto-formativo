@@ -74,7 +74,8 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
     (c.fecha || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (c.resultado || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (c.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (c.observaciones || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (c.observaciones || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof c.active === "boolean" && (c.active ? "activo" : "inactivo").includes(busqueda.toLowerCase()))
   )
 
   return (
@@ -104,14 +105,15 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Fecha</th>
                   <th className="p-3 text-left font-semibold text-sm">Resultado</th>
                   <th className="p-3 text-left font-semibold text-sm">Responsable</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Observaciones</th>
+                  <th className="p-3 text-left font-semibold text-sm">Observaciones</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
                       <div className="flex justify-center items-center space-x-2">
                         <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -125,7 +127,7 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && !error && casos.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
                       Todavia no hay casos de mastitis registrados.
                     </td>
                   </tr>
@@ -148,6 +150,14 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
                       </td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{caso.responsable}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{caso.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${caso.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
+                          {caso.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}

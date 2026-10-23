@@ -1,194 +1,228 @@
-const { 
-    userCreate, 
-    userGetById, 
-    usuarioDelete, 
-    userUpdate, 
-    getAllUsers: getAllUsersService 
-} = require('../services/userService');
+const {
+    createUserService,
+    getAllUsers: getAllUsersService,
+    getUserById: getUserByIdService,
+    userUpdate: serviceUpdateUser,
+    deleteIdUsers: deleteUserService
+} = require("../services/userService");
+
 const Response = require("../functions/response");
-const bcrypt = require('bcrypt');
+const path = require("path");
+const fs = require("fs");
+const { sendEmail } = require("../services/emailService");
+const bcrypt = require("bcrypt");
+
 
 const getAllUsers = async (req, res) => {
     try {
-        const queryLimit = req.query.limit;
-        const queryOffset = req.query.offset; 
-        const limit = queryLimit ? Number(queryLimit) : 10;
-        const offset = queryOffset ? Number(queryOffset) : 0;
+        const limit = Number(req.query.limit) || 10;
+        const page = Number(req.query.page) || 1;
+        const offset = (page - 1) * limit;
 
         const result = await getAllUsersService(limit, offset);
-        const responseData = {
+
+        return res.status(200).json({
+            success: true,
+            message: "Usuarios encontrados",
             data: result.data,
-            totalItems: result.totalItems,
-            totalPages: result.totalPages,
-            currentPage: result.currentPage
-        };
-        
-        var response = new Response(true, "Usuarios consultados exitosamente", responseData, null);
-        res.status(200);
-        res.json(response.json);
+            pagination: {
+                page: result.currentPage,
+                limit: limit,
+                total: result.totalItems,
+                totalPages: result.totalPages
+            },
+            error: null
+        });
+
     } catch (error) {
-        console.log(error);
-        var response = new Response(false, "error al consultar todos los usuarios", null, [
-            error.message,
-        ]);
-        res.status(500);
-        res.json(response.json);
+        console.error("Error al obtener los usuarios:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error al obtener los usuarios",
+            data: null,
+            error: error.message
+        });
     }
 };
+
 
 const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        var errores = [];
-        if (!id || String(id).trim() === "") {
-            errores.push({ mensaje: "El ID es obligatorio" });
-        }
-        if (errores.length > 0) {
-            var response = new Response(false, "Error al consultar el usuario", null, errores);
-            res.status(400);
-            res.json(response.json);
-            return;
-        }
-        const user = await userGetById(id);
+
+        const user = await getUserByIdService(id);
+
         if (!user) {
-            var response = new Response(false, "Usuario no encontrado", null, [
-                { mensaje: "No se encontro un usuario con el ID proporcionado" }
-            ]);
-            res.status(404);
-            res.json(response.json);
-            return;
+            return res.status(404).json({
+                success: false,
+                message: "Usuario no encontrado",
+                data: null,
+                error: null
+            });
         }
-        var response = new Response(true, "Usuario consultado exitosamente", user, null);
-        res.status(200);
-        res.json(response.json);
+
+        return res.status(200).json({
+            success: true,
+            message: "Registro encontrado",
+            data: user,
+            error: null
+        });
+
     } catch (error) {
-        console.log(error);
-        var response = new Response(false, "error en la consulta de usuario", null, [
-            error.message,
-        ]);
-        res.status(500);
-        res.json(response.json);
+        console.error("Error al obtener el usuario:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error al obtener el usuario",
+            data: null,
+            error: error.message
+        });
     }
 };
+
 
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, documentId, postJob } = req.body;
+        const {
+            name,
+            email,
+            password,
+            documento,
+            postJob,
+            verifyEmail,
+            active
+        } = req.body;
 
-        var errores = [];
-
-        if (!name || String(name).trim() === "") {
-            errores.push({ mensaje: "El nombre es obligatorio" });
-        }
-        if (!email || String(email).trim() === "") {
-            errores.push({ mensaje: "El email es obligatorio" });
-        }
-        if (!password || String(password).trim() === "") {
-            errores.push({ mensaje: "La contraseña es obligatoria" });
-        }
-        if (!documentId || String(documentId).trim() === "") {
-            errores.push({ mensaje: "El documento es obligatorio" });
-        }
-        if (!postJob || String(postJob).trim() === "") {
-            errores.push({ mensaje: "El cargo es obligatorio" });
-        }
-
-        if (errores.length > 0) {
-            var response = new Response(false, "Error en la creacion del usuario", null, errores);
-            res.status(400);
-            res.json(response.json);
-            return;
+        if (
+            !name ||
+            !email ||
+            !password ||
+            !documento ||
+            !postJob
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Todos los campos son obligatorios",
+                data: null,
+                error: null
+            });
         }
 
-        const salt =bcrypt.genSaltSync(10);
-        const hashed_password = bcrypt.hashSync(password, salt)
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(password, salt);
 
         const data = {
-            name: name,
-            email: email,
-            password: hashed_password,
-            salt, 
-            documentId: documentId,
-            postJob: postJob,
-            verifyEmail: false,
-            active: false
+            name,
+            email,
+            password: hashedPassword,
+            salt,
+            documento,
+            postJob,
+            verifyEmail: verifyEmail ?? false,
+            active: active ?? false
         };
 
-        console.log("Datos a guardar USER:", data);
-        const user = await userCreate(data);
-        var response = new Response(true, "Usuario creado exitosamente", user, null);
-        res.status(201);
-        res.json(response.json);
+        const newUser = await createUserService(data);
+
+        return res.status(201).json({
+            success: true,
+            message: "Usuario creado exitosamente",
+            data: newUser,
+            error: null
+        });
+
     } catch (error) {
-        console.log(error);
-        var response = new Response(false, "error en la creacion de usuario", null, [
-            error.message,
-        ]);
-        res.status(500);
-        res.json(response.json);
+        console.error("Error al crear el usuario:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error al crear el usuario",
+            data: null,
+            error: error.message
+        });
     }
 };
+
 
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const data = req.body;
-        var errores = [];
-        if (!id || String(id).trim() === "") {
-            errores.push({ mensaje: "El ID es obligatorio" });
+
+        const {
+            name,
+            email,
+            password,
+            documento,
+            postJob,
+            verifyEmail,
+            active
+        } = req.body;
+
+        const dataToValidate = {
+            name,
+            email,
+            documentId: documento,
+            postJob,
+            verifyEmail: typeof verifyEmail === "boolean" ? verifyEmail : false,
+            active: typeof active === "boolean" ? active : true
+        };
+
+        if (password && password.trim() !== "") {
+            const salt = bcrypt.genSaltSync(10);
+            dataToValidate.password = bcrypt.hashSync(password, salt);
         }
-        if (errores.length > 0) {
-            var response = new Response(false, "Error al actualizar el usuario", null, errores);
-            res.status(400);
-            res.json(response.json);
-            return;
-        }
-        const user = await userUpdate(id, data);
-        var response = new Response(true, "Usuario actualizado exitosamente", user, null);
-        res.status(200);
-        res.json(response.json);
+
+        const resultado = await serviceUpdateUser(id, dataToValidate);
+
+        var response = new Response(true, "Usuario actualizado correctamente", resultado);
+        return res.status(200).json(response);
+
     } catch (error) {
-        console.log(error);
-        var response = new Response(false, "error en la actualizacion de usuario", null, [
-            error.message,
+        console.error("Error al actualizar el usuario:", error);
+
+        var response = new Response(false, "Error al actualizar el usuario", [
+            error.message
         ]);
-        res.status(500);
-        res.json(response.json);
+        return res.status(500).json(response);
     }
 };
+
 
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
-        var errores = [];
-        if (!id || String(id).trim() === "") {
-            errores.push({ mensaje: "El ID es obligatorio" });
+
+        const deleted = await deleteUserService(id);
+
+        if (deleted === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Usuario no encontrado",
+                data: null,
+                error: null
+            });
         }
-        if (errores.length > 0) {
-            var response = new Response(false, "Error al eliminar el usuario", null, errores);
-            res.status(400);
-            res.json(response.json);
-            return;
-        }
-        const user = await usuarioDelete(id);
-        if (user === 0) {
-            var response = new Response(false, "Usuario no encontrado", null, [
-                { mensaje: "No se encontro un usuario con el ID proporcionado" }
-            ]);
-            res.status(404);
-            res.json(response.json);
-            return;
-        }
-        var response = new Response(true, "Usuario eliminado exitosamente", { id }, null);
-        res.status(200);
-        res.json(response.json);
+
+        return res.status(200).json({
+            success: true,
+            message: `Usuario con ID ${id} eliminado correctamente`,
+            data: null,
+            error: null
+        });
+
     } catch (error) {
-        console.log(error);
-        var response = new Response(false, "error al eliminar usuario", null, [error.message]);
-        res.status(500);
-        res.json(response.json);
+        console.error("Error al eliminar el usuario:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Error al eliminar el usuario",
+            data: null,
+            error: error.message
+        });
     }
 };
+
 
 module.exports = {
     getAllUsers,

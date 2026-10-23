@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, CirclePlus } from "lucide-react"
-import FormCreacionUsuario from "@/components/user/formCreacion"
+import { Search, CirclePlus, Pencil } from "lucide-react" // 👈 Importamos el icono Pencil (lápiz)
+import FormCreacionUsuario, { User } from "@/components/user/formCreacion"
 
 export default function TablaUsuario() {
   const [usuarios, setUsuarios] = useState<any[]>([])
@@ -13,50 +13,34 @@ export default function TablaUsuario() {
   const [totalItems, setTotalItems] = useState(0)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  // 👇 1. Estado para guardar el usuario que vamos a editar
+  const [usuarioEditor, setUsuarioEditor] = useState<User | null>(null)
 
   const [busqueda, setBusqueda] = useState("")
 
-  const cargarUsuarios = async (pagina = 1) => {
+        const cargarUsuarios = async (pagina = 1) => {
     try {
       setCargando(true)
       setError("")
-
       const limite = 10
-      const offset = (pagina - 1) * limite
-      const respuesta = await fetch(`http://localhost:3001/api/user?limit=${limite}&offset=${offset}`)
+      
+      const respuesta = await fetch(`http://localhost:3001/api/user?limit=${limite}&page=${pagina}`)
       const datos = await respuesta.json().catch(() => ({}))
-      console.log("Respuesta USER:", datos)
+      
+      if (!respuesta.ok) throw new Error(datos.message || "Error al cargar usuarios")
 
-      const lista = Array.isArray(datos?.data?.data)
-        ? datos.data.data
-        : Array.isArray(datos?.data)
-          ? datos.data
-          : Array.isArray(datos?.users)
-            ? datos.users
-            : Array.isArray(datos)
-              ? datos
-              : []
-
-      const total = Number(datos?.data?.totalItems ?? datos?.totalItems ?? lista.length ?? 0)
-      const paginas = Number(datos?.data?.totalPages ?? datos?.totalPages ?? 1)
-      const paginaActualServidor = Number(datos?.data?.currentPage ?? datos?.currentPage ?? pagina)
-
-      if (!respuesta.ok && datos?.message && !lista.length) {
-        setUsuarios([])
-        setTotalItems(0)
-        setTotalPaginas(1)
-        setPaginaActual(1)
-        return
-      }
-
-      if (!respuesta.ok) {
-        throw new Error(datos.message || "Error al cargar usuarios")
-      }
+      // 👇 LA SOLUCIÓN: Tu backend envía el arreglo directamente en 'datos.data'
+      const lista = Array.isArray(datos?.data) ? datos.data : []
+      
+      const total = Number(datos?.pagination?.total ?? lista.length ?? 0)
+      const paginas = Number(datos?.pagination?.totalPages ?? 1)
+      const paginaActualServidor = Number(datos?.pagination?.page ?? pagina)
 
       setUsuarios(lista)
       setTotalItems(total)
       setTotalPaginas(paginas || 1)
       setPaginaActual(paginaActualServidor || pagina)
+      
     } catch (error: any) {
       console.error("Error al cargar los usuarios:", error)
       setError(error.message || "No se pudieron cargar los usuarios")
@@ -74,7 +58,15 @@ export default function TablaUsuario() {
     cargarUsuarios(paginaActual)
   }
 
+  // 👇 2. Función para Crear
   function handleAgregarUsuario() {
+    setUsuarioEditor(null) // Nos aseguramos de que no haya datos viejos
+    setIsModalOpen(true)
+  }
+
+  // 👇 3. Función para Editar (Recibe el usuario)
+  function handleEditarUsuario(u: User) {
+    setUsuarioEditor(u)
     setIsModalOpen(true)
   }
 
@@ -87,7 +79,7 @@ export default function TablaUsuario() {
   const usuariosFiltrados = usuarios.filter((u: any) =>
     (u.name || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (u.email || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (u.documentId || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (u.documento || u.documentId || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (u.postJob || "").toString().toLowerCase().includes(busqueda.toLowerCase())
   )
 
@@ -110,12 +102,8 @@ export default function TablaUsuario() {
                 className="w-full border border-[#844243] rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-[#E8D9C5] text-sm"
               />
             </div>
-            <button 
-              onClick={handleAgregarUsuario}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2"
-            >
-              <CirclePlus className="w-5 h-5" />
-              Agregar Usuario
+            <button onClick={handleAgregarUsuario} className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
+              <CirclePlus className="w-5 h-5" /> Agregar Usuario
             </button>
           </div>
         </div>
@@ -137,28 +125,24 @@ export default function TablaUsuario() {
                   <th className="p-3 text-left font-semibold text-sm">Email</th>
                   <th className="p-3 text-left font-semibold text-sm">Documento</th>
                   <th className="p-3 text-left font-semibold text-sm">Cargo</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
+                  <th className="p-3 text-left font-semibold text-sm">Estado</th>
+                  {/* 👇 4. Nueva Columna */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Acciones</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">
-                      <div className="flex justify-center items-center space-x-2">
-                        <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Cargando usuarios...</span>
-                      </div>
+                    <td colSpan={7} className="p-6 text-center text-gray-500"> {/* 👈 Colspan a 7 */}
+                      Cargando usuarios...
                     </td>
                   </tr>
                 )}
 
                 {!cargando && !error && usuarios.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">
+                    <td colSpan={7} className="p-6 text-center text-gray-500"> {/* 👈 Colspan a 7 */}
                       Todavia no hay usuarios registrados.
                     </td>
                   </tr>
@@ -170,16 +154,20 @@ export default function TablaUsuario() {
                       <td className="p-3 text-sm text-gray-800 font-medium">{usuario.id}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{usuario.name}</td>
                       <td className="p-3 text-sm text-gray-800">{usuario.email}</td>
-                      <td className="p-3 text-sm text-gray-800">{usuario.documentId}</td>
+                      <td className="p-3 text-sm text-gray-800">{usuario.documento || usuario.documentId}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{usuario.postJob}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          usuario.active 
-                            ? "bg-green-100 text-green-800" 
-                            : "bg-red-100 text-red-800"
+                          usuario.active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                         }`}>
                           {usuario.active ? "Activo" : "Inactivo"}
                         </span>
+                      </td>
+                      {/* 👇 5. Botón de Editar */}
+                      <td className="p-3 text-sm text-gray-800">
+                        <button onClick={() => handleEditarUsuario({ ...usuario, documento: usuario.documento || usuario.documentId })} className="text-blue-600 hover:text-blue-800 transition">
+                          <Pencil className="w-5 h-5" />
+                        </button>
                       </td>
                     </tr>
                   )
@@ -194,26 +182,10 @@ export default function TablaUsuario() {
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => irPagina(paginaActual - 1)}
-                  disabled={paginaActual === 1}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    paginaActual === 1
-                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
-                >
+                <button onClick={() => irPagina(paginaActual - 1)} disabled={paginaActual === 1} className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${paginaActual === 1 ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed" : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"}`}>
                   ← Anterior
                 </button>
-                <button
-                  onClick={() => irPagina(paginaActual + 1)}
-                  disabled={paginaActual === totalPaginas}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                    paginaActual === totalPaginas
-                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
-                  }`}
-                >
+                <button onClick={() => irPagina(paginaActual + 1)} disabled={paginaActual === totalPaginas} className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${paginaActual === totalPaginas ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed" : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"}`}>
                   Siguiente →
                 </button>
               </div>
@@ -222,10 +194,12 @@ export default function TablaUsuario() {
         </div>
       </div>
 
+      {/* 👇 6. Le pasamos la prop usuarioEditor al Formulario */}
       <FormCreacionUsuario
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleSuccess}
+        usuarioEditor={usuarioEditor}
       />
     </div>
   )

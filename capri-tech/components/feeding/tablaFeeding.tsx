@@ -73,7 +73,8 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
     (a.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (a.alimento || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (a.fecha || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (a.hora || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (a.hora || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof a.active === "boolean" && (a.active ? "activo" : "inactivo").includes(busqueda.toLowerCase()))
   )
 
   return (
@@ -103,14 +104,15 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
                   <th className="p-3 text-left font-semibold text-sm">Hora</th>
                   <th className="p-3 text-left font-semibold text-sm">Responsable</th>
                   <th className="p-3 text-left font-semibold text-sm">Alimento</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Cantidad (Kg)</th>
+                  <th className="p-3 text-left font-semibold text-sm">Cantidad (Kg)</th>
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
                       <div className="flex justify-center items-center space-x-2">
                         <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -124,7 +126,7 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
 
                 {!cargando && !error && alimentaciones.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
                       Todavia no hay alimentacion registrada.
                     </td>
                   </tr>
@@ -138,6 +140,14 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.responsable}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.alimento}</td>
                       <td className="p-3 text-sm text-gray-800 font-medium">{item.cantidad} Kg</td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${item.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
+                          {item.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}

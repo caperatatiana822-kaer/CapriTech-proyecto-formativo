@@ -72,7 +72,7 @@ const getMastitisById = async (req, res) => {
 
 const createMastitis = async (req, res) => {
     try {
-        const { chapeta, fecha, resultado, responsable, observaciones } = req.body;
+        const { chapeta, fecha, resultado, responsable, observaciones, active = true } = req.body;
 
         var errores = [];
 
@@ -88,6 +88,9 @@ const createMastitis = async (req, res) => {
         if (!responsable || String(responsable).trim() === "") {
             errores.push({ mensaje: "El responsable es obligatorio" });
         }
+        if (typeof active !== "boolean") {
+            errores.push({ mensaje: "El estado debe ser Activo o Inactivo" });
+        }
 
         if (errores.length > 0) {
             var response = new Response(false, "Error en la creacion del caso de mastitis", null, errores);
@@ -101,7 +104,8 @@ const createMastitis = async (req, res) => {
             fecha: fecha,
             resultado: resultado,
             responsable: responsable,
-            observaciones: observaciones || null
+            observaciones: observaciones || null,
+            active
         };
 
         console.log("Datos a guardar MASTITIS:", data);

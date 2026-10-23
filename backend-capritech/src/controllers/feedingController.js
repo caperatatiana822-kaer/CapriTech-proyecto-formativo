@@ -72,7 +72,7 @@ const getFeedingById = async (req, res) => {
 
 const createFeeding = async (req, res) => {
     try {
-        const { fecha, responsable, alimento, cantidad } = req.body;
+        const { fecha, responsable, alimento, cantidad, active = true } = req.body;
 
         var errores = [];
 
@@ -88,6 +88,9 @@ const createFeeding = async (req, res) => {
         if (!cantidad || String(cantidad).trim() === "") {
             errores.push({ mensaje: "La cantidad es obligatoria" });
         }
+        if (typeof active !== "boolean") {
+            errores.push({ mensaje: "El estado debe ser Activo o Inactivo" });
+        }
 
         if (errores.length > 0) {
             var response = new Response(false, "Error en la creacion de la alimentacion", null, errores);
@@ -100,7 +103,8 @@ const createFeeding = async (req, res) => {
             fecha: fecha,
             responsable: responsable,
             alimento: alimento,
-            cantidad: parseFloat(cantidad)
+            cantidad: parseFloat(cantidad),
+            active
         };
 
         console.log("Datos a guardar FEEDING:", data);

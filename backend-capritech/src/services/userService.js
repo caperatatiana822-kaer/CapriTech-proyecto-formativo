@@ -16,6 +16,7 @@ const getAllUsers = async (limit, offset) => {
     try {
         const totalCount = await User.count();
         const users = await User.findAll({
+            attributes: ['id', 'name', 'email', 'documentId', 'postJob', 'verifyEmail', 'active'],
             limit: limit,
             offset: offset,
             order: [['id', 'DESC']]
@@ -73,11 +74,31 @@ const userUpdate = async (id, data) => {
     }
 };
 
+const updateEmailUser = async (email, data) => {
+    try{
+        const updateUser = await User.update(data, {where: {email}});
+        return updateUser;
+    } catch (error){
+        throw error;
+    }
+};
+
+const getTokenUser = async (token) => {
+    try {
+        const userToken = await User.findOne({ where: { resetPasswordToken: token } });
+        return userToken;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
     userCreate,
     getAllUsers,
     userGetById,
     usuarioDelete,
     userUpdate,
-    getEmailUser
+    getEmailUser,
+    updateEmailUser,
+    getTokenUser
 };

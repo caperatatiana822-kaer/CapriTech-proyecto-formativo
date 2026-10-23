@@ -55,6 +55,10 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarProduccion(1)
+
+    const handler = () => cargarProduccion(1)
+    window.addEventListener("production:created", handler)
+    return () => window.removeEventListener("production:created", handler)
   }, [])
 
   function handlePageChange(newPage: number) {

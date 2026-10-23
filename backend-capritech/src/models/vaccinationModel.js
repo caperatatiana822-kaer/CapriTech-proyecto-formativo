@@ -26,6 +26,11 @@ const Vaccination = db.define('Vaccination', {
     responsable: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     tableName: 'vaccination',

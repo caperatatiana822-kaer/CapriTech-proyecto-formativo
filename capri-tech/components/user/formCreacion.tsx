@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { API_USER_URL } from "@/app/config";
 
@@ -19,18 +19,33 @@ function obtenerMensajeError(error: unknown): string {
   return "Error desconocido al registrar el usuario";
 }
 
+// 👇 1. Interfaz del Usuario (Tomado del paso 3 del tutorial)
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  documento: string;
+  postJob: string;
+  verifyEmail: boolean;
+  active: boolean;
+}
+
 interface FormCreacionUsuarioProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  usuarioEditor?: User | null; // 👈 2. Nueva Prop (por defecto null para CREAR)
 }
 
-export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: FormCreacionUsuarioProps) {
+export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuarioEditor = null }: FormCreacionUsuarioProps) {
+  
+  // 👇 3. Saber si es modo edición
+  const esModoEdicion = Boolean(usuarioEditor);
 
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [documentId, setDocumentId] = useState<string>('');
+  const [documento, setDocumento] = useState<string>('');
   const [postJob, setPostJob] = useState<string>('');
   const [verifyEmail] = useState<boolean>(false);
   const [active] = useState<boolean>(true);
@@ -38,19 +53,30 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
 
-  const [open, setOpen] = useState(false)
-
-  if (!isOpen) return null;
-
-  const resetForm = () => {
+  // 👇 4. Llenar los datos si es edición
+ const resetForm = () => {
     setName('');
     setEmail('');
     setPassword('');
-    setDocumentId('');
+    setDocumento('');
     setPostJob('');
     setError('');
     setMensajeExito(null);
   };
+
+  useEffect(() => {
+    if (usuarioEditor) {
+      setName(usuarioEditor.name || '');
+      setEmail(usuarioEditor.email || '');
+      setDocumento(usuarioEditor.documento || '');
+      setPostJob(usuarioEditor.postJob || '');
+      setPassword(''); // La contraseña se deja vacía
+    } else {
+      resetForm();
+    }
+  }, [usuarioEditor, isOpen]);
+
+  if (!isOpen) return null;
 
   const handleCancel = () => {
     resetForm();
@@ -73,12 +99,15 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
       setGuardando(false);
       return;
     }
-    if (!password || password.length < 6) {
+    
+    // 👇 5. La contraseña solo es obligatoria si NO es edición
+    if (!esModoEdicion && (!password || password.length < 6)) {
       setError("La contraseña debe tener al menos 6 caracteres.");
       setGuardando(false);
       return;
     }
-    if (!documentId.trim() || documentId.length < 5) {
+
+    if (!documento.trim() || documento.length < 5) {
       setError("El documento de identidad debe tener al menos 5 caracteres.");
       setGuardando(false);
       return;
@@ -89,19 +118,27 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
       return;
     }
 
-    const userData = {
+    const userData: any = {
       name,
       email,
-      password,
-      documentId,
+      documento,
       postJob,
       verifyEmail,
       active
     };
 
+    // Solo agregamos la contraseña al objeto si el usuario escribió una
+    if (password && password.trim() !== "") {
+      userData.password = password;
+    }
+
+    // 👇 6. Definir URL y método según el modo
+    const url = esModoEdicion ? `${API_USER_URL}/${usuarioEditor?.id}` : API_USER_URL;
+    const method = esModoEdicion ? "PUT" : "POST";
+
     try {
-      const response = await fetch(API_USER_URL, {
-        method: "POST",
+      const response = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData)
       });
@@ -118,11 +155,10 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
       }
 
       if (!response.ok || data.success === false) {
-        throw new Error(obtenerMensajeError(data) || "Error al registrar el usuario");
+        throw new Error(obtenerMensajeError(data) || "Error al guardar el usuario");
       }
 
-      setMensajeExito("¡Usuario creado correctamente!");
-
+      setMensajeExito(esModoEdicion ? "¡Usuario actualizado correctamente!" : "¡Usuario creado correctamente!");
       onSuccess();
 
       setTimeout(() => {
@@ -132,32 +168,26 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
 
     } catch (error: unknown) {
       const mensajeError = obtenerMensajeError(error);
-      console.error("Error registrando usuario:", error);
-      setError("Error al registrar usuario: " + mensajeError);
+      console.error("Error guardando usuario:", error);
+      setError("Error al guardar usuario: " + mensajeError);
     } finally {
       setGuardando(false);
-      setOpen(false)
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-[#3E2723]/40">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
-
-        <button
-          type="button"
-          onClick={handleCancel}
-          className="absolute top-4 right-4 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"
-          aria-label="Cerrar"
-        >
+        
+        <button type="button" onClick={handleCancel} className="absolute top-4 right-4 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors">
           <X className="h-5 w-5" />
         </button>
 
         <div className="p-6 pb-2">
+          {/* 👇 7. Título dinámico */}
           <h1 className="text-2xl font-bold tracking-tight text-[#000000]">
-            Formulario de Usuario
+            {esModoEdicion ? "Editar Usuario" : "Formulario de Usuario"}
           </h1>
-          
         </div>
 
         {error && (
@@ -175,60 +205,29 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
         <form onSubmit={gestionarForm} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre *</label>
-            <input 
-              type="text" 
-              required 
-              value={name} 
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              placeholder="Nombre completo"
-            />
+            <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" placeholder="Nombre completo" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Email *</label>
-            <input 
-              type="email" 
-              required 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              placeholder="correo@ejemplo.com"
-            />
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" placeholder="correo@ejemplo.com" />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Documento *</label>
-            <input 
-              type="text" 
-              required 
-              value={documentId} 
-              onChange={(e) => setDocumentId(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              placeholder="Número de documento"
-            />
+            <input type="text" required value={documento} onChange={(e) => setDocumento(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" placeholder="Número de documento" />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Contraseña *</label>
-            <input 
-              type="password" 
-              required 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              placeholder="Mínimo 6 caracteres"
-            />
+            <label className="block text-sm font-semibold text-[#000000] mb-2">
+              Contraseña {esModoEdicion ? "(Opcional)" : "*"}
+            </label>
+            <input type="password" required={!esModoEdicion} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" placeholder={esModoEdicion ? "Dejar en blanco para no cambiar" : "Mínimo 6 caracteres"} />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-[#000000] mb-2">Cargo *</label>
-            <select 
-              required 
-              value={postJob} 
-              onChange={(e) => setPostJob(e.target.value)}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-            >
+            <select required value={postJob} onChange={(e) => setPostJob(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200">
               <option value="">Selecciona un cargo</option>
               <option value="Administrador">Administrador</option>
               <option value="Instructor">Instructor</option>
@@ -236,24 +235,18 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess }: Form
               <option value="Pasante">Pasante</option>
             </select>
           </div>
+          
           <p className="text-gray-500 mt-1 text-sm">
             Ingresa la información del usuario.
           </p>
 
           <div className="md:col-span-2 flex justify-end gap-3 mt-2 !border-t-0">
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
-            >
+            <button type="button" onClick={handleCancel} className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition">
               Cancelar
             </button>
-            <button 
-              type="submit" 
-              disabled={guardando}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
-            >
-              {guardando ? "Registrando..." : "Guardar"}
+            {/* 👇 8. Texto del botón dinámico */}
+            <button type="submit" disabled={guardando} className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50">
+              {guardando ? "Guardando..." : esModoEdicion ? "Actualizar Usuario" : "Guardar"}
             </button>
           </div>
         </form>

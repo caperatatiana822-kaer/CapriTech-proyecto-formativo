@@ -50,6 +50,10 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarAnimales(1)
+
+    const handler = () => cargarAnimales(1)
+    window.addEventListener("livestock:created", handler)
+    return () => window.removeEventListener("livestock:created", handler)
   }, [])
 
   function handlePageChange(newPage: number) {
@@ -123,8 +127,8 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                       <td className="p-3 text-sm text-gray-800 capitalize">{animal.observaciones || "—"}</td>
                       <td className="p-3 text-sm text-gray-800">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${animal.active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                           }`}>
                           {animal.active ? "Activo" : "Inactivo"}
                         </span>
@@ -146,8 +150,8 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                   onClick={() => handlePageChange(pagination.currentPage - 1)}
                   disabled={pagination.currentPage === 1}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${pagination.currentPage === 1
-                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
+                    ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
                     }`}
                 >
                   ← Anterior
@@ -156,8 +160,8 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                   onClick={() => handlePageChange(pagination.currentPage + 1)}
                   disabled={pagination.currentPage === pagination.totalPages}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${pagination.currentPage === pagination.totalPages
-                      ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                      : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
+                    ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                    : "bg-white text-[#3E2723] border-[#E8D9C5] hover:bg-[#E8D9C5]"
                     }`}
                 >
                   Siguiente →

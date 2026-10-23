@@ -29,6 +29,7 @@ CREATE TABLE `mastitis` (
   `resultado` varchar(255) NOT NULL,
   `observaciones` varchar(80) NOT NULL,
   `responsable` varchar(255) NOT NULL DEFAULT 'Sin asignar',
+  `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

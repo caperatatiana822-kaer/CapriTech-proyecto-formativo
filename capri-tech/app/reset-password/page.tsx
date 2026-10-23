@@ -1,44 +1,29 @@
 "use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Eye, EyeClosed } from "lucide-react"; 
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
 
-  const token = searchParams.get("token");
+  const token = searchParams.get("t");
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [cargando, setCargando] = useState(false);
-  const [tokenValido, setTokenValido] = useState<boolean | null>(null);
 
+  const [typePassword, setTypePassword] = useState("password");
+  const [typeConfirmPassword, setTypeConfirmPassword] = useState("password");
 
-  useEffect(() => {
-    const verificarToken = async () => {
-      if (!token) {
-        setTokenValido(false);
-        return;
-      }
-
-      try {
-        const response = await fetch("http://localhost:3001/api/auth/verify-reset-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
-
-        const data = await response.json();
-        setTokenValido(data.success);
-      } catch (error) {
-        console.error("Error verificando token:", error);
-        setTokenValido(false);
-      }
-    };
-
-    verificarToken();
-  }, [token]);
+  if (!token) {
+    return (
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-[#844243] mb-4">Error</h2>
+        <p className="text-black">Token inválido o no proporcionado.</p>
+      </div>
+    );
+  }
 
   const handleResetPassword = async () => {
     if (!newPassword || !confirmPassword) {
@@ -60,82 +45,86 @@ function ResetPasswordForm() {
       const response = await fetch("http://localhost:3001/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword, confirmPassword }),
+        body: JSON.stringify({ 
+            token: token, 
+            newPassword: newPassword, 
+            confirmPassword: confirmPassword 
+        }),
       });
 
       const data = await response.json();
-      console.log("Respuesta reset:", data);
+      console.log("Respuesta del backend al cambiar contraseña:", data);
 
       if (data.success) {
-        alert("¡Contraseña actualizada! Ahora puedes iniciar sesión.");
-        router.push("/");
+        alert("¡Contraseña actualizada! Ya puedes iniciar sesión.");
+        router.push("/"); 
       } else {
+
         alert(data.mensaje || "Error al cambiar la contraseña");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Ocurrió un error de conexión");
+      console.error("Error de conexión:", error);
+      alert("Ocurrió un error de conexión con el servidor");
     } finally {
       setCargando(false);
     }
   };
 
-  if (tokenValido === null) {
-    return <p className="text-center text-gray-600">Verificando enlace...</p>;
-  }
-
-  if (tokenValido === false) {
-    return (
-      <div className="text-center">
-        <h2 className="text-xl font-bold text-red-600 mb-4">Enlace inválido o expirado</h2>
-        <p className="text-gray-600 mb-4">Solicita un nuevo enlace de recuperación.</p>
-        <button
-          onClick={() => router.push("/")}
-          className="bg-[#6d4c41] text-white px-6 py-2 rounded-lg"
-        >
-          Volver al inicio
-        </button>
-      </div>
-    );
-  }
-
-  return (
+   return (
     <>
-      <h2 className="text-2xl font-bold text-center mb-6 text-[#5d4037]">
+      <h2 className="text-2xl font-bold text-center mb-6 text-[#844243]">
         Nueva Contraseña
       </h2>
 
       <div className="mb-3">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-black mb-1">
           Nueva contraseña
         </label>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="********"
-          className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
-        />
+        <div className="relative">
+          <input
+            type={typePassword}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="********"
+            className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-black focus:outline-none focus:ring-2 focus:ring-[#844243]"
+          />
+          <button
+            type="button"
+            onClick={() => setTypePassword(typePassword === "password" ? "text" : "password")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {typePassword === "password" ? <EyeClosed size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-black mb-1">
           Confirmar contraseña
         </label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="********"
-          className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#6d4c41]"
-        />
+        <div className="relative">
+          <input
+            type={typeConfirmPassword}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="********"
+            className="w-full border border-gray-200 rounded-lg p-3 pr-10 text-black focus:outline-none focus:ring-2 focus:ring-[#844243]"
+          />
+          <button
+            type="button"
+            onClick={() => setTypeConfirmPassword(typeConfirmPassword === "password" ? "text" : "password")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {typeConfirmPassword === "password" ? <EyeClosed size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
       </div>
 
       <button
         onClick={handleResetPassword}
         disabled={cargando}
         type="button"
-        className="w-full bg-[#6d4c41] hover:bg-[#4e342e] text-[#f5efe6] py-3 rounded-lg font-medium transition border border-[#8d6e63] disabled:opacity-50"
+        className="w-full bg-[#844243] hover:bg-[#6E3536] text-white py-3 rounded-lg font-medium transition disabled:opacity-50"
       >
         {cargando ? "Cambiando..." : "Cambiar Contraseña"}
       </button>
@@ -145,9 +134,9 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f5efe6]">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="bg-white p-8 rounded-xl w-96 shadow-xl">
-        <Suspense fallback={<p className="text-center">Cargando...</p>}>
+        <Suspense fallback={<p className="text-center text-black">Cargando...</p>}>
           <ResetPasswordForm />
         </Suspense>
       </div>

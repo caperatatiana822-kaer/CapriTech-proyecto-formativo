@@ -22,6 +22,11 @@ const Famacha = db.define('Famacha', {
     observaciones: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     tableName: 'famacha',

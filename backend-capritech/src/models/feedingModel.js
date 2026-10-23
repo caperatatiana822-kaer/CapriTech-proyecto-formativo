@@ -22,6 +22,11 @@ const Feeding = db.define('Feeding', {
     cantidad: {
         type: DataTypes.DECIMAL(10,2),
         allowNull: false
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     tableName: 'feeding',

@@ -22,6 +22,7 @@ function FormCreacionFeeding() {
   const [responsable, setResponsable] = useState("")
   const [alimento, setAlimento] = useState("")
   const [cantidad, setCantidad] = useState("")
+  const [active, setActive] = useState(true)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
 
@@ -38,6 +39,7 @@ function FormCreacionFeeding() {
       responsable: responsable,
       alimento: alimento,
       cantidad: parseFloat(cantidad),
+      active,
     }
 
     try {
@@ -150,6 +152,20 @@ function FormCreacionFeeding() {
               placeholder="Ej: 5.5"
             />
           </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Estado *</label>
+            <select
+              required
+              value={active ? "true" : "false"}
+              onChange={(e) => setActive(e.target.value === "true")}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            >
+              <option value="true">Activo</option>
+              <option value="false">Inactivo</option>
+            </select>
+          </div>
+
           <DialogDescription className="text-gray-500">
           Ingresa la informacion de la alimentacion suministrada.
         </DialogDescription>

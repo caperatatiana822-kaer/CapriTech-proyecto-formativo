@@ -18,11 +18,13 @@ export default function FormCreacionMount() {
   const router = useRouter()
 
   const [animales, setAnimales] = useState<any[]>([])
+  const [responsables, setResponsables] = useState<any[]>([])
   const [fechaMonta, setFechaMonta] = useState("")
   const [chapetaMacho, setChapetaMacho] = useState("")
   const [chapetaHembra, setChapetaHembra] = useState("")
   const [numeroMonta, setNumeroMonta] = useState("")
   const [posibleFechaParto, setPosibleFechaParto] = useState("")
+  const [responsable, setResponsable] = useState("")
   const [enviando, setEnviando] = useState(false)
 
   const [open, setOpen] = useState(false)
@@ -32,23 +34,27 @@ export default function FormCreacionMount() {
       try {
         const res = await fetch("http://localhost:3001/api/livestock/livestockAll")
         const json = await res.json()
-
-        const datos = Array.isArray(json?.data)
-          ? json.data
-          : Array.isArray(json?.data?.data)
-            ? json.data.data
-            : Array.isArray(json?.animales)
-              ? json.animales
-              : Array.isArray(json)
-                ? json
-                : []
-
+        const datos = Array.isArray(json?.data) ? json.data : Array.isArray(json?.data?.data) ? json.data.data : Array.isArray(json?.animales) ? json.animales : Array.isArray(json) ? json : []
         setAnimales(datos)
       } catch (e) {
         console.error(e)
       }
     }
     cargar()
+  }, [])
+
+  useEffect(() => {
+    async function cargarResponsables() {
+      try {
+        const res = await fetch("http://localhost:3001/api/responsible/responsibleAll")
+        const json = await res.json()
+        const datos = Array.isArray(json?.data?.data) ? json.data.data : Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : []
+        setResponsables(datos)
+      } catch (e) {
+        console.error("Error cargando responsables:", e)
+      }
+    }
+    cargarResponsables()
   }, [])
 
   const listaAnimales = Array.isArray(animales) ? animales : []
@@ -71,13 +77,10 @@ export default function FormCreacionMount() {
     const nuevaMonta = {
       fechaMonta,
       numeroMonta,
-      nombreMacho: macho.nombre,
-      razaMacho: macho.raza,
       chapetaMacho: macho.chapeta,
-      nombreHembra: hembra.nombre,
-      razaHembra: hembra.raza,
       chapetaHembra: hembra.chapeta,
-      posibleFechaParto
+      posibleFechaParto,
+      responsable
     }
 
     try {
@@ -94,7 +97,8 @@ export default function FormCreacionMount() {
       alert("No se pudo registrar la monta.")
     } finally {
       setEnviando(false)
-      setEnviando(false)
+      setOpen(false)
+      window.dispatchEvent(new Event("Mounts:created"))
     }
   }
 
@@ -147,14 +151,37 @@ export default function FormCreacionMount() {
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Posible Fecha de Parto</label>
             <input type="date" required value={posibleFechaParto} onChange={e => setPosibleFechaParto(e.target.value)}
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200" />
           </div>
-          <DialogDescription className="text-gray-500">
-          Ingresa la información de la monta realizada.
-        </DialogDescription>
+
+          <div>
+            <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
+            <select
+              required
+              value={responsable}
+              onChange={(e) => setResponsable(e.target.value)}
+              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
+            >
+              <option value="">Selecciona un responsable</option>
+              {responsables.map((r: any) => (
+                <option key={r.id} value={r.nombre}>
+                  {r.nombre}
+                </option>
+              ))}
+            </select>
+            {responsables.length === 0 && (
+              <p className="text-sm text-yellow-600 mt-1">
+                No hay responsables registrados en el sistema.
+              </p>
+            )}
+          </div>
+
+          <DialogDescription className="text-gray-500 md:col-span-2">
+            Ingresa la información de la monta realizada.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button

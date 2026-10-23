@@ -72,7 +72,7 @@ const getMortalityById = async (req, res) => {
 
 const createMortality = async (req, res) => {
     try {
-        const { fecha, chapeta, diagnosticopresuntivo } = req.body;
+        const { fecha, chapeta, diagnosticopresuntivo, active = true } = req.body;
 
         var errores = [];
 
@@ -85,6 +85,9 @@ const createMortality = async (req, res) => {
         if (!diagnosticopresuntivo || String(diagnosticopresuntivo).trim() === "") {
             errores.push({ mensaje: "El diagnostico presuntivo es obligatorio" });
         }
+        if (typeof active !== "boolean") {
+            errores.push({ mensaje: "El estado debe ser Activo o Inactivo" });
+        }
 
         if (errores.length > 0) {
             var response = new Response(false, "Error en la creacion de la mortalidad", null, errores);
@@ -96,7 +99,8 @@ const createMortality = async (req, res) => {
         const data = {
             fecha: fecha,
             chapeta: parseInt(chapeta),
-            diagnosticopresuntivo: diagnosticopresuntivo
+            diagnosticopresuntivo: diagnosticopresuntivo,
+            active
         };
 
         console.log("Datos a guardar MORTALITY:", data);

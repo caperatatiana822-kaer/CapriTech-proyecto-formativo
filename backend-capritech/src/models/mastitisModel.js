@@ -26,6 +26,11 @@ const Mastitis = db.define('Mastitis', {
     observaciones: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     tableName: 'mastitis',
