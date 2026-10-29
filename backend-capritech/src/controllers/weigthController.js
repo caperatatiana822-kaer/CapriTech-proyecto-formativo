@@ -72,7 +72,7 @@ const getWeigthById = async (req, res) => {
 
 const createWeigth = async (req, res) => {
     try {
-        const { fechaPesaje, chapeta, peso, responsable } = req.body;
+        const { fechaPesaje, chapeta, peso, responsable, active = true } = req.body;
 
         var errores = [];
 
@@ -100,7 +100,8 @@ const createWeigth = async (req, res) => {
             fechaPesaje: fechaPesaje,
             chapeta: parseInt(chapeta),
             peso: parseFloat(peso),
-            responsable: responsable
+            responsable: responsable,
+            active 
         };
 
         console.log("Datos a guardar WEIGHT:", data);

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
 
 import {
@@ -11,24 +10,25 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 export default function FormCreacionFamacha() {
-  const router = useRouter()
-
   const [animales, setAnimales] = useState<any[]>([])
   const [responsables, setResponsables] = useState<any[]>([])
   const [chapeta, setChapeta] = useState("")
   const [responsable, setResponsable] = useState("")
   const [resultado, setResultado] = useState("")
   const [observaciones, setObservaciones] = useState("")
-  const [active, setActive] = useState(true)
+  
+  // Ya no necesitamos el estado 'active' ni 'setActive'
+  
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
   const [cargandoResponsables, setCargandoResponsables] = useState(true)
+
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     async function cargarAnimales() {
@@ -88,12 +88,20 @@ export default function FormCreacionFamacha() {
 
   const todosAnimales = Array.isArray(animales) ? animales : []
 
+  function limpiarFormulario() {
+    setChapeta("")
+    setResponsable("")
+    setResultado("")
+    setObservaciones("")
+    setError("")
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setEnviando(true)
     setError("")
 
-    const animal = todosAnimales.find(a => a.chapeta === parseInt(chapeta))
+    const animal = todosAnimales.find(a => String(a.chapeta) === String(chapeta))
     if (!animal) {
       setError("Debe seleccionar un animal valido.")
       setEnviando(false)
@@ -105,7 +113,7 @@ export default function FormCreacionFamacha() {
       responsable: responsable,
       resultado: resultado,
       observaciones: observaciones,
-      active
+      active: true // 👈 FORZAMOS EL ESTADO A ACTIVO
     }
 
     try {
@@ -126,8 +134,9 @@ export default function FormCreacionFamacha() {
         throw new Error(erroresDetalle || mensajeError)
       }
 
-      alert("Prueba FAMACHA registrada correctamente")
-      router.push("/dashboard/famacha")
+      limpiarFormulario()
+      setOpen(false)
+      window.dispatchEvent(new Event("famacha:created"))
 
     } catch (error: any) {
       console.error("Error al registrar la prueba FAMACHA:", error)
@@ -138,9 +147,9 @@ export default function FormCreacionFamacha() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
+        <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Famacha
         </button>
@@ -148,11 +157,8 @@ export default function FormCreacionFamacha() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Creacion FAMACHA
+          Crear Famacha
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion de la prueba FAMACHA.
-        </DialogDescription>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -211,18 +217,7 @@ export default function FormCreacionFamacha() {
             )}
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Estado *</label>
-            <select
-              required
-              value={active ? "true" : "false"}
-              onChange={(e) => setActive(e.target.value === "true")}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
-            >
-              <option value="true">Activo</option>
-              <option value="false">Inactivo</option>
-            </select>
-          </div>
+          {/* 👇 SE ELIMINÓ EL SELECT DE ESTADO 👇 */}
 
           <div className="md:col-span-2">
             <label className="block text-sm font-semibold text-[#000000] mb-2">Resultado de la Prueba *</label>
@@ -256,6 +251,9 @@ export default function FormCreacionFamacha() {
                 {observaciones.length} / 200
               </span>
             </div>
+            <DialogDescription className="text-gray-500">
+          Ingresa la informacion de la prueba FAMACHA.
+        </DialogDescription>
           </div>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
@@ -270,7 +268,7 @@ export default function FormCreacionFamacha() {
             <button
               type="submit"
               disabled={enviando || cargandoAnimales || cargandoResponsables}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Guardando..." : "Registrar famacha"}
             </button>

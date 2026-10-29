@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
 
 import {
@@ -10,14 +9,12 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 function FormCreationWeight() {
-  const router = useRouter()
-
   const [animales, setAnimales] = useState<any[]>([])
+  const [responsables, setResponsables] = useState<any[]>([]) 
   const [chapeta, setChapeta] = useState("")
   const [fecha, setFecha] = useState("")
   const [peso, setPeso] = useState("")
@@ -25,6 +22,7 @@ function FormCreationWeight() {
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
+  const [cargandoResponsables, setCargandoResponsables] = useState(true) 
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -60,7 +58,38 @@ function FormCreationWeight() {
     cargarAnimales()
   }, [])
 
+  useEffect(() => {
+    async function cargarResponsables() {
+      try {
+        setCargandoResponsables(true)
+        const respuesta = await fetch("http://localhost:3001/api/responsible/responsibleAll")
+        const datos = await respuesta.json()
+
+        if (!respuesta.ok) {
+          throw new Error(datos.message || "Error al cargar responsables")
+        }
+
+        const listaResponsables = datos?.data?.data ?? datos?.data ?? datos
+        setResponsables(Array.isArray(listaResponsables) ? listaResponsables : [])
+      } catch (error) {
+        console.error("Error al cargar responsables:", error)
+        setError("No se pudieron cargar los responsables")
+      } finally {
+        setCargandoResponsables(false)
+      }
+    }
+    cargarResponsables()
+  }, [])
+
   const todosAnimales = Array.isArray(animales) ? animales : []
+
+  function limpiarFormulario() {
+    setChapeta("")
+    setFecha("")
+    setPeso("")
+    setResponsable("")
+    setError("")
+  }
 
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
@@ -73,8 +102,7 @@ function FormCreationWeight() {
       return
     }
 
-    const chapetaNumero = parseInt(chapeta)
-    const animal = todosAnimales.find(a => Number(a.chapeta) === chapetaNumero)
+    const animal = todosAnimales.find(a => String(a.chapeta) === String(chapeta))
 
     if (!animal) {
       setError("Debe seleccionar un animal valido.")
@@ -83,10 +111,11 @@ function FormCreationWeight() {
     }
 
     const nuevoPesaje = {
-      chapeta: chapetaNumero,
+      chapeta: parseInt(chapeta),
       fechaPesaje: fecha,
       peso: parseFloat(peso),
       responsable: responsable,
+      active: true, // 👈 FORZAMOS EL ESTADO ACTIVO
     }
 
     try {
@@ -107,8 +136,9 @@ function FormCreationWeight() {
         throw new Error(erroresDetalle || mensajeError)
       }
 
-      alert("Pesaje registrado correctamente")
-      router.push("/dashboard/weigth")
+      limpiarFormulario()
+      setOpen(false)
+      window.dispatchEvent(new Event("weigth:created"))
 
     } catch (error: any) {
       console.error("Error al registrar el pesaje:", error)
@@ -121,7 +151,7 @@ function FormCreationWeight() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
+        <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Pesaje
         </button>
@@ -131,9 +161,6 @@ function FormCreationWeight() {
         <DialogHeader className="text-2xl font-bold text-[#000000]">
           Formulario de Pesaje
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion del pesaje realizado.
-        </DialogDescription>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -199,15 +226,32 @@ function FormCreationWeight() {
 
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Responsable *</label>
-            <input
-              type="text"
+            <select
               required
               value={responsable}
               onChange={(e) => setResponsable(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              placeholder="Nombre del responsable"
-            />
+              disabled={cargandoResponsables}
+            >
+              <option value="">
+                {cargandoResponsables ? "Cargando responsables..." : "Selecciona un responsable"}
+              </option>
+              {responsables.map((item) => (
+                <option key={item.id} value={item.nombre}>
+                  {item.nombre}
+                </option>
+              ))}
+            </select>
+            {responsables.length === 0 && !cargandoResponsables && (
+              <p className="text-sm text-yellow-600 mt-1">
+                No hay responsables registrados en el sistema.
+              </p>
+            )}
           </div>
+          
+          <DialogDescription className="text-gray-500 md:col-span-2">
+            Ingresa la informacion del pesaje realizado.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
@@ -219,8 +263,8 @@ function FormCreationWeight() {
             </button>
             <button
               type="submit"
-              disabled={enviando || cargandoAnimales}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              disabled={enviando || cargandoAnimales || cargandoResponsables}
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Registrar Pesaje"}
             </button>

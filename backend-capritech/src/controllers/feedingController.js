@@ -22,7 +22,7 @@ const getAllFeeding = async (req, res) => {
             totalPages: result.totalPages,
             currentPage: result.currentPage
         };
-        
+
         var response = new Response(true, "Alimentaciones consultadas exitosamente", responseData, null);
         res.status(200);
         res.json(response.json);
@@ -72,12 +72,15 @@ const getFeedingById = async (req, res) => {
 
 const createFeeding = async (req, res) => {
     try {
-        const { fecha, responsable, alimento, cantidad, active = true } = req.body;
+        const { fecha, responsable, alimento, cantidad, hora, active = true } = req.body;
 
         var errores = [];
 
         if (!fecha || String(fecha).trim() === "") {
             errores.push({ mensaje: "La fecha es obligatoria" });
+        }
+        if (!hora || String(hora).trim() === "") { // <-- CORREGIDO
+            errores.push({ mensaje: "La hora es obligatoria" });
         }
         if (!responsable || String(responsable).trim() === "") {
             errores.push({ mensaje: "El responsable es obligatorio" });
@@ -101,6 +104,7 @@ const createFeeding = async (req, res) => {
 
         const data = {
             fecha: fecha,
+            hora: hora,
             responsable: responsable,
             alimento: alimento,
             cantidad: parseFloat(cantidad),

@@ -52,7 +52,7 @@ const getMountById = async (req, res) => {
 
 const createMount = async (req, res) => {
     try {
-        const { fechaMonta, numeroMonta, chapetaMacho, chapetaHembra, posibleFechaParto, responsable } = req.body;
+        const { fechaMonta, numeroMonta, chapetaMacho, chapetaHembra, posibleFechaParto, responsable, active = true } = req.body;
         var errores = [];
         
         if (!fechaMonta || fechaMonta.trim() === "") {
@@ -81,7 +81,15 @@ const createMount = async (req, res) => {
             return;
         }
 
-        data = { fechaMonta, numeroMonta, chapetaMacho, chapetaHembra, posibleFechaParto, responsable };
+        const data = { 
+            fechaMonta, 
+            numeroMonta, 
+            chapetaMacho, 
+            chapetaHembra, 
+            posibleFechaParto, 
+            responsable,
+            active 
+        };
         
         const mount = await mountCreate(data);
         var response = new Response(true, "Monta creada exitosamente", mount, null);
@@ -96,7 +104,6 @@ const createMount = async (req, res) => {
         res.json(response.json);
     }
 };
-
 const updateMount = async (req, res) => {
     try {
         const { id } = req.params;

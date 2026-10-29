@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { Pencil } from "lucide-react" // <-- 1. Importamos el lápiz
+import FormCreacionLivestock, { Livestock } from "@/components/livestokc/formCreacion" // Ajusta tu ruta
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -14,7 +15,6 @@ type Props = {
 }
 
 export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [animales, setAnimales] = useState([])
   const [cargando, setCargando] = useState(true)
   const [pagination, setPagination] = useState({
@@ -23,6 +23,10 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
     totalItems: 0,
     itemsPerPage: 10
   })
+
+  // 2. Estados para el modal y el elemento a editar
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [usuarioEditor, setUsuarioEditor] = useState<Livestock | null>(null)
 
   const cargarAnimales = async (page = 1) => {
     setCargando(true)
@@ -62,6 +66,17 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
     }
   }
 
+  // 3. Función para editar
+  function handleEditarAnimal(animal: Livestock) {
+    setUsuarioEditor(animal)
+    setIsModalOpen(true)
+  }
+
+  // 4. Función de éxito
+  function handleSuccess() {
+    cargarAnimales(pagination.currentPage)
+  }
+
   const animalesFiltrados = animales.filter((a: any) =>
     (a.nombre || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (a.chapeta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -75,8 +90,9 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
     <div className="py-10 px-6 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
+        {/* TUS ESTILOS ORIGINALES INTACTOS */}
         <div className="bg-white p-6 ">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Inventario</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Caprinos</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro general de animales</p>
 
           {headerExtra}
@@ -94,14 +110,16 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Sexo</th>
                   <th className="p-3 text-left font-semibold text-sm">Etapa de Producción</th>
                   <th className="p-3 text-left font-semibold text-sm">Observaciones</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
+                  <th className="p-3 text-left font-semibold text-sm">Estado</th>
+                  {/* 5. Nueva columna de Acciones */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Acciones</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={8} className="p-6 text-center text-gray-500">
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
                       Cargando animales...
                     </td>
                   </tr>
@@ -109,8 +127,16 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && animales.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="p-6 text-center text-gray-500">
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
                       Todavía no hay animales registrados.
+                    </td>
+                  </tr>
+                )}
+
+                {!cargando && animalesFiltrados.length === 0 && animales.length > 0 && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
+                      No se encontraron animales que coincidan con la búsqueda.
                     </td>
                   </tr>
                 )}
@@ -133,6 +159,15 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
                           {animal.active ? "Activo" : "Inactivo"}
                         </span>
                       </td>
+                      {/* 6. Celda con el botón de editar */}
+                      <td className="p-3 text-sm text-gray-800">
+                        <button
+                          onClick={() => handleEditarAnimal(animal)}
+                          className="text-blue-600 hover:text-blue-800 transition"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}
@@ -140,7 +175,7 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
             </table>
           </div>
 
-          {!cargando && pagination.totalPages > 0 && (
+          {!cargando && pagination.totalPages > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{pagination.totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{pagination.currentPage}</span> de {pagination.totalPages}
@@ -171,6 +206,14 @@ export default function TablaLivestock({ busqueda = "", headerExtra }: Props) {
           )}
         </div>
       </div>
+
+      {/* 7. Se llama al componente enviándole las props */}
+      <FormCreacionLivestock
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleSuccess}
+        usuarioEditor={usuarioEditor}
+      />
     </div>
   );
 }

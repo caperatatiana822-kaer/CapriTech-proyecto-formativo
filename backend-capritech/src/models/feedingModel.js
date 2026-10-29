@@ -11,6 +11,10 @@ const Feeding = db.define('Feeding', {
         type: DataTypes.DATE,
         allowNull: false
     },
+    hora: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
     responsable: {
         type: DataTypes.STRING,
         allowNull: false

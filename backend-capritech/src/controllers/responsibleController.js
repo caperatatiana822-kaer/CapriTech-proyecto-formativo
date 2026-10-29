@@ -71,7 +71,7 @@ const getResponsibleById = async (req, res) => {
 
 const createResponsible = async (req, res) => {
     try {
-        const { nombre, documento, tipoResponsable, actividad, frecuencia, diaSemana } = req.body;
+        const { nombre, documento, tipoResponsable, actividad, frecuencia, diaSemana, active = true } = req.body;
 
         var errores = [];
 
@@ -109,6 +109,7 @@ const createResponsible = async (req, res) => {
             actividad: Array.isArray(actividad) ? actividad.join(", ") : actividad,
             frecuencia: frecuencia,
             diaSemana: Array.isArray(diaSemana) ? diaSemana.join(", ") : diaSemana,
+            active
         };
 
         console.log("Datos a guardar RESPONSIBLE:", data);
@@ -125,7 +126,6 @@ const createResponsible = async (req, res) => {
         res.json(response.json);
     }
 };
-
 const updateResponsible = async (req, res) => {
     try {
         const { id } = req.params;

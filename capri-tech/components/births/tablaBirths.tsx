@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -10,7 +9,6 @@ function formatearFecha(fechaISO: string) {
 type Props = { busqueda?: string; headerExtra?: React.ReactNode }
 
 export default function TablaBirths({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [nacimientos, setNacimientos] = useState<any[]>([]) 
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -56,14 +54,15 @@ export default function TablaBirths({ busqueda = "", headerExtra }: Props) {
   const filtrados = nacimientos.filter((n: any) =>
     (n.razas || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (n.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (n.idMonta || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (n.idMonta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof n.active === "boolean" && (n.active ? "activo" : "inactivo").includes(busqueda.toLowerCase()))
   )
 
   return (
     <div className="py-10 px-6 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Registro de Partos</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Partos</h1>
           <p className="text-gray-500 mt-1 text-sm">Historial y resultados de partos</p>
           {headerExtra}
         </div>
@@ -82,12 +81,36 @@ export default function TablaBirths({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Muertos</th>
                   <th className="p-3 text-left font-semibold text-sm">Machos</th>
                   <th className="p-3 text-left font-semibold text-sm">Hembras</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Responsable</th>
+                  <th className="p-3 text-left font-semibold text-sm">Responsable</th>
+                  {/* COLUMNA DE ESTADO AGREGADA */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
               <tbody>
-                {cargando && <tr><td colSpan={8} className="p-6 text-center text-gray-500">Cargando partos...</td></tr>}
-                {!cargando && !error && filtrados.length === 0 && <tr><td colSpan={8} className="p-6 text-center text-gray-500">No hay partos registrados.</td></tr>}
+                {cargando && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
+                      Cargando partos...
+                    </td>
+                  </tr>
+                )}
+                
+                {!cargando && !error && nacimientos.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
+                      No hay partos registrados.
+                    </td>
+                  </tr>
+                )}
+
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && filtrados.length === 0 && nacimientos.length > 0 && (
+                  <tr>
+                    <td colSpan={9} className="p-6 text-center text-gray-500">
+                      No se encontraron partos que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
                 
                 {!cargando && !error && filtrados.map((n: any) => (
                   <tr key={n.id} className="border-b border-gray-100 hover:bg-[#faf8f5]">
@@ -99,14 +122,21 @@ export default function TablaBirths({ busqueda = "", headerExtra }: Props) {
                     <td className="p-3 text-sm text-gray-800">{n.machos}</td>
                     <td className="p-3 text-sm text-gray-800">{n.hembras}</td>
                     <td className="p-3 text-sm text-gray-800 capitalize">{n.responsable}</td>
+                    <td className="p-3 text-sm text-gray-800">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${n.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                        }`}>
+                        {n.active ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Paginación (se mantiene igual) */}
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
               <div className="text-sm text-gray-600">Total: <b>{totalItems}</b> | Página <b>{paginaActual}</b> de {totalPaginas}</div>
               <div className="flex gap-2">

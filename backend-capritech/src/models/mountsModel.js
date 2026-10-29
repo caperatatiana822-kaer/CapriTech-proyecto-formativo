@@ -30,6 +30,11 @@ const Mating = db.define('Mating', {
     responsable: {             
         type: DataTypes.STRING,
         allowNull: false
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     timestamps: false,

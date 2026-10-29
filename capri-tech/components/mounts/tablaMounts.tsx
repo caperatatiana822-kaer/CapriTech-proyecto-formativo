@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -14,7 +13,6 @@ type Props = {
 }
 
 export default function TablaMounts({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [montas, setMontas] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [paginaActual, setPaginaActual] = useState(1)
@@ -68,7 +66,8 @@ export default function TablaMounts({ busqueda = "", headerExtra }: Props) {
     (m.chapetaHembra || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (m.numeroMonta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (m.posibleFechaParto || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (m.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) // 👈 Búsqueda por responsable
+    (m.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof m.active === "boolean" && (m.active ? "activo" : "inactivo").includes(busqueda.toLowerCase())) // 👈 Filtro de búsqueda
   )
 
   return (
@@ -92,20 +91,32 @@ export default function TablaMounts({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Chapeta de la Hembra</th>
                   <th className="p-3 text-left font-semibold text-sm">Número de Monta</th>
                   <th className="p-3 text-left font-semibold text-sm">Posible Fecha de Parto</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Responsable</th>
+                  <th className="p-3 text-left font-semibold text-sm">Responsable</th>
+                  {/* COLUMNA AGREGADA */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">Cargando montas...</td>
+                    <td colSpan={7} className="p-6 text-center text-gray-500">Cargando montas...</td>
                   </tr>
                 )}
+                
                 {!cargando && montas.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">Todavía no hay montas registradas.</td>
+                    <td colSpan={7} className="p-6 text-center text-gray-500">Todavía no hay montas registradas.</td>
                   </tr>
                 )}
+
+                {!cargando && montasFiltradas.length === 0 && montas.length > 0 && (
+                  <tr>
+                    <td colSpan={7} className="p-6 text-center text-gray-500">
+                      No se encontraron montas que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
+
                 {!cargando && montasFiltradas.map((item: any) => (
                   <tr key={item.id} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                     <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fechaMonta)}</td>
@@ -114,13 +125,21 @@ export default function TablaMounts({ busqueda = "", headerExtra }: Props) {
                     <td className="p-3 text-sm text-gray-800">{item.numeroMonta}</td>
                     <td className="p-3 text-sm text-gray-800">{formatearFecha(item.posibleFechaParto)}</td>
                     <td className="p-3 text-sm text-gray-800 capitalize">{item.responsable || "—"}</td>
+                    <td className="p-3 text-sm text-gray-800">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${item.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                        }`}>
+                        {item.active ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {!cargando && totalItems > 0 && (
+          {!cargando && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

@@ -62,7 +62,7 @@ const getBirthsById = async (req, res) => {
 
 const createBirths = async (req, res) => {
     try {
-        const { idMonta, fechaParto, razas, nacidosVivos, nacidosMuertos, machos, hembras, responsable } = req.body;
+        const { idMonta, fechaParto, razas, nacidosVivos, nacidosMuertos, machos, hembras, responsable, active = true } = req.body;
 
         let errores = [];
         if (!idMonta) errores.push({ mensaje: "La monta es obligatoria" });
@@ -89,7 +89,8 @@ const createBirths = async (req, res) => {
             nacidosMuertos: parseInt(nacidosMuertos),
             machos: parseInt(machos),
             hembras: parseInt(hembras),
-            responsable
+            responsable,
+            active 
         };
         
         const births = await birthsCreate(data);

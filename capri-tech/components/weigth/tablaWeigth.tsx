@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [pesajes, setPesajes] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -62,6 +60,10 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarPesajes(1)
+
+    const handler = () => cargarPesajes(1)
+    window.addEventListener("weigth:created", handler)
+    return () => window.removeEventListener("weigth:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -74,7 +76,8 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
     (p.chapeta || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (p.fechaPesaje || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (p.peso || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (p.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (p.responsable || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof p.active === "boolean" && (p.active ? "activo" : "inactivo").includes(busqueda.toLowerCase())) // 👈 Filtro de estado
   )
 
   return (
@@ -82,7 +85,7 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Pesaje</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Pesaje</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro de peso y seguimiento del crecimiento de los caprinos</p>
 
           {headerExtra}
@@ -103,14 +106,16 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm rounded-l-lg">Chapeta</th>
                   <th className="p-3 text-left font-semibold text-sm">Fecha</th>
                   <th className="p-3 text-left font-semibold text-sm">Ganancia de Peso</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Responsable</th>
+                  <th className="p-3 text-left font-semibold text-sm">Responsable</th>
+                  {/* COLUMNA AGREGADA */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={4} className="p-6 text-center text-gray-500">
+                    <td colSpan={5} className="p-6 text-center text-gray-500">
                       <div className="flex justify-center items-center space-x-2">
                         <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -124,8 +129,16 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && !error && pesajes.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="p-6 text-center text-gray-500">
+                    <td colSpan={5} className="p-6 text-center text-gray-500">
                       Todavia no hay pesajes registrados.
+                    </td>
+                  </tr>
+                )}
+
+                {!cargando && !error && pesajesFiltrados.length === 0 && pesajes.length > 0 && (
+                  <tr>
+                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                      No se encontraron pesajes que coincidan con la búsqueda.
                     </td>
                   </tr>
                 )}
@@ -136,13 +149,21 @@ export default function TablaWeight({ busqueda = "", headerExtra }: Props) {
                     <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fechaPesaje)}</td>
                     <td className="p-3 text-sm text-gray-800 capitalize">{item.peso} kg</td>
                     <td className="p-3 text-sm text-gray-800 capitalize">{item.responsable}</td>
+                    <td className="p-3 text-sm text-gray-800">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${item.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                        }`}>
+                        {item.active ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

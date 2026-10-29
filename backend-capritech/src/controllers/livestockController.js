@@ -1,4 +1,8 @@
-const { livestockCreate, livestockGetById, livestockUpdate, livestockDelete, getAllLivestock: getAllLivestockService } = require('../services/livestockService');
+const { livestockCreate, 
+    livestockGetById, 
+    livestockUpdate: serviceUpdateLivestock, 
+    livestockDelete, 
+    getAllLivestock: getAllLivestockService } = require('../services/livestockService');
 const Response = require("../functions/response");
 
 const getAllLivestock = async (req, res) => {
@@ -107,33 +111,46 @@ const createLivestock = async(req, res) => {
     }
 };
 
-const updateLivestock = async(req, res) => {
+const updateLivestock = async (req, res) => {
     try {
-    const {id} = req.params;
-    var errores = [];
-    if(!id){
-        errores.push({mensaje: "El ID es obligatorio"});
-    }
-    if(id == ""){
-        errores.push({mensaje: "El ID no puede estar vacío"});
-    }
-    if(errores.length > 0){
-        var response = new Response(false, "Error al actualizar el semoviente", null, errores);
-        res.status(400);
+        const { id } = req.params;
+        const { nombre, chapeta, fechaNacimiento, raza, sexo, etapaProduccion, observaciones, active } = req.body;
+
+        var errores = [];
+        if (!id) {
+            errores.push({ mensaje: "El ID es obligatorio" });
+        }
+        if (id == "") {
+            errores.push({ mensaje: "El ID no puede estar vacío" });
+        }
+        if (errores.length > 0) {
+            var response = new Response(false, "Error al actualizar el semoviente", null, errores);
+            res.status(400);
+            res.json(response.json);
+            return;
+        }
+        const dataToUpdate = {
+            nombre,
+            chapeta,
+            fechaNacimiento,
+            raza,
+            sexo,
+            etapaProduccion,
+            observaciones,
+            active,
+        };
+        const livestock = await serviceUpdateLivestock(id, dataToUpdate);
+
+        var response = new Response(true, "Semoviente actualizado exitosamente", livestock, null);
+        res.status(200);
         res.json(response.json);
-        return;
-    }
-    const livestock = await livestockUpdate(id);
-    var response = new Response(true, "Semoviente actualizado exitosamente", livestock, null);
-    res.status(200);
-    res.json(response.json);
-} catch (error) {
-    console.log(error);
-    var response = new Response(false, "error en la actualizacion de semoviente", null, [
-        error.message,
-    ])
-    res.status(500);
-    res.json(response.json);
+    } catch (error) {
+        console.log(error);
+        var response = new Response(false, "error en la actualizacion de semoviente", null, [
+            error.message,
+        ]);
+        res.status(500);
+        res.json(response.json);
     }
 };
 
@@ -158,7 +175,12 @@ const deleteLivestock = async(req, res) => {
     res.status(200);
     res.json(response.json);
 } catch (error) {
-    throw error;
+    console.log(error);
+    var response = new Response(false, "error en la eliminacion de semoviente", null, [
+        error.message,
+    ]);
+    res.status(500);
+    res.json(response.json);
     }
 };
 

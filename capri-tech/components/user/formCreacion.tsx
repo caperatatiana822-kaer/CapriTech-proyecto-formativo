@@ -19,7 +19,6 @@ function obtenerMensajeError(error: unknown): string {
   return "Error desconocido al registrar el usuario";
 }
 
-// 👇 1. Interfaz del Usuario (Tomado del paso 3 del tutorial)
 export interface User {
   id: number;
   name: string;
@@ -34,12 +33,11 @@ interface FormCreacionUsuarioProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  usuarioEditor?: User | null; // 👈 2. Nueva Prop (por defecto null para CREAR)
+  usuarioEditor?: User | null; 
 }
 
 export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuarioEditor = null }: FormCreacionUsuarioProps) {
   
-  // 👇 3. Saber si es modo edición
   const esModoEdicion = Boolean(usuarioEditor);
 
   const [name, setName] = useState<string>('');
@@ -53,7 +51,6 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
 
-  // 👇 4. Llenar los datos si es edición
  const resetForm = () => {
     setName('');
     setEmail('');
@@ -70,7 +67,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
       setEmail(usuarioEditor.email || '');
       setDocumento(usuarioEditor.documento || '');
       setPostJob(usuarioEditor.postJob || '');
-      setPassword(''); // La contraseña se deja vacía
+      setPassword(''); 
     } else {
       resetForm();
     }
@@ -99,8 +96,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
       setGuardando(false);
       return;
     }
-    
-    // 👇 5. La contraseña solo es obligatoria si NO es edición
+
     if (!esModoEdicion && (!password || password.length < 6)) {
       setError("La contraseña debe tener al menos 6 caracteres.");
       setGuardando(false);
@@ -127,12 +123,10 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
       active
     };
 
-    // Solo agregamos la contraseña al objeto si el usuario escribió una
     if (password && password.trim() !== "") {
       userData.password = password;
     }
 
-    // 👇 6. Definir URL y método según el modo
     const url = esModoEdicion ? `${API_USER_URL}/${usuarioEditor?.id}` : API_USER_URL;
     const method = esModoEdicion ? "PUT" : "POST";
 
@@ -184,9 +178,8 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
         </button>
 
         <div className="p-6 pb-2">
-          {/* 👇 7. Título dinámico */}
           <h1 className="text-2xl font-bold tracking-tight text-[#000000]">
-            {esModoEdicion ? "Editar Usuario" : "Formulario de Usuario"}
+            {esModoEdicion ? "Editar Usuario" : "Crear usuario"}
           </h1>
         </div>
 
@@ -244,8 +237,7 @@ export default function FormCreacionUsuario({ isOpen, onClose, onSuccess, usuari
             <button type="button" onClick={handleCancel} className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition">
               Cancelar
             </button>
-            {/* 👇 8. Texto del botón dinámico */}
-            <button type="submit" disabled={guardando} className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50">
+            <button type="submit" disabled={guardando} className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50">
               {guardando ? "Guardando..." : esModoEdicion ? "Actualizar Usuario" : "Guardar"}
             </button>
           </div>

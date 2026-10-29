@@ -33,13 +33,13 @@ export default function NavBar() {
             Inicio
           </a>
           <a
-            href="/contacto"
+            href="/contact"
             className="text-base text-gray-800 hover:text-[#844243] font-medium transition duration-300"
           >
             Contacto
           </a>
           <a
-            href="/nosotros"
+            href="/about"
             className="text-base text-gray-800 hover:text-[#844243] font-medium transition duration-300"
           >
             Nosotros
@@ -56,13 +56,13 @@ export default function NavBar() {
               Inicio
             </a>
             <a
-              href="/contacto"
+              href="/contact"
               className="text-gray-800 hover:text-[#844243] font-medium transition duration-300 py-2"
             >
               Contacto
             </a>
             <a
-              href="/nosotros"
+              href="/about"
               className="text-gray-800 hover:text-[#844243] font-medium transition duration-300 py-2"
             >
               Nosotros

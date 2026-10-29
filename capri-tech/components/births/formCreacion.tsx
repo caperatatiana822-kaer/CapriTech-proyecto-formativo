@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
+import { Toaster, toast } from "@/components/ui/toast";
 
 import {
   Dialog,
@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/dialog"
 
 function FormCreacionNacimiento() {
-  const router = useRouter()
-
   const [montas, setMontas] = useState<any[]>([])
   const [responsables, setResponsables] = useState<any[]>([])
   
@@ -35,13 +33,11 @@ function FormCreacionNacimiento() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        // Cargar montas
         const resMontas = await fetch("http://localhost:3001/api/mounts/mountsAll?limit=100")
         const jsonMontas = await resMontas.json()
         const listaMontas = jsonMontas?.data?.data || jsonMontas?.data || []
         setMontas(listaMontas)
 
-        // Cargar responsables
         const resResp = await fetch("http://localhost:3001/api/responsible/responsibleAll")
         const jsonResp = await resResp.json()
         const listaResp = jsonResp?.data?.data || jsonResp?.data || []
@@ -62,6 +58,8 @@ function FormCreacionNacimiento() {
     setMachos("")
     setHembras("")
     setResponsable("")
+    setError("")
+    setErroresDetallados([])
   }
 
   async function handleSubmit(evento: React.FormEvent) {
@@ -78,7 +76,8 @@ function FormCreacionNacimiento() {
       nacidosMuertos: parseInt(nacidosMuertos),
       machos: parseInt(machos),
       hembras: parseInt(hembras),
-      responsable
+      responsable,
+      active: true 
     }
 
     try {
@@ -100,15 +99,23 @@ function FormCreacionNacimiento() {
         throw new Error(mensajeError)
       }
 
-      alert("Parto registrado correctamente")
       limpiarFormulario()
       setOpen(false)
       window.dispatchEvent(new Event("Births:created"))
-      router.push("/dashboard/births")
-
+      toast.add({
+              title: "Éxito",
+              description: "El parto se registró correctamente",
+              type: "success",
+            });
     } catch (error: any) {
       setError(error.message || "No se pudo registrar el parto")
       setErroresDetallados((prev) => prev.length > 0 ? prev : [error.message])
+      toast.add({
+        title: "Corregir",
+        description: "No se pudo registrar el parto. Intenta de nuevo.",
+        type: "error",
+      });
+       return;
     } finally {
       setEnviando(false)
     }
@@ -117,7 +124,7 @@ function FormCreacionNacimiento() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] transition flex items-center gap-2">
+        <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Parto
         </button>
@@ -125,11 +132,9 @@ function FormCreacionNacimiento() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Partos
+          Crear Parto
         </DialogHeader>
-       
-
-
+      
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
             <p className="text-red-700 font-semibold">Error:</p>
@@ -197,13 +202,14 @@ function FormCreacionNacimiento() {
             <label className="block text-sm font-semibold text-[#000000] mb-2">Cantidad Hembras *</label>
             <input type="number" min="0" required value={hembras} onChange={e => setHembras(e.target.value)} className="w-full border border-[#d7ccc8] rounded-lg p-3" />
           </div>
-           <DialogDescription className="text-gray-500">
-          Ingresa los resultados del parto.
-        </DialogDescription>
+          
+          <DialogDescription className="text-gray-500">
+            Ingresa los resultados del parto.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button type="button" onClick={() => setOpen(false)} className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-200">Cancelar</button>
-            <button type="submit" disabled={enviando} className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg hover:bg-[#ccf0bc] disabled:opacity-50">
+            <button type="submit" disabled={enviando} className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg hover:bg-[#ccf0bc] disabled:opacity-50">
               {enviando ? "Registrando..." : "Guardar"}
             </button>
           </DialogFooter>

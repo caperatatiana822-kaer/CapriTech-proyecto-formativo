@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [registros, setRegistros] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -61,6 +59,10 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarMortalidad(1)
+
+    const handler = () => cargarMortalidad(1)
+    window.addEventListener("mortality:created", handler)
+    return () => window.removeEventListener("mortality:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -129,6 +131,15 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
                   </tr>
                 )}
 
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && registrosFiltrados.length === 0 && registros.length > 0 && (
+                  <tr>
+                    <td colSpan={4} className="p-6 text-center text-gray-500">
+                      No se encontraron registros que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
+
                 {!cargando && !error && registrosFiltrados.map(function renderFila(registro: any, index: number) {
                   return (
                     <tr key={registro.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
@@ -150,7 +161,7 @@ export default function TablaMortality({ busqueda = "", headerExtra }: Props) {
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

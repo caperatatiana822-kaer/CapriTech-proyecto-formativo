@@ -58,55 +58,49 @@ const getProductionById = async (req, res) => {
 
 const createProduction = async (req, res) => {
     try {
-        const { productionType, fecha, descripcionElemento, unidadMedida, cantidad, valorUnitario, valorTotal, fechaVencimiento, centroCosto, nombreTraslada, nombreRecibe, instructorTecnico, observaciones } = req.body;
+        const { productionType, fecha, descripcionElemento, unidadMedida, cantidad, valorUnitario, valorTotal, fechaVencimiento, centroCosto, nombreTraslada, nombreRecibe, instructorTecnico, observaciones, active = true } = req.body;
         var errores = [];
+        
         if (!productionType || !fecha || !descripcionElemento || !unidadMedida || !cantidad || !valorUnitario || !valorTotal || !fechaVencimiento || !centroCosto || !nombreTraslada || !nombreRecibe || !instructorTecnico || !observaciones) {
             errores.push({ mensaje: "Todos los campos son obligatorios" });
         }
-        if (productionType == "") {
-            errores.push({ mensaje: "El campo productionType no puede estar vacio" });
-        }
-        if (fecha == "") {
-            errores.push({ mensaje: "El campo fecha no puede estar vacio" });
-        }
-        if (descripcionElemento == "") {
-            errores.push({ mensaje: "El campo descripcion no puede estar vacio" });
-        }
-        if (unidadMedida == "") {
-            errores.push({ mensaje: "El campo unidadMedida no puede estar vacio" });
-        }
-        if (cantidad == "") {
-            errores.push({ mensaje: "El campo cantidad no puede estar vacio" });
-        }
-        if (valorUnitario == "") {
-            errores.push({ mensaje: "El campo valorUnitario no puede estar vacio" });
-        }
-        if (valorTotal == "") {
-            errores.push({ mensaje: "El campo valorTotal no puede estar vacio" });
-        }
-        if (fechaVencimiento == "") {
-            errores.push({ mensaje: "El campo fechaVencimiento no puede estar vacio" });
-        }
-        if (nombreTraslada == "") {
-            errores.push({ mensaje: "El campo nombreTraslada no puede estar vacio" });
-        }
-        if (nombreRecibe == "") {
-            errores.push({ mensaje: "El campo nombreRecibe no puede estar vacio" });
-        }
-        if (instructorTecnico == "") {
-            errores.push({ mensaje: "El campo instructorTecnico no puede estar vacio" });
-        }
-        if (observaciones == "") {
-            errores.push({ mensaje: "El campo observaciones no puede estar vacio" });
-        }
+        
+        if (productionType == "") errores.push({ mensaje: "El campo productionType no puede estar vacio" });
+        if (fecha == "") errores.push({ mensaje: "El campo fecha no puede estar vacio" });
+        if (descripcionElemento == "") errores.push({ mensaje: "El campo descripcion no puede estar vacio" });
+        if (unidadMedida == "") errores.push({ mensaje: "El campo unidadMedida no puede estar vacio" });
+        if (cantidad == "") errores.push({ mensaje: "El campo cantidad no puede estar vacio" });
+        if (valorUnitario == "") errores.push({ mensaje: "El campo valorUnitario no puede estar vacio" });
+        if (valorTotal == "") errores.push({ mensaje: "El campo valorTotal no puede estar vacio" });
+        if (fechaVencimiento == "") errores.push({ mensaje: "El campo fechaVencimiento no puede estar vacio" });
+        if (nombreTraslada == "") errores.push({ mensaje: "El campo nombreTraslada no puede estar vacio" });
+        if (nombreRecibe == "") errores.push({ mensaje: "El campo nombreRecibe no puede estar vacio" });
+        if (instructorTecnico == "") errores.push({ mensaje: "El campo instructorTecnico no puede estar vacio" });
+        if (observaciones == "") errores.push({ mensaje: "El campo observaciones no puede estar vacio" });
+        
         if (errores.length > 0) {
             var response = new Response(false, "Error en la creación de la producción", null, errores);
             res.status(400);
             res.json(response.json);
             return;
         }
-
-        data = { productionType, fecha, descripcionElemento, unidadMedida, cantidad, valorUnitario, valorTotal, fechaVencimiento, centroCosto, nombreTraslada, nombreRecibe, instructorTecnico, observaciones };
+        const data = { 
+            productionType, 
+            fecha, 
+            descripcionElemento, 
+            unidadMedida, 
+            cantidad, 
+            valorUnitario, 
+            valorTotal, 
+            fechaVencimiento, 
+            centroCosto, 
+            nombreTraslada, 
+            nombreRecibe, 
+            instructorTecnico, 
+            observaciones,
+            active 
+        };
+        
         const production = await productionCreate(data);
         var response = new Response(true, "Producción creada exitosamente", production, null);
         res.status(201);

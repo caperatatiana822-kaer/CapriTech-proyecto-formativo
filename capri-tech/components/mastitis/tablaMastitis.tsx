@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [casos, setCasos] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -61,6 +59,10 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarMastitis(1)
+
+    const handler = () => cargarMastitis(1)
+    window.addEventListener("mastitis:created", handler)
+    return () => window.removeEventListener("mastitis:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -83,7 +85,7 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Mastitis</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Mastitis</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro de diagnosticos y pruebas de mastitis</p>
 
           {headerExtra}
@@ -133,6 +135,15 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
                   </tr>
                 )}
 
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && casosFiltrados.length === 0 && casos.length > 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
+                      No se encontraron casos que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
+
                 {!cargando && !error && casosFiltrados.map(function renderFila(caso: any, index: number) {
                   return (
                     <tr key={caso.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
@@ -165,7 +176,7 @@ export default function TablaMastitis({ busqueda = "", headerExtra }: Props) {
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -12,6 +11,17 @@ function formatearFecha(fechaISO: string) {
     return "—"
   }
 }
+function formatearHora(horaStr: string) {
+  if (!horaStr) return "—"
+  try {
+    if (typeof horaStr === "string" && horaStr.includes(":")) {
+      return horaStr.slice(0, 5)
+    }
+    return horaStr
+  } catch {
+    return horaStr
+  }
+}
 
 type Props = {
   busqueda?: string
@@ -19,7 +29,6 @@ type Props = {
 }
 
 export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [alimentaciones, setAlimentaciones] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -61,6 +70,10 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
 
   useEffect(() => {
     cargarAlimentaciones(1)
+
+    const handler = () => cargarAlimentaciones(1)
+    window.addEventListener("feeding:created", handler)
+    return () => window.removeEventListener("feeding:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -132,11 +145,20 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
                   </tr>
                 )}
 
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && alimentacionesFiltradas.length === 0 && alimentaciones.length > 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-6 text-center text-gray-500">
+                      No se encontraron registros que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
+
                 {!cargando && !error && alimentacionesFiltradas.map(function renderFila(item: any, index: number) {
                   return (
                     <tr key={item.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
                       <td className="p-3 text-sm text-gray-800">{formatearFecha(item.fecha)}</td>
-                      <td className="p-3 text-sm text-gray-800">{item.hora}</td>
+                      <td className="p-3 text-sm text-gray-800">{formatearHora(item.hora)}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.responsable}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.alimento}</td>
                       <td className="p-3 text-sm text-gray-800 font-medium">{item.cantidad} Kg</td>
@@ -155,7 +177,8 @@ export default function TablaAlimentacion({ busqueda = "", headerExtra }: Props)
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {/* AQUÍ ESTÁ EL CAMBIO: se oculta si hay búsqueda */}
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

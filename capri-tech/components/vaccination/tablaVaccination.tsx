@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function TablaVacunacion({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [vacunaciones, setVacunaciones] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -61,6 +59,10 @@ export default function TablaVacunacion({ busqueda = "", headerExtra }: Props) {
 
   useEffect(() => {
     cargarVacunaciones(1)
+
+    const handler = () => cargarVacunaciones(1)
+    window.addEventListener("vaccination:created", handler)
+    return () => window.removeEventListener("vaccination:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -82,7 +84,7 @@ export default function TablaVacunacion({ busqueda = "", headerExtra }: Props) {
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
         <div className="bg-white p-6">
-          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Tabla de Vacunacion</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#000000]">Vacunacion</h1>
           <p className="text-gray-500 mt-1 text-sm">Registro de vacunas aplicadas a los caprinos</p>
 
           {headerExtra}
@@ -131,6 +133,15 @@ export default function TablaVacunacion({ busqueda = "", headerExtra }: Props) {
                   </tr>
                 )}
 
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && vacunacionesFiltradas.length === 0 && vacunaciones.length > 0 && (
+                  <tr>
+                    <td colSpan={5} className="p-6 text-center text-gray-500">
+                      No se encontraron vacunaciones que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                )}
+
                 {!cargando && !error && vacunacionesFiltradas.map(function renderFila(item: any, index: number) {
                   return (
                     <tr key={item.id || index} className="border-b border-gray-100 hover:bg-[#faf8f5] transition-colors">
@@ -153,7 +164,7 @@ export default function TablaVacunacion({ busqueda = "", headerExtra }: Props) {
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

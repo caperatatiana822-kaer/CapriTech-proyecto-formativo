@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, CirclePlus, Pencil } from "lucide-react" // 👈 Importamos el icono Pencil (lápiz)
+import { Search, CirclePlus, Pencil } from "lucide-react" 
 import FormCreacionUsuario, { User } from "@/components/user/formCreacion"
 
 export default function TablaUsuario() {
@@ -13,7 +13,6 @@ export default function TablaUsuario() {
   const [totalItems, setTotalItems] = useState(0)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  // 👇 1. Estado para guardar el usuario que vamos a editar
   const [usuarioEditor, setUsuarioEditor] = useState<User | null>(null)
 
   const [busqueda, setBusqueda] = useState("")
@@ -29,7 +28,6 @@ export default function TablaUsuario() {
       
       if (!respuesta.ok) throw new Error(datos.message || "Error al cargar usuarios")
 
-      // 👇 LA SOLUCIÓN: Tu backend envía el arreglo directamente en 'datos.data'
       const lista = Array.isArray(datos?.data) ? datos.data : []
       
       const total = Number(datos?.pagination?.total ?? lista.length ?? 0)
@@ -58,13 +56,11 @@ export default function TablaUsuario() {
     cargarUsuarios(paginaActual)
   }
 
-  // 👇 2. Función para Crear
   function handleAgregarUsuario() {
-    setUsuarioEditor(null) // Nos aseguramos de que no haya datos viejos
+    setUsuarioEditor(null) 
     setIsModalOpen(true)
   }
 
-  // 👇 3. Función para Editar (Recibe el usuario)
   function handleEditarUsuario(u: User) {
     setUsuarioEditor(u)
     setIsModalOpen(true)
@@ -102,7 +98,7 @@ export default function TablaUsuario() {
                 className="w-full border border-[#844243] rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-[#E8D9C5] text-sm"
               />
             </div>
-            <button onClick={handleAgregarUsuario} className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
+            <button onClick={handleAgregarUsuario} className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
               <CirclePlus className="w-5 h-5" /> Agregar Usuario
             </button>
           </div>
@@ -126,7 +122,6 @@ export default function TablaUsuario() {
                   <th className="p-3 text-left font-semibold text-sm">Documento</th>
                   <th className="p-3 text-left font-semibold text-sm">Cargo</th>
                   <th className="p-3 text-left font-semibold text-sm">Estado</th>
-                  {/* 👇 4. Nueva Columna */}
                   <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Acciones</th>
                 </tr>
               </thead>
@@ -134,7 +129,7 @@ export default function TablaUsuario() {
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={7} className="p-6 text-center text-gray-500"> {/* 👈 Colspan a 7 */}
+                    <td colSpan={7} className="p-6 text-center text-gray-500"> 
                       Cargando usuarios...
                     </td>
                   </tr>
@@ -142,7 +137,7 @@ export default function TablaUsuario() {
 
                 {!cargando && !error && usuarios.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="p-6 text-center text-gray-500"> {/* 👈 Colspan a 7 */}
+                    <td colSpan={7} className="p-6 text-center text-gray-500"> 
                       Todavia no hay usuarios registrados.
                     </td>
                   </tr>
@@ -163,7 +158,7 @@ export default function TablaUsuario() {
                           {usuario.active ? "Activo" : "Inactivo"}
                         </span>
                       </td>
-                      {/* 👇 5. Botón de Editar */}
+
                       <td className="p-3 text-sm text-gray-800">
                         <button onClick={() => handleEditarUsuario({ ...usuario, documento: usuario.documento || usuario.documentId })} className="text-blue-600 hover:text-blue-800 transition">
                           <Pencil className="w-5 h-5" />
@@ -194,7 +189,6 @@ export default function TablaUsuario() {
         </div>
       </div>
 
-      {/* 👇 6. Le pasamos la prop usuarioEditor al Formulario */}
       <FormCreacionUsuario
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

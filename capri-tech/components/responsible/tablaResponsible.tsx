@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 type Props = {
   busqueda?: string
@@ -9,7 +8,6 @@ type Props = {
 }
 
 export default function TablaResponsables({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [responsables, setResponsables] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState("")
@@ -51,6 +49,10 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
 
   useEffect(() => {
     cargarResponsables(1)
+
+    const handler = () => cargarResponsables(1)
+    window.addEventListener("responsible:created", handler)
+    return () => window.removeEventListener("responsible:created", handler)
   }, [])
 
   function irPagina(pagina: number) {
@@ -66,7 +68,6 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
     (r.actividad || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (r.frecuencia || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (r.diaSemana || "").toString().toLowerCase().includes(busqueda.toLowerCase())
-
   )
 
   return (
@@ -105,7 +106,7 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">
+                    <td colSpan={7} className="p-6 text-center text-gray-500">
                       <div className="flex justify-center items-center space-x-2">
                         <svg className="animate-spin h-5 w-5 text-[#844243]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -119,8 +120,17 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
 
                 {!cargando && !error && responsables.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-gray-500">
+                    <td colSpan={7} className="p-6 text-center text-gray-500">
                       Todavia no hay responsables registrados.
+                    </td>
+                  </tr>
+                )}
+
+                {/* Mensaje si la búsqueda no arroja resultados */}
+                {!cargando && !error && responsablesFiltrados.length === 0 && responsables.length > 0 && (
+                  <tr>
+                    <td colSpan={7} className="p-6 text-center text-gray-500">
+                      No se encontraron responsables que coincidan con la búsqueda.
                     </td>
                   </tr>
                 )}
@@ -131,7 +141,11 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
                       <td className="p-3 text-sm text-gray-800 font-medium capitalize">{responsable.nombre}</td>
                       <td className="p-3 text-sm text-gray-800">{responsable.documento}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{responsable.tipoResponsable}</td>
-                      <td className="p-3 text-sm text-gray-800 capitalize">{responsable.actividad}</td>
+                      <td className="p-3 text-sm text-gray-800 capitalize">
+                        {Array.isArray(responsable.actividad)
+                          ? responsable.actividad.join(", ")
+                          : responsable.actividad}
+                      </td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{responsable.frecuencia}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">
                         {Array.isArray(responsable.diaSemana)
@@ -153,7 +167,7 @@ export default function TablaResponsables({ busqueda = "", headerExtra }: Props)
             </table>
           </div>
 
-          {!cargando && !error && totalItems > 0 && (
+          {!cargando && !error && totalItems > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{paginaActual}</span> de {totalPaginas}

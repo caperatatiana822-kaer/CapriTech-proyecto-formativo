@@ -58,6 +58,11 @@ const Production = db.define('Production', {
     observaciones: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+     active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
     }
 }, {
     timestamps: false,

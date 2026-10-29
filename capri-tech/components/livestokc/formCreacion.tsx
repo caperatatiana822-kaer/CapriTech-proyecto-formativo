@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { CalendarIcon, CirclePlus } from "lucide-react"
+import { Toaster, toast } from "@/components/ui/toast";
 
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -20,7 +21,33 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-function FormCreacionLivestock() {
+// 1. Exportar la interfaz
+export interface Livestock {
+  id: number;
+  nombre: string;
+  chapeta: string;
+  fechaNacimiento: string;
+  raza: string;
+  sexo: string;
+  etapaProduccion: string;
+  observaciones: string;
+  active: boolean;
+}
+
+// 2. Props con 'usuarioEditor' por defecto null
+interface FormCreacionLivestockProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  usuarioEditor?: Livestock | null;
+}
+
+function FormCreacionLivestock({
+  isOpen,
+  onClose,
+  onSuccess,
+  usuarioEditor = null,
+}: FormCreacionLivestockProps) {
   const [nombre, setNombre] = useState("")
   const [chapeta, setChapeta] = useState("")
   const [fechaNacimiento, setFechaNacimiento] = useState<Date | undefined>(undefined)
@@ -32,6 +59,9 @@ function FormCreacionLivestock() {
 
   const [open, setOpen] = useState(false)
 
+  // 3. Constante modo edición
+  const esModoEdicion = Boolean(usuarioEditor);
+
   function limpiarFormulario() {
     setNombre("")
     setChapeta("")
@@ -42,11 +72,26 @@ function FormCreacionLivestock() {
     setObservaciones("")
   }
 
+  // 4. useEffect
+  useEffect(() => {
+    if (usuarioEditor) {
+      setNombre(usuarioEditor.nombre || "")
+      setChapeta(usuarioEditor.chapeta || "")
+      setFechaNacimiento(usuarioEditor.fechaNacimiento ? new Date(usuarioEditor.fechaNacimiento) : undefined)
+      setRaza(usuarioEditor.raza || "")
+      setSexo(usuarioEditor.sexo || "Macho")
+      setEtapaProduccion(usuarioEditor.etapaProduccion || "carne")
+      setObservaciones(usuarioEditor.observaciones || "")
+    } else {
+      limpiarFormulario()
+    }
+  }, [usuarioEditor, isOpen])
+
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
     setEnviando(true)
 
-    const nuevoAnimal = {
+    const datosAnimal = {
       nombre: nombre,
       chapeta: chapeta,
       fechaNacimiento: fechaNacimiento ? format(fechaNacimiento, "yyyy-MM-dd") : null,
@@ -56,13 +101,19 @@ function FormCreacionLivestock() {
       observaciones: observaciones,
     }
 
+    // 5. URL y método según el modo
+    const url = esModoEdicion
+      ? `http://localhost:3001/api/livestock/livestock/${usuarioEditor?.id}`
+      : "http://localhost:3001/api/livestock/livestock"
+    const method = esModoEdicion ? "PUT" : "POST"
+
     try {
-      const respuesta = await fetch("http://localhost:3001/api/livestock/livestock", {
-        method: "POST",
+      const respuesta = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(nuevoAnimal),
+        body: JSON.stringify(datosAnimal),
       })
 
       if (!respuesta.ok) {
@@ -71,19 +122,38 @@ function FormCreacionLivestock() {
 
       limpiarFormulario()
       setOpen(false)
+      if (onSuccess) onSuccess()
       window.dispatchEvent(new Event("livestock:created"))
+      toast.add({
+        title: "Éxito",
+        description: esModoEdicion ? "El caprino se actualizó correctamente" : "El caprino se registró correctamente",
+        type: "success",
+      });
     } catch (error) {
-      console.error("Error al registrar el animal:", error)
-      alert("No se pudo registrar el animal. Intenta de nuevo.")
+      console.error("Error al guardar el animal:", error)
+      toast.add({
+        title: "Corregir",
+        description: "No se pudo guardar el animal. Intenta de nuevo.",
+        type: "error",
+      });
+      return;
     } finally {
       setEnviando(false)
     }
   }
 
+  // Control del Dialog
+  const dialogOpen = isOpen !== undefined ? isOpen : open
+  const setDialogOpen = (valor: boolean) => {
+    if (onClose && !valor) onClose()
+    setOpen(valor)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      {/* AQUÍ ESTÁ TU BOTÓN ORIGINAL DE AGREGAR */}
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
+        <button className="bg-[#aff5af]  text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Caprino
         </button>
@@ -91,10 +161,12 @@ function FormCreacionLivestock() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Inventario
+          {/* 6. Título dinámico */}
+          {esModoEdicion ? "Editar caprino" : "Crear caprino"}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          {/* ... AQUÍ VA TODO TU FORMULARIO TAL CUAL LO TENÍAS ... */}
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre</label>
             <input
@@ -206,15 +278,15 @@ function FormCreacionLivestock() {
                 {observaciones.length} / 200
               </span>
             </div>
-          </div>
-          <DialogDescription className="text-gray-500">
+            <DialogDescription className="text-gray-500">
             Ingresa la información del caprino.
           </DialogDescription>
-
+          </div>
+          
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => setDialogOpen(false)}
               className="bg-gray-100 border border-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-gray-200 hover:border-gray-400 transition"
             >
               Cancelar
@@ -222,9 +294,10 @@ function FormCreacionLivestock() {
             <button
               type="submit"
               disabled={enviando}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
-              {enviando ? "Registrando..." : "Guardar"}
+              {/* 7. Nombre del botón dinámico */}
+              {enviando ? "Registrando..." : esModoEdicion ? "Actualizar Caprino" : "Guardar"}
             </button>
           </DialogFooter>
         </form>

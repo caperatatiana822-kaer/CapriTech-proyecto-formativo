@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Toaster, toast } from "@/components/ui/toast";
 
 import {
   Dialog,
@@ -11,18 +11,14 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 function FormCreacionResponsibles() {
-  const router = useRouter()
-
   const [nombre, setNombre] = useState("")
   const [tipoResponsable, setTipoResponsable] = useState("")
   const [documento, setDocumento] = useState("")
   const [frecuencia, setFrecuencia] = useState("")
-  const [diaSemana, setDiaSemana] = useState("")
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
 
@@ -44,8 +40,29 @@ function FormCreacionResponsibles() {
   const diasSemana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
   const [diasSeleccionados, setDiasSeleccionados] = useState<string[]>([])
 
+  function limpiarFormulario() {
+    setNombre("")
+    setTipoResponsable("")
+    setDocumento("")
+    setFrecuencia("")
+    setActividadesSeleccionadas([])
+    setDiasSeleccionados([])
+    setError("")
+  }
+
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
+    
+    // Validación manual por si acaso, ya que quitamos los textos visuales
+    if (actividadesSeleccionadas.length === 0) {
+      setError("Por favor, selecciona al menos una actividad.")
+      return
+    }
+    if (diasSeleccionados.length === 0) {
+      setError("Por favor, selecciona al menos un día.")
+      return
+    }
+
     setEnviando(true)
     setError("")
 
@@ -56,6 +73,7 @@ function FormCreacionResponsibles() {
       actividad: actividadesSeleccionadas,
       frecuencia: frecuencia,
       diaSemana: diasSeleccionados,
+      active: true // 👈 FORZAMOS EL ESTADO ACTIVO
     }
 
     try {
@@ -78,13 +96,24 @@ function FormCreacionResponsibles() {
         throw new Error(erroresDetalle || mensajeError)
       }
 
-      alert("Responsable registrado correctamente")
+      limpiarFormulario()
       setOpen(false)
-      router.push("/dashboard/responsible")
-
+      window.dispatchEvent(new Event("responsible:created"))
+      toast.add({
+        title: "Éxito",
+        description: "El responsable se registró correctamente",
+        type: "success",
+      });
+      return;
     } catch (error: any) {
       console.error("Error al registrar el responsable:", error)
       setError(error.message || "No se pudo registrar el responsable")
+      toast.add({
+        title: "Corregir",
+        description: "No se pudo registrar el responsable. Intenta de nuevo.",
+        type: "error",
+      });
+      return;
     } finally {
       setEnviando(false)
     }
@@ -93,7 +122,7 @@ function FormCreacionResponsibles() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
+        <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar responsable
         </button>
@@ -101,7 +130,7 @@ function FormCreacionResponsibles() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Responsables
+          Crear Responsable
         </DialogHeader>
 
         {error && (
@@ -110,7 +139,8 @@ function FormCreacionResponsibles() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+          {/* Fila 1: Nombre y Tipo */}
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Nombre *</label>
             <input
@@ -141,6 +171,7 @@ function FormCreacionResponsibles() {
             </select>
           </div>
 
+          {/* Fila 2: Documento y Frecuencia (Los juntamos para que no queden descolgados) */}
           <div>
             <label className="block text-sm font-semibold text-[#000000] mb-2">Documento *</label>
             <input
@@ -151,34 +182,6 @@ function FormCreacionResponsibles() {
               className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-200"
               placeholder="Número de documento"
             />
-          </div>
-
-          <div className="w-full space-y-3">
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Actividades a Cargo *</label>
-
-            <ToggleGroup
-              type="multiple"
-              value={actividadesSeleccionadas}
-              onValueChange={setActividadesSeleccionadas}
-              className="flex flex-wrap gap-2"
-            >
-              {actividades.map((actividad) => (
-                <ToggleGroupItem
-                  key={actividad.value}
-                  value={actividad.value}
-                  aria-label={actividad.label}
-                  className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                >
-                  {actividad.label}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-
-            {actividadesSeleccionadas.length === 0 && (
-              <p className="text-sm text-destructive">
-                Selecciona al menos una actividad
-              </p>
-            )}
           </div>
 
           <div>
@@ -197,9 +200,31 @@ function FormCreacionResponsibles() {
             </select>
           </div>
 
-          <div className="w-full space-y-3">
-            <label className="text-sm font-medium">Selecciona los días</label>
+          {/* Fila 3: Actividades (Ocupa todo el ancho) */}
+          <div className="md:col-span-2 space-y-3 mt-2">
+            <label className="block text-sm font-semibold text-[#000000] mb-1">Actividades a Cargo *</label>
+            <ToggleGroup
+              type="multiple"
+              value={actividadesSeleccionadas}
+              onValueChange={setActividadesSeleccionadas}
+              className="flex flex-wrap gap-2"
+            >
+              {actividades.map((actividad) => (
+                <ToggleGroupItem
+                  key={actividad.value}
+                  value={actividad.value}
+                  aria-label={actividad.label}
+                  className="rounded-lg border border-[#d7ccc8] px-4 py-2 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {actividad.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
 
+          {/* Fila 4: Días (Ocupa todo el ancho) */}
+          <div className="md:col-span-2 space-y-3 mt-2">
+            <label className="block text-sm font-semibold text-[#000000] mb-1">Selecciona los días *</label>
             <ToggleGroup  
               type="multiple"
               value={diasSeleccionados}
@@ -217,15 +242,9 @@ function FormCreacionResponsibles() {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-
-            {diasSeleccionados.length === 0 && (
-              <p className="text-sm text-destructive">
-                Selecciona al menos un día
-              </p>
-            )}
           </div>
           
-          <DialogDescription className="text-gray-500">
+          <DialogDescription className="text-gray-500 md:col-span-2 mt-2">
             Ingresa la informacion del responsable.
           </DialogDescription>
 
@@ -240,7 +259,7 @@ function FormCreacionResponsibles() {
             <button
               type="submit"
               disabled={enviando}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Guardar"}
             </button>

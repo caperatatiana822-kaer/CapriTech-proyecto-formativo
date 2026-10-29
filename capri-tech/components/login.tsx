@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
+import { Toaster, toast } from "@/components/ui/toast";
 
-export default function LoginModal(props: any) {
+export default function LoginModal({ hideTrigger = false }: { hideTrigger?: boolean }) {
   const [abrir, setAbrir] = useState(false);
   const [modo, setModo] = useState("login");
   const [email, setEmail] = useState("");
@@ -14,7 +15,11 @@ export default function LoginModal(props: any) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Por favor ingresa tu correo y contraseña");
+      toast.add({
+        title: "Corregir",
+        description: "Por favor, ingresa tu correo electrónico y contraseña",
+        type: "error",
+      });
       return;
     }
 
@@ -33,6 +38,11 @@ export default function LoginModal(props: any) {
 
       if (success && token) {
         localStorage.setItem("token", token);
+        toast.add({
+          title: "Exito",
+          description: "Bienvenido, has iniciado sesión correctamente",
+          type: "success",
+        });
         router.push("/dashboard");
       } else {
         const msg = data.message || data.json?.message || "Credenciales incorrectas";
@@ -88,8 +98,9 @@ export default function LoginModal(props: any) {
     <>
       <button
         type="button"
+        id="btn-login-hidden"
         onClick={() => setAbrir(true)}
-        className="bg-[#844243] hover:bg-[#6E3536] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"
+        className={hideTrigger ? "hidden" : "bg-[#844243] hover:bg-[#6E3536] text-[#f5efe6] font-medium px-6 py-2 rounded-full shadow-md hover:shadow-lg transition duration-300 border border-[#8d6e63]"}
       >
         Ingresar
       </button>

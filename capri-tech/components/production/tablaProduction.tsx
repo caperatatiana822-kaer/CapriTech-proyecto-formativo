@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 
 function formatearFecha(fechaISO: string) {
   if (!fechaISO) return "—"
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
-  const router = useRouter()
   const [produccion, setProduccion] = useState([])
   const [cargando, setCargando] = useState(true)
   const [pagination, setPagination] = useState({
@@ -76,7 +74,8 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
     (p.nombreTraslada || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (p.nombreRecibe || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
     (p.instructorTecnico || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
-    (p.observaciones || "").toString().toLowerCase().includes(busqueda.toLowerCase())
+    (p.observaciones || "").toString().toLowerCase().includes(busqueda.toLowerCase()) ||
+    (typeof p.active === "boolean" && (p.active ? "activo" : "inactivo").includes(busqueda.toLowerCase())) // 👈 Filtro de búsqueda
   )
 
   return (
@@ -107,14 +106,16 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
                   <th className="p-3 text-left font-semibold text-sm">Quien Traslada</th>
                   <th className="p-3 text-left font-semibold text-sm">Quien Recibe</th>
                   <th className="p-3 text-left font-semibold text-sm">Instructor Técnico</th>
-                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Observaciones</th>
+                  <th className="p-3 text-left font-semibold text-sm">Observaciones</th>
+                  {/* COLUMNA AGREGADA */}
+                  <th className="p-3 text-left font-semibold text-sm rounded-r-lg">Estado</th>
                 </tr>
               </thead>
 
               <tbody>
                 {cargando && (
                   <tr>
-                    <td colSpan={13} className="p-6 text-center text-gray-500">
+                    <td colSpan={14} className="p-6 text-center text-gray-500">
                       Cargando producción...
                     </td>
                   </tr>
@@ -122,8 +123,16 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
 
                 {!cargando && produccion.length === 0 && (
                   <tr>
-                    <td colSpan={13} className="p-6 text-center text-gray-500">
+                    <td colSpan={14} className="p-6 text-center text-gray-500">
                       Todavía no hay producción registrada.
+                    </td>
+                  </tr>
+                )}
+
+                {!cargando && produccionFiltrada.length === 0 && produccion.length > 0 && (
+                  <tr>
+                    <td colSpan={14} className="p-6 text-center text-gray-500">
+                      No se encontraron registros que coincidan con la búsqueda.
                     </td>
                   </tr>
                 )}
@@ -144,6 +153,14 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.nombreRecibe}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.instructorTecnico}</td>
                       <td className="p-3 text-sm text-gray-800 capitalize">{item.observaciones || "—"}</td>
+                      <td className="p-3 text-sm text-gray-800">
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${item.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}>
+                          {item.active ? "Activo" : "Inactivo"}
+                        </span>
+                      </td>
                     </tr>
                   )
                 })}
@@ -151,7 +168,7 @@ export default function TablaProduction({ busqueda = "", headerExtra }: Props) {
             </table>
           </div>
 
-          {!cargando && pagination.totalPages > 0 && (
+          {!cargando && pagination.totalPages > 0 && busqueda.length === 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-gray-200 gap-4">
               <div className="text-sm text-gray-600">
                 Total de registros: <span className="font-semibold text-[#3E2723]">{pagination.totalItems}</span> | Página <span className="font-semibold text-[#3E2723]">{pagination.currentPage}</span> de {pagination.totalPages}

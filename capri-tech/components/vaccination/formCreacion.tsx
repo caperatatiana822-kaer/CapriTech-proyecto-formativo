@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
 
 import {
@@ -11,13 +10,10 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 function FormCreacionVacunacion() {
-  const router = useRouter()
-
   const [animales, setAnimales] = useState<any[]>([])
   const [responsables, setResponsables] = useState<any[]>([])
   const [chapeta, setChapeta] = useState("")
@@ -25,11 +21,13 @@ function FormCreacionVacunacion() {
   const [vacuna, setVacuna] = useState("")
   const [dosis, setDosis] = useState("")
   const [responsable, setResponsable] = useState("")
-  const [active, setActive] = useState(true)
+  
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState("")
   const [cargandoAnimales, setCargandoAnimales] = useState(true)
   const [cargandoResponsables, setCargandoResponsables] = useState(true)
+  
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     async function cargarAnimales() {
@@ -89,6 +87,15 @@ function FormCreacionVacunacion() {
 
   const todosAnimales = Array.isArray(animales) ? animales : []
 
+  function limpiarFormulario() {
+    setChapeta("")
+    setFecha("")
+    setVacuna("")
+    setDosis("")
+    setResponsable("")
+    setError("")
+  }
+
   async function handleSubmit(evento: React.FormEvent) {
     evento.preventDefault()
     setEnviando(true)
@@ -100,8 +107,7 @@ function FormCreacionVacunacion() {
       return
     }
 
-    const chapetaNumero = parseInt(chapeta)
-    const animal = todosAnimales.find(a => Number(a.chapeta) === chapetaNumero)
+    const animal = todosAnimales.find(a => String(a.chapeta) === String(chapeta))
 
     if (!animal) {
       setError("Debe seleccionar un animal valido.")
@@ -110,12 +116,12 @@ function FormCreacionVacunacion() {
     }
 
     const nuevaVacunacion = {
-      chapeta: chapetaNumero,
+      chapeta: parseInt(chapeta),
       fecha: fecha,
       vacuna: vacuna,
       dosis: dosis,
       responsable: responsable,
-      active,
+      active: true, 
     }
 
     try {
@@ -136,8 +142,9 @@ function FormCreacionVacunacion() {
         throw new Error(erroresDetalle || mensajeError)
       }
 
-      alert("Vacunacion registrada correctamente")
-      router.push("/dashboard/vaccination")
+      limpiarFormulario()
+      setOpen(false)
+      window.dispatchEvent(new Event("vaccination:created"))
 
     } catch (error: any) {
       console.error("Error al registrar la vacunacion:", error)
@@ -148,9 +155,9 @@ function FormCreacionVacunacion() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
+        <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Vacunacion
         </button>
@@ -158,11 +165,8 @@ function FormCreacionVacunacion() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Vacunacion
+          Crear Vacunacion
         </DialogHeader>
-        <DialogDescription className="text-gray-500">
-          Ingresa la informacion de la vacunacion realizada.
-        </DialogDescription>
 
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-2">
@@ -256,18 +260,9 @@ function FormCreacionVacunacion() {
             )}
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-[#000000] mb-2">Estado *</label>
-            <select
-              required
-              value={active ? "true" : "false"}
-              onChange={(e) => setActive(e.target.value === "true")}
-              className="w-full border border-[#d7ccc8] rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#844243]"
-            >
-              <option value="true">Activo</option>
-              <option value="false">Inactivo</option>
-            </select>
-          </div>
+          <DialogDescription className="text-gray-500 md:col-span-2">
+            Ingresa la informacion de la vacunacion realizada.
+          </DialogDescription>
 
           <DialogFooter className="md:col-span-2 flex justify-end mt-2 !border-t-0 !bg-transparent">
             <DialogClose asChild>
@@ -281,7 +276,7 @@ function FormCreacionVacunacion() {
             <button
               type="submit"
               disabled={enviando || cargandoAnimales || cargandoResponsables}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Registrar Vacunacion"}
             </button>

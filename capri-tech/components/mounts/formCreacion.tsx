@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { CirclePlus } from "lucide-react"
+import { Toaster, toast } from "@/components/ui/toast";
 
 import {
   Dialog,
@@ -10,13 +10,10 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 export default function FormCreacionMount() {
-  const router = useRouter()
-
   const [animales, setAnimales] = useState<any[]>([])
   const [responsables, setResponsables] = useState<any[]>([])
   const [fechaMonta, setFechaMonta] = useState("")
@@ -65,11 +62,11 @@ export default function FormCreacionMount() {
     e.preventDefault()
     setEnviando(true)
 
-    const macho = machos.find(a => a.chapeta === chapetaMacho)
-    const hembra = hembras.find(a => a.chapeta === chapetaHembra)
+    const macho = machos.find(a => String(a.chapeta) === String(chapetaMacho))
+    const hembra = hembras.find(a => String(a.chapeta) === String(chapetaHembra))
 
     if (!macho || !hembra) {
-      alert("Debe seleccionar un macho y una hembra.")
+      alert("Debe seleccionar un macho y una hembra válidos.")
       setEnviando(false)
       return
     }
@@ -80,7 +77,8 @@ export default function FormCreacionMount() {
       chapetaMacho: macho.chapeta,
       chapetaHembra: hembra.chapeta,
       posibleFechaParto,
-      responsable
+      responsable,
+      active: true 
     }
 
     try {
@@ -92,20 +90,35 @@ export default function FormCreacionMount() {
 
       if (!res.ok) throw new Error()
 
-      router.push("/dashboard/mounts")
-    } catch {
-      alert("No se pudo registrar la monta.")
-    } finally {
-      setEnviando(false)
+      setFechaMonta("")
+      setChapetaMacho("")
+      setChapetaHembra("")
+      setNumeroMonta("")
+      setPosibleFechaParto("")
+      setResponsable("")
       setOpen(false)
       window.dispatchEvent(new Event("Mounts:created"))
+      toast.add({
+              title: "Éxito",
+              description: "La monta se registró correctamente",
+              type: "success",
+            });
+    } catch {
+      toast.add({
+        title: "Corregir",
+        description: "No se pudo registrar la monta. Intenta de nuevo.",
+        type: "error",
+      });
+      return;
+    } finally {
+      setEnviando(false)
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-         <button className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[bg-[#E2EFE2]] transition flex items-center gap-2">
+         <button className="bg-[#aff5af] text-black font-semibold px-6 py-2 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition flex items-center gap-2">
           <CirclePlus className="w-5 h-5" />
           Agregar Monta
         </button>
@@ -113,7 +126,7 @@ export default function FormCreacionMount() {
 
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-2xl font-bold text-[#000000]">
-          Formulario de Montas
+          Crear Monta
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -172,11 +185,6 @@ export default function FormCreacionMount() {
                 </option>
               ))}
             </select>
-            {responsables.length === 0 && (
-              <p className="text-sm text-yellow-600 mt-1">
-                No hay responsables registrados en el sistema.
-              </p>
-            )}
           </div>
 
           <DialogDescription className="text-gray-500 md:col-span-2">
@@ -194,7 +202,7 @@ export default function FormCreacionMount() {
             <button
               type="submit"
               disabled={enviando}
-              className="bg-[#aff5af] border border-[#90a78f] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
+              className="bg-[#aff5af] text-black font-semibold px-8 py-3 rounded-lg shadow-sm hover:bg-[#ccf0bc] hover:border-[#E2EFE2] transition disabled:opacity-50"
             >
               {enviando ? "Registrando..." : "Guardar"}
             </button>
